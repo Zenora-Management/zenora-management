@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +23,11 @@ const Navbar = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  // Close mobile menu when navigating
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <header
@@ -47,16 +53,19 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/" className="text-foreground hover:text-zenora-purple transition-colors">
+          <Link to="/" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/' ? 'text-zenora-purple font-medium' : ''}`}>
             Home
           </Link>
-          <Link to="/features" className="text-foreground hover:text-zenora-purple transition-colors">
+          <Link to="/features" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/features' ? 'text-zenora-purple font-medium' : ''}`}>
             Features
           </Link>
-          <Link to="/about" className="text-foreground hover:text-zenora-purple transition-colors">
+          <Link to="/property-management" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/property-management' ? 'text-zenora-purple font-medium' : ''}`}>
+            Services
+          </Link>
+          <Link to="/about" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/about' ? 'text-zenora-purple font-medium' : ''}`}>
             About
           </Link>
-          <Link to="/contact" className="text-foreground hover:text-zenora-purple transition-colors">
+          <Link to="/contact" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/contact' ? 'text-zenora-purple font-medium' : ''}`}>
             Contact
           </Link>
         </nav>
@@ -90,39 +99,41 @@ const Navbar = () => {
           <div className="zenora-container flex flex-col gap-4">
             <Link 
               to="/"
-              className="text-foreground hover:text-zenora-purple py-2 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
+              className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/' ? 'text-zenora-purple font-medium' : ''}`}
             >
               Home
             </Link>
             <Link 
               to="/features"
-              className="text-foreground hover:text-zenora-purple py-2 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
+              className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/features' ? 'text-zenora-purple font-medium' : ''}`}
             >
               Features
             </Link>
             <Link 
+              to="/property-management"
+              className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/property-management' ? 'text-zenora-purple font-medium' : ''}`}
+            >
+              Services
+            </Link>
+            <Link 
               to="/about"
-              className="text-foreground hover:text-zenora-purple py-2 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
+              className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/about' ? 'text-zenora-purple font-medium' : ''}`}
             >
               About
             </Link>
             <Link 
               to="/contact"
-              className="text-foreground hover:text-zenora-purple py-2 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
+              className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/contact' ? 'text-zenora-purple font-medium' : ''}`}
             >
               Contact
             </Link>
             <div className="flex flex-col gap-2 mt-2">
-              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link to="/login">
                 <ZenoraButton variant="outline" size="default" className="w-full">
                   Log In
                 </ZenoraButton>
               </Link>
-              <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link to="/signup">
                 <ZenoraButton variant="default" size="default" className="w-full">
                   Sign Up
                 </ZenoraButton>
