@@ -21,29 +21,38 @@ interface AuthFormProps {
 const ADMIN_EMAIL = "zenoramgmt@gmail.com";
 const ADMIN_PASSWORD = "Zenora101!";
 
+// Define the login schema
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   companyCode: z.string().optional(),
 });
 
+// Extend the login schema for signup to include the name field
 const signupSchema = loginSchema.extend({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  fullName: z.string().min(2, { message: "Name must be at least 2 characters" }),
 });
+
+// Define types based on the schemas
+type LoginFormValues = z.infer<typeof loginSchema>;
+type SignupFormValues = z.infer<typeof signupSchema>;
 
 const AuthForm = ({ mode, userType }: AuthFormProps) => {
   const { signIn, signUp, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [autoFilledAdmin, setAutoFilledAdmin] = useState(false);
   
+  // Use the appropriate schema based on the mode
   const formSchema = mode === "login" ? loginSchema : signupSchema;
+  
+  // Create the form with the correct type
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: userType === "admin" ? ADMIN_EMAIL : "",
       password: userType === "admin" ? ADMIN_PASSWORD : "",
-      name: "",
       companyCode: "",
+      ...(mode === "signup" ? { fullName: "" } : {}),
     }
   });
   
@@ -52,7 +61,9 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
       if (mode === "login") {
         await signIn(values.email, values.password, userType === "admin");
       } else {
-        await signUp(values.email, values.password, values.name || "");
+        // We need to cast to access the fullName field which only exists in signup mode
+        const signupValues = values as SignupFormValues;
+        await signUp(signupValues.email, signupValues.password, signupValues.fullName);
       }
     } catch (error) {
       console.error("Authentication error:", error);
@@ -104,7 +115,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
             {mode === "signup" && (
               <FormField
                 control={form.control}
-                name="name"
+                name="fullName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
