@@ -1,422 +1,242 @@
 
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Link } from "react-router-dom";
-import { Check, Settings, Clock, LineChart, Shield, Users, Star, Gift, ArrowRight, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import React from 'react';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
+import { ZenoraButton } from '@/components/ui/button-zenora';
+import { Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const PropertyManagement = () => {
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-24 pb-16">
-        <div className="zenora-container">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-zenora-gradient">
-              Property Management
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Experience effortless property management with our AI-powered platform designed to maximize your rental income and minimize your workload.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
-            <div className="order-2 md:order-1">
-              <h2 className="text-3xl font-bold mb-6">Comprehensive Management Solutions</h2>
-              <p className="text-muted-foreground mb-6">
-                Zenora Management combines cutting-edge AI technology with industry expertise to deliver a complete property management experience that maximizes your rental income while minimizing your workload.
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-zenora-dark dark:to-black py-20">
+          <div className="zenora-container">
+            <div className="text-center">
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-zenora-gradient">
+                Property Management Made Simple
+              </h1>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+                Our AI-powered platform helps you manage your properties efficiently, 
+                save time, and maximize returns with intelligent insights.
               </p>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-1 bg-green-100 rounded-full">
-                    <Check className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Tenant Screening & Selection</h3>
-                    <p className="text-muted-foreground">AI-powered screening process to find reliable, high-quality tenants.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <div className="p-1 bg-green-100 rounded-full">
-                    <Check className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Rent Collection & Financial Management</h3>
-                    <p className="text-muted-foreground">Automated rent collection and comprehensive financial reporting.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <div className="p-1 bg-green-100 rounded-full">
-                    <Check className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Property Maintenance</h3>
-                    <p className="text-muted-foreground">Proactive maintenance management to protect your investment.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <div className="p-1 bg-green-100 rounded-full">
-                    <Check className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Legal Compliance</h3>
-                    <p className="text-muted-foreground">Stay compliant with all local, state, and federal housing regulations.</p>
-                  </div>
-                </div>
-              </div>
+              <ZenoraButton as={Link} to="/signup" size="lg">
+                Start Free Trial
+              </ZenoraButton>
             </div>
+          </div>
+        </section>
+        
+        {/* Features Section */}
+        <section className="py-20">
+          <div className="zenora-container">
+            <h2 className="text-3xl font-bold text-center mb-16">Everything You Need to Manage Your Properties</h2>
             
-            <div className="order-1 md:order-2 bg-zenora-gradient p-1 rounded-xl">
-              <div className="bg-white dark:bg-zenora-dark h-full rounded-lg p-6">
-                <img 
-                  src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1073&q=80" 
-                  alt="Property management" 
-                  className="w-full h-64 object-cover rounded-lg mb-4"
-                />
-                <h3 className="text-xl font-bold mb-2">Why Property Owners Choose Zenora</h3>
-                <ul className="space-y-2">
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>30% increase in rental income on average</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>75% reduction in property management workload</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>90% fewer tenant complaints and issues</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>24/7 property monitoring and support</span>
-                  </li>
-                </ul>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  title: "AI Rent Analysis",
+                  description: "Get data-driven insights on optimal rental prices for your properties based on market trends and comparable listings.",
+                  icon: "📊"
+                },
+                {
+                  title: "Tenant Screening",
+                  description: "Automated background checks, credit reports, and rental history verification to find reliable tenants.",
+                  icon: "🔍"
+                },
+                {
+                  title: "Maintenance Tracking",
+                  description: "Schedule and track maintenance requests, assign contractors, and keep tenants updated on progress.",
+                  icon: "🔧"
+                },
+                {
+                  title: "Financial Reporting",
+                  description: "Track income, expenses, and generate professional reports for tax purposes with minimal effort.",
+                  icon: "💰"
+                },
+                {
+                  title: "Smart Notifications",
+                  description: "Get timely alerts for lease renewals, rent collections, and scheduled maintenance tasks.",
+                  icon: "🔔"
+                },
+                {
+                  title: "Document Management",
+                  description: "Store and manage all property-related documents securely in one centralized location.",
+                  icon: "📄"
+                }
+              ].map((feature, index) => (
+                <div key={index} className="zenora-card p-6 h-full">
+                  <div className="text-4xl mb-4">{feature.icon}</div>
+                  <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </div>
+              ))}
             </div>
           </div>
-          
-          <div className="mb-20">
-            <h2 className="text-3xl font-bold text-center mb-10">Our Management Process</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden p-6 text-center">
-                <div className="w-16 h-16 bg-zenora-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Settings className="h-8 w-8 text-zenora-purple" />
-                </div>
-                <h3 className="text-xl font-bold mb-2">Setup & Onboarding</h3>
-                <p className="text-muted-foreground">
-                  We conduct a thorough property assessment, establish your management goals, and create a customized plan tailored to your property's unique needs.
-                </p>
-              </div>
-              
-              <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden p-6 text-center">
-                <div className="w-16 h-16 bg-zenora-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-8 w-8 text-zenora-purple" />
-                </div>
-                <h3 className="text-xl font-bold mb-2">Active Management</h3>
-                <p className="text-muted-foreground">
-                  Our AI-powered system actively manages your property, handling tenant relations, maintenance, rent collection, and day-to-day operations.
-                </p>
-              </div>
-              
-              <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden p-6 text-center">
-                <div className="w-16 h-16 bg-zenora-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <LineChart className="h-8 w-8 text-zenora-purple" />
-                </div>
-                <h3 className="text-xl font-bold mb-2">Optimization & Growth</h3>
-                <p className="text-muted-foreground">
-                  We continuously analyze performance data to optimize your property's profitability and implement strategies to increase your rental income.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Our Approach Section - Replacing "Our Vision" section */}
-          <div className="mb-20">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold">Our Approach</h2>
-              <p className="text-lg text-muted-foreground mt-3 max-w-3xl mx-auto">
-                Leveraging technology and expertise to deliver exceptional property management experiences
-              </p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white dark:bg-zenora-dark/50 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 text-center">
-                <div className="w-20 h-20 bg-zenora-gradient rounded-full flex items-center justify-center mx-auto mb-5">
-                  <Shield className="h-10 w-10 text-white" />
-                </div>
-                <h3 className="text-xl font-bold mb-3">Trust & Transparency</h3>
-                <p className="text-muted-foreground">
-                  We build lasting relationships through complete transparency in all our operations and communications.
-                </p>
-              </div>
-              
-              <div className="bg-white dark:bg-zenora-dark/50 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 text-center">
-                <div className="w-20 h-20 bg-zenora-gradient rounded-full flex items-center justify-center mx-auto mb-5">
-                  <LineChart className="h-10 w-10 text-white" />
-                </div>
-                <h3 className="text-xl font-bold mb-3">Data-Driven Decisions</h3>
-                <p className="text-muted-foreground">
-                  We harness AI and market analytics to make informed decisions that maximize your property's performance.
-                </p>
-              </div>
-              
-              <div className="bg-white dark:bg-zenora-dark/50 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 text-center">
-                <div className="w-20 h-20 bg-zenora-gradient rounded-full flex items-center justify-center mx-auto mb-5">
-                  <Clock className="h-10 w-10 text-white" />
-                </div>
-                <h3 className="text-xl font-bold mb-3">Proactive Management</h3>
-                <p className="text-muted-foreground">
-                  We anticipate issues before they arise, ensuring smooth operations and minimizing unexpected costs.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Pricing section - UPDATED to show cards in a row instead of a column */}
-          <div className="mb-20">
-            <h2 className="text-3xl font-bold text-center mb-10">Pricing Plans</h2>
-            <p className="text-muted-foreground mb-8 text-center max-w-3xl mx-auto">
-              Choose the perfect plan for your property management needs with transparent, all-inclusive pricing.
+        </section>
+        
+        {/* Pricing Section */}
+        <section className="py-20 bg-gray-50 dark:bg-zenora-dark/30">
+          <div className="zenora-container">
+            <h2 className="text-3xl font-bold text-center mb-4">Simple, Transparent Pricing</h2>
+            <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-16">
+              Choose the plan that fits your needs. All plans include our core features with no hidden fees.
             </p>
             
-            {/* Updated this section to use grid with 4 columns on larger screens */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800 h-full flex flex-col">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">Client Plan</h3>
-                      <p className="text-muted-foreground">For single property owners</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  name: "Starter",
+                  price: "$29",
+                  description: "Perfect for small landlords with a few properties",
+                  features: [
+                    "Up to 5 properties",
+                    "Basic AI rent analysis",
+                    "Tenant screening (3/month)",
+                    "Maintenance tracking",
+                    "Email support"
+                  ],
+                  button: "Get Started",
+                  popular: false
+                },
+                {
+                  name: "Professional",
+                  price: "$79",
+                  description: "Ideal for growing property portfolios",
+                  features: [
+                    "Up to 20 properties",
+                    "Advanced AI rent analysis",
+                    "Unlimited tenant screening",
+                    "Maintenance tracking & scheduling",
+                    "Financial reporting",
+                    "Priority support"
+                  ],
+                  button: "Get Started",
+                  popular: true
+                },
+                {
+                  name: "Enterprise",
+                  price: "$199",
+                  description: "Comprehensive solution for property management companies",
+                  features: [
+                    "Unlimited properties",
+                    "Premium AI rent analysis",
+                    "Unlimited tenant screening",
+                    "Advanced maintenance management",
+                    "Custom financial reporting",
+                    "API access",
+                    "Dedicated account manager"
+                  ],
+                  button: "Contact Sales",
+                  popular: false
+                }
+              ].map((plan, index) => (
+                <div 
+                  key={index} 
+                  className={`zenora-card p-8 relative ${plan.popular ? 'border-zenora-purple ring-2 ring-zenora-purple' : ''}`}
+                >
+                  {plan.popular && (
+                    <div className="absolute top-0 right-0 bg-zenora-purple text-white py-1 px-3 text-sm font-medium rounded-bl-lg rounded-tr-lg">
+                      Most Popular
                     </div>
-                    <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-2 rounded-full">
-                      <Star className="h-5 w-5" />
-                    </div>
+                  )}
+                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                  <div className="flex items-end mb-4">
+                    <span className="text-4xl font-extrabold">{plan.price}</span>
+                    <span className="text-muted-foreground ml-1 mb-1">/month</span>
                   </div>
-                  
-                  <div className="mb-4">
-                    <span className="text-3xl font-extrabold">$1,999</span>
-                    <span className="text-muted-foreground">/year</span>
-                  </div>
-                  
-                  <ul className="space-y-3 mb-6 flex-grow">
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>All Zenora management features included</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>AI rent analysis included</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Tenant screening included</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Maintenance coordination</span>
-                    </li>
+                  <p className="text-muted-foreground mb-6">{plan.description}</p>
+                  <ul className="space-y-3 mb-8">
+                    {plan.features.map((feature, i) => (
+                      <li key={i} className="flex items-start">
+                        <Check className="h-5 w-5 text-zenora-purple shrink-0 mr-2" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
                   </ul>
-                  
-                  <Link to={`/contact?plan=client`} className="mt-auto">
-                    <ZenoraButton
-                      variant="default"
-                      size="lg"
-                      className="w-full group-hover:shadow-lg transition-all duration-300"
-                    >
-                      Choose <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </ZenoraButton>
-                  </Link>
+                  <ZenoraButton 
+                    className="w-full"
+                    variant={plan.popular ? "default" : "outline"}
+                    as={Link}
+                    to="/signup"
+                  >
+                    {plan.button}
+                  </ZenoraButton>
                 </div>
-              </div>
-              
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-pink-500 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800 h-full flex flex-col">
-                  <div className="absolute -top-3 left-4 bg-gradient-to-r from-amber-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-full">
-                    SAVE $500
-                  </div>
-                  
-                  <div className="flex items-center justify-between mb-4 mt-2">
-                    <div>
-                      <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-pink-500">Referral Discount</h3>
-                      <p className="text-muted-foreground">For referred clients</p>
-                    </div>
-                    <div className="bg-gradient-to-r from-amber-500 to-pink-500 text-white p-2 rounded-full">
-                      <Gift className="h-5 w-5" />
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4 flex items-end">
-                    <span className="text-3xl font-extrabold">$1,499</span>
-                    <span className="text-muted-foreground">/year</span>
-                    <span className="text-sm text-muted-foreground line-through ml-2">$1,999</span>
-                  </div>
-                  
-                  <ul className="space-y-3 mb-6 flex-grow">
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>$500 off yearly base price</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>All Client Plan features included</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Priority support</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Must be referred by existing client</span>
-                    </li>
-                  </ul>
-                  
-                  <Link to={`/contact?plan=referral`} className="mt-auto">
-                    <ZenoraButton
-                      variant="default"
-                      size="lg"
-                      className="w-full group-hover:shadow-lg transition-all duration-300"
-                    >
-                      Choose <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </ZenoraButton>
-                  </Link>
-                </div>
-              </div>
-              
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-teal-500 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800 h-full flex flex-col">
-                  <div className="absolute -top-3 left-4 bg-gradient-to-r from-blue-600 to-teal-500 text-white px-3 py-1 text-xs font-bold rounded-full">
-                    SAVE $500
-                  </div>
-                  
-                  <div className="flex items-center justify-between mb-4 mt-2">
-                    <div>
-                      <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500">Transfer Discount</h3>
-                      <p className="text-muted-foreground">For clients switching to Zenora</p>
-                    </div>
-                    <div className="bg-gradient-to-r from-blue-600 to-teal-500 text-white p-2 rounded-full">
-                      <RefreshCw className="h-5 w-5" />
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4 flex items-end">
-                    <span className="text-3xl font-extrabold">$1,499</span>
-                    <span className="text-muted-foreground">/year</span>
-                    <span className="text-sm text-muted-foreground line-through ml-2">$1,999</span>
-                  </div>
-                  
-                  <ul className="space-y-3 mb-6 flex-grow">
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>$500 off yearly for transfers</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>All Client Plan features included</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Free property transition assistance</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Coming from another management company</span>
-                    </li>
-                  </ul>
-                  
-                  <Link to={`/contact?plan=transfer`} className="mt-auto">
-                    <ZenoraButton
-                      variant="default"
-                      size="lg"
-                      className="w-full group-hover:shadow-lg transition-all duration-300"
-                    >
-                      Choose <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </ZenoraButton>
-                  </Link>
-                </div>
-              </div>
-              
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-slate-600 to-gray-600 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800 h-full flex flex-col">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold">Enterprise Plan</h3>
-                      <p className="text-muted-foreground">For portfolio investors (10+ properties)</p>
-                    </div>
-                    <div className="bg-gradient-to-r from-slate-600 to-gray-600 text-white p-2 rounded-full">
-                      <Users className="h-5 w-5" />
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <span className="text-xl font-semibold">Custom Pricing</span>
-                  </div>
-                  
-                  <ul className="space-y-3 mb-6 flex-grow">
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Unlimited properties</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Advanced portfolio analytics</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Dedicated account manager</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span>Custom reporting and API access</span>
-                    </li>
-                  </ul>
-                  
-                  <Link to={`/contact?plan=enterprise`} className="mt-auto">
-                    <ZenoraButton
-                      variant="default"
-                      size="lg"
-                      className="w-full group-hover:shadow-lg transition-all duration-300"
-                    >
-                      Choose <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </ZenoraButton>
-                  </Link>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-          
-          <div className="bg-zenora-gradient p-1 rounded-xl">
-            <div className="bg-white dark:bg-zenora-dark rounded-lg p-8 text-center">
-              <h2 className="text-3xl font-bold mb-6">Ready to transform your property management experience?</h2>
-              <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
-                Join thousands of property owners who have switched to Zenora's AI-powered management platform and discovered a better way to manage their investments.
-              </p>
-              <div className="flex flex-wrap gap-4 justify-center">
-                <Link to="/signup">
-                  <ZenoraButton variant="default" size="lg">
-                    Start Free Trial
-                  </ZenoraButton>
-                </Link>
-                <Link to="/contact">
-                  <ZenoraButton variant="outline" size="lg">
-                    Book a Consultation
-                  </ZenoraButton>
-                </Link>
-              </div>
+        </section>
+        
+        {/* Testimonials Section */}
+        <section className="py-20">
+          <div className="zenora-container">
+            <h2 className="text-3xl font-bold text-center mb-16">What Our Customers Say</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  quote: "Zenora has completely transformed how I manage my rental properties. The AI rent analysis alone has increased my revenue by 15%.",
+                  name: "Sarah J.",
+                  role: "Property Owner, 12 units"
+                },
+                {
+                  quote: "The tenant screening feature has saved me from at least two potentially problematic tenants. Worth every penny for the peace of mind.",
+                  name: "Michael T.",
+                  role: "Landlord, 8 units"
+                },
+                {
+                  quote: "As a property management company, we've tried many solutions, but Zenora offers the best combination of powerful features and ease of use.",
+                  name: "Rebecca L.",
+                  role: "CEO, Urban Property Management"
+                }
+              ].map((testimonial, index) => (
+                <div key={index} className="zenora-card p-6">
+                  <div className="mb-4 text-zenora-purple">
+                    {"★".repeat(5)}
+                  </div>
+                  <p className="mb-4 italic">"{testimonial.quote}"</p>
+                  <div>
+                    <p className="font-semibold">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        </section>
+        
+        {/* CTA Section */}
+        <section className="py-20 bg-zenora-gradient text-white">
+          <div className="zenora-container text-center">
+            <h2 className="text-3xl font-bold mb-4">Ready to Streamline Your Property Management?</h2>
+            <p className="max-w-2xl mx-auto mb-8 text-white/90">
+              Join thousands of property owners who are saving time and increasing profits with Zenora's AI-powered platform.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <ZenoraButton 
+                variant="inverted"
+                size="lg"
+                as={Link}
+                to="/signup"
+              >
+                Start Your Free Trial
+              </ZenoraButton>
+              <ZenoraButton 
+                variant="outline" 
+                size="lg"
+                as={Link}
+                to="/contact"
+                className="border-white text-white hover:bg-white hover:text-zenora-purple"
+              >
+                Schedule a Demo
+              </ZenoraButton>
+            </div>
+          </div>
+        </section>
       </main>
       
       <Footer />

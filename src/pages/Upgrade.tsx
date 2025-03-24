@@ -1,249 +1,331 @@
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Check, CreditCard, HelpCircle } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
+import { ZenoraButton } from '@/components/ui/button-zenora';
+import { Check, ChevronRight, ExternalLink, AlertTriangle } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription } from '@/hooks/useSubscription';
+import { toast } from '@/hooks/use-toast';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Upgrade = () => {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const [selectedPlan, setSelectedPlan] = useState<"basic" | "pro" | "enterprise">("pro");
-
-  const handleUpgrade = () => {
-    toast({
-      title: "Upgrade initiated",
-      description: `You've selected the ${selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} plan with ${billingCycle} billing.`,
-      variant: "default",
-    });
-  };
-
-  const plans = {
-    basic: {
-      name: "Basic",
-      monthly: 19.99,
-      yearly: 199.99,
-      features: [
-        "Up to 2 properties",
-        "1 AI rent analysis per month",
-        "Standard support",
-        "Basic reporting",
-      ],
-      color: "bg-gradient-to-r from-blue-500 to-teal-400",
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
+  const { 
+    subscription, 
+    isLoading, 
+    createCheckoutSession, 
+    cancelSubscription,
+    isSubscriptionActive,
+    getPlanDetails
+  } = useSubscription();
+  
+  // Get price ID map - replace these with your actual Stripe price IDs once created
+  const PRICE_IDS = {
+    starter: {
+      month: 'price_starter_monthly',
+      year: 'price_starter_yearly'
     },
-    pro: {
-      name: "Pro",
-      monthly: 39.99,
-      yearly: 399.99,
-      features: [
-        "Up to 5 properties",
-        "3 AI rent analyses per month",
-        "Priority support",
-        "Advanced reporting",
-        "API access",
-      ],
-      color: "bg-gradient-to-r from-purple-600 to-violet-400",
+    professional: {
+      month: 'price_professional_monthly',
+      year: 'price_professional_yearly'
     },
     enterprise: {
-      name: "Enterprise",
-      monthly: 99.99,
-      yearly: 999.99,
-      features: [
-        "Unlimited properties",
-        "Unlimited AI rent analyses",
-        "24/7 dedicated support",
-        "Custom reports & dashboards",
-        "API access with higher rate limits",
-        "White-labeling options",
-        "Dedicated account manager",
-      ],
-      color: "bg-gradient-to-r from-orange-500 to-amber-400",
-    },
+      month: 'price_enterprise_monthly',
+      year: 'price_enterprise_yearly'
+    }
   };
-
+  
+  // Plans data
+  const plans = [
+    {
+      id: 'starter',
+      name: 'Starter',
+      description: 'Perfect for small landlords with a few properties',
+      price: {
+        month: '$29',
+        year: '$290'
+      },
+      savings: '17%',
+      features: [
+        'Up to 5 properties',
+        'Basic AI rent analysis',
+        'Tenant screening (3/month)',
+        'Maintenance tracking',
+        'Email support'
+      ],
+      popular: false
+    },
+    {
+      id: 'professional',
+      name: 'Professional',
+      description: 'Ideal for growing property portfolios',
+      price: {
+        month: '$79',
+        year: '$790'
+      },
+      savings: '17%',
+      features: [
+        'Up to 20 properties',
+        'Advanced AI rent analysis',
+        'Unlimited tenant screening',
+        'Maintenance tracking & scheduling',
+        'Financial reporting',
+        'Priority support'
+      ],
+      popular: true
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise',
+      description: 'Comprehensive solution for property management companies',
+      price: {
+        month: '$199',
+        year: '$1990'
+      },
+      savings: '17%',
+      features: [
+        'Unlimited properties',
+        'Premium AI rent analysis',
+        'Unlimited tenant screening',
+        'Advanced maintenance management',
+        'Custom financial reporting',
+        'API access',
+        'Dedicated account manager'
+      ],
+      popular: false
+    }
+  ];
+  
+  // Check URL params for stripe success/cancel messages
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    
+    if (params.get('success') === 'true') {
+      toast({
+        title: 'Subscription successful!',
+        description: 'Your subscription has been activated.',
+      });
+      // Clear the URL parameters
+      navigate('/upgrade', { replace: true });
+    }
+    
+    if (params.get('canceled') === 'true') {
+      toast({
+        title: 'Subscription canceled',
+        description: 'Your subscription process was canceled.',
+        variant: 'destructive',
+      });
+      // Clear the URL parameters
+      navigate('/upgrade', { replace: true });
+    }
+  }, [location, navigate]);
+  
+  // Handle plan selection
+  const handleSelectPlan = async (planId: string) => {
+    if (!user) {
+      toast({
+        title: 'Authentication required',
+        description: 'Please sign in to subscribe to a plan.',
+        variant: 'destructive',
+      });
+      navigate('/login');
+      return;
+    }
+    
+    try {
+      const priceId = PRICE_IDS[planId as keyof typeof PRICE_IDS][billingInterval];
+      await createCheckoutSession.mutateAsync({
+        priceId,
+        returnUrl: `${window.location.origin}/upgrade`,
+      });
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+    }
+  };
+  
+  // Handle subscription cancellation
+  const handleCancelSubscription = async () => {
+    if (window.confirm('Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing period.')) {
+      try {
+        await cancelSubscription.mutateAsync();
+      } catch (error) {
+        console.error('Error canceling subscription:', error);
+      }
+    }
+  };
+  
+  const currentPlan = subscription ? getPlanDetails() : { name: 'Free', features: [] };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow py-16 bg-gradient-to-b from-white to-gray-50 dark:from-zenora-dark dark:to-black">
+      <main className="flex-grow py-12">
         <div className="zenora-container">
-          <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-zenora-gradient">
-              Upgrade Your Plan
-            </h1>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Choose the plan that best fits your property management needs and unlock powerful AI-driven features.
-            </p>
-          </div>
-          
-          <div className="flex justify-center mb-10">
-            <div className="inline-flex bg-gray-100 dark:bg-gray-800 rounded-full p-1">
-              <button
-                onClick={() => setBillingCycle("monthly")}
-                className={`px-4 py-2 text-sm font-medium rounded-full ${
-                  billingCycle === "monthly"
-                    ? "bg-white dark:bg-black shadow"
-                    : "text-muted-foreground"
-                }`}
-              >
-                Monthly Billing
-              </button>
-              <button
-                onClick={() => setBillingCycle("yearly")}
-                className={`px-4 py-2 text-sm font-medium rounded-full flex items-center ${
-                  billingCycle === "yearly"
-                    ? "bg-white dark:bg-black shadow"
-                    : "text-muted-foreground"
-                }`}
-              >
-                Yearly Billing
-                <span className="ml-2 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-xs py-0.5 px-1.5 rounded-full">
-                  Save 16%
-                </span>
-              </button>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {(Object.keys(plans) as Array<keyof typeof plans>).map((planKey) => {
-              const plan = plans[planKey];
-              const isSelected = selectedPlan === planKey;
-              
-              return (
-                <div 
-                  key={planKey}
-                  className={`zenora-card relative overflow-hidden ${
-                    isSelected 
-                      ? "ring-2 ring-zenora-purple dark:ring-zenora-purple" 
-                      : ""
-                  }`}
-                >
-                  {planKey === "pro" && (
-                    <div className="absolute top-0 right-0 bg-zenora-gradient text-white text-xs font-bold py-1 px-3 rounded-bl">
-                      MOST POPULAR
-                    </div>
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-3xl font-bold mb-8">Upgrade Your Subscription</h1>
+            
+            {/* Current Plan */}
+            {!isLoading && (
+              <Card className="mb-8">
+                <CardHeader>
+                  <CardTitle>Current Plan: {currentPlan.name}</CardTitle>
+                  {subscription && (
+                    <CardDescription>
+                      Status: {subscription.status}
+                      {subscription.current_period_end && (
+                        `, Renews on ${new Date(subscription.current_period_end).toLocaleDateString()}`
+                      )}
+                    </CardDescription>
                   )}
-                  
-                  <div className={`h-2 w-full ${plan.color}`}></div>
-                  
-                  <div className="p-6">
-                    <h2 className="text-xl font-bold mb-2">{plan.name}</h2>
-                    
-                    <div className="mb-6">
-                      <span className="text-3xl font-extrabold">${billingCycle === "monthly" ? plan.monthly : plan.yearly}</span>
-                      <span className="text-muted-foreground">/{billingCycle === "monthly" ? "month" : "year"}</span>
-                    </div>
-                    
-                    <ul className="space-y-3 mb-8">
-                      {plan.features.map((feature, index) => (
+                </CardHeader>
+                <CardContent>
+                  {currentPlan.features.length > 0 ? (
+                    <ul className="space-y-2">
+                      {currentPlan.features.map((feature, index) => (
                         <li key={index} className="flex items-start">
-                          <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                          <Check className="h-5 w-5 text-zenora-purple shrink-0 mr-2" />
                           <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
-                    
+                  ) : (
+                    <p>No active subscription. Upgrade to access premium features.</p>
+                  )}
+                </CardContent>
+                {isSubscriptionActive && (
+                  <CardFooter>
                     <ZenoraButton
-                      onClick={() => setSelectedPlan(planKey)}
-                      className="w-full"
-                      variant={isSelected ? "default" : "outline"}
+                      variant="outline" 
+                      onClick={handleCancelSubscription}
                     >
-                      {isSelected ? "Selected" : "Select Plan"}
+                      Cancel Subscription
                     </ZenoraButton>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          
-          <div className="mt-12 zenora-card p-6">
-            <h2 className="text-xl font-bold mb-4">Complete Your Upgrade</h2>
-            
-            <div className="mb-6">
-              <p className="font-medium mb-2">Selected Plan:</p>
-              <div className="flex items-center bg-gray-50 dark:bg-zenora-dark/50 p-3 rounded-md">
-                <div className={`h-8 w-8 rounded-full ${plans[selectedPlan].color} mr-3`}></div>
-                <div>
-                  <p className="font-semibold">{plans[selectedPlan].name} Plan</p>
-                  <p className="text-sm text-muted-foreground">
-                    ${billingCycle === "monthly" ? plans[selectedPlan].monthly : plans[selectedPlan].yearly}/{billingCycle === "monthly" ? "month" : "year"}
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="border-t pt-6 mb-6">
-              <h3 className="font-medium mb-4">Payment Method</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label htmlFor="card-name" className="block text-sm font-medium mb-1">Name on Card</label>
-                  <input id="card-name" type="text" className="zenora-input" placeholder="John Doe" />
-                </div>
-                <div>
-                  <label htmlFor="card-number" className="block text-sm font-medium mb-1">Card Number</label>
-                  <div className="relative">
-                    <input id="card-number" type="text" className="zenora-input pl-10" placeholder="1234 5678 9012 3456" />
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
-                      <CreditCard className="h-5 w-5" />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="card-expiry" className="block text-sm font-medium mb-1">Expiration Date</label>
-                  <input id="card-expiry" type="text" className="zenora-input" placeholder="MM/YY" />
-                </div>
-                <div>
-                  <label htmlFor="card-cvc" className="block text-sm font-medium mb-1">CVC</label>
-                  <input id="card-cvc" type="text" className="zenora-input" placeholder="123" />
-                </div>
-              </div>
-              
-              <div className="flex items-center mb-4">
-                <input id="save-card" type="checkbox" className="mr-2" />
-                <label htmlFor="save-card" className="text-sm">Save this card for future payments</label>
-              </div>
-            </div>
-            
-            <div className="border-t pt-6 mb-6">
-              <h3 className="font-medium mb-2">Order Summary</h3>
-              
-              <div className="space-y-2 mb-4">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{plans[selectedPlan].name} Plan ({billingCycle})</span>
-                  <span>${billingCycle === "monthly" ? plans[selectedPlan].monthly : plans[selectedPlan].yearly}</span>
-                </div>
-                {billingCycle === "yearly" && (
-                  <div className="flex justify-between">
-                    <span className="text-green-600">Annual discount</span>
-                    <span className="text-green-600">-$${(plans[selectedPlan].monthly * 12 - plans[selectedPlan].yearly).toFixed(2)}</span>
-                  </div>
+                  </CardFooter>
                 )}
-                <div className="flex justify-between font-bold pt-2 border-t">
-                  <span>Total</span>
-                  <span>${billingCycle === "monthly" ? plans[selectedPlan].monthly : plans[selectedPlan].yearly}</span>
-                </div>
+              </Card>
+            )}
+            
+            {/* Subscription Options */}
+            <div className="mb-8">
+              <div className="flex justify-center mb-8">
+                <Tabs 
+                  defaultValue="month" 
+                  value={billingInterval}
+                  onValueChange={(value) => setBillingInterval(value as 'month' | 'year')}
+                  className="w-full max-w-md"
+                >
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="month">Monthly Billing</TabsTrigger>
+                    <TabsTrigger value="year">
+                      Yearly Billing
+                      <span className="ml-2 rounded-full bg-zenora-purple/10 px-2 py-0.5 text-xs text-zenora-purple">
+                        Save 17%
+                      </span>
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
               </div>
               
-              <div className="bg-gray-50 dark:bg-zenora-dark/20 p-3 rounded-md text-sm mb-6 flex items-start">
-                <HelpCircle className="h-5 w-5 mr-2 flex-shrink-0 text-zenora-purple" />
-                <p>
-                  You'll be charged ${billingCycle === "monthly" ? plans[selectedPlan].monthly : plans[selectedPlan].yearly} 
-                  for your {billingCycle} subscription to the {plans[selectedPlan].name} Plan. 
-                  You can cancel or change your plan at any time from your account settings.
-                </p>
+              <div className="grid md:grid-cols-3 gap-8">
+                {plans.map((plan) => (
+                  <Card key={plan.id} className={`relative ${plan.popular ? 'border-zenora-purple ring-2 ring-zenora-purple' : ''}`}>
+                    {plan.popular && (
+                      <div className="absolute top-0 right-0 bg-zenora-purple text-white py-1 px-3 text-sm font-medium rounded-bl-lg rounded-tr-lg">
+                        Most Popular
+                      </div>
+                    )}
+                    <CardHeader>
+                      <CardTitle>{plan.name}</CardTitle>
+                      <CardDescription>{plan.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="mb-4">
+                        <span className="text-3xl font-bold">{plan.price[billingInterval]}</span>
+                        <span className="text-muted-foreground">/{billingInterval}</span>
+                        {billingInterval === 'year' && (
+                          <p className="text-sm text-zenora-purple mt-1">Save {plan.savings} with annual billing</p>
+                        )}
+                      </div>
+                      
+                      <ul className="space-y-2 mb-6">
+                        {plan.features.map((feature, index) => (
+                          <li key={index} className="flex items-start">
+                            <Check className="h-5 w-5 text-zenora-purple shrink-0 mr-2" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                    <CardFooter>
+                      <ZenoraButton 
+                        className="w-full" 
+                        variant={plan.popular ? "default" : "outline"}
+                        onClick={() => handleSelectPlan(plan.id)}
+                        disabled={
+                          createCheckoutSession.isLoading || 
+                          (isSubscriptionActive && subscription?.plan_type === plan.id)
+                        }
+                      >
+                        {isSubscriptionActive && subscription?.plan_type === plan.id
+                          ? 'Current Plan'
+                          : createCheckoutSession.isLoading
+                            ? 'Processing...'
+                            : 'Select Plan'}
+                      </ZenoraButton>
+                    </CardFooter>
+                  </Card>
+                ))}
               </div>
+            </div>
+            
+            {/* FAQs */}
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
               
-              <div className="flex gap-3">
-                <ZenoraButton onClick={handleUpgrade} className="flex-grow">
-                  Complete Upgrade
-                </ZenoraButton>
-                <Link to="/dashboard">
-                  <ZenoraButton variant="outline">
-                    Cancel
-                  </ZenoraButton>
-                </Link>
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">How do I change my subscription plan?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>You can upgrade or downgrade your plan at any time. The new plan will take effect immediately, and we'll prorate any charges or credits.</p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">What happens when I cancel my subscription?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>You'll continue to have access to your current plan's features until the end of your billing period. After that, you'll be downgraded to the free plan.</p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Are there any refunds if I cancel early?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>We don't offer refunds for partial subscription periods. If you cancel, you'll have access until the end of your current billing cycle.</p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">How secure is my payment information?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>All payments are processed securely through Stripe. We never store your credit card information on our servers.</p>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>
