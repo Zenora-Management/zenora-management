@@ -10,11 +10,15 @@ const ContactPage = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get the plan from the URL query parameters
+    // Get the plan and subject from the URL query parameters
     const searchParams = new URLSearchParams(location.search);
     const plan = searchParams.get("plan");
+    const subject = searchParams.get("subject");
+
     if (plan) {
       setSelectedPlan(plan);
+    } else if (subject) {
+      setSelectedPlan(subject);
     }
   }, [location]);
 

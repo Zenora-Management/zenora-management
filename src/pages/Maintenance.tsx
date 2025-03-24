@@ -1,7 +1,7 @@
-
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ZenoraButton } from "@/components/ui/button-zenora";
+import { Link } from "react-router-dom";
 import { Wrench, MessageSquare, CalendarClock, CheckCircle, Smartphone, Bot } from "lucide-react";
 
 const Maintenance = () => {
@@ -62,8 +62,12 @@ const Maintenance = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <ZenoraButton size="lg">Get Started</ZenoraButton>
-                <ZenoraButton size="lg" variant="outline">Learn More</ZenoraButton>
+                <Link to="/contact">
+                  <ZenoraButton size="lg">Get Started</ZenoraButton>
+                </Link>
+                <Link to="/about">
+                  <ZenoraButton size="lg" variant="outline">Learn More</ZenoraButton>
+                </Link>
               </div>
             </div>
             
@@ -219,9 +223,11 @@ const Maintenance = () => {
               <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
                 Start using our AI-powered maintenance coordination system today and reduce your management workload.
               </p>
-              <ZenoraButton size="lg">
-                Get Started Today
-              </ZenoraButton>
+              <Link to="/contact">
+                <ZenoraButton size="lg">
+                  Get Started Today
+                </ZenoraButton>
+              </Link>
               <p className="text-sm text-muted-foreground mt-4">Available with all Zenora property management plans.</p>
             </div>
           </div>

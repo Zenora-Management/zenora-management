@@ -84,7 +84,7 @@ const About = () => {
                   <p className="text-sm text-muted-foreground mb-4">
                     We leverage advanced AI algorithms to analyze vast amounts of property data, enabling our clients to make smarter decisions and maximize returns.
                   </p>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {["AI", "Machine Learning", "Data Analytics"].map((tech, i) => (
                       <div key={i} className="px-2 py-1 bg-zenora-purple/20 rounded-full text-xs text-zenora-purple">
                         {tech}

@@ -182,7 +182,7 @@ const PropertyManagement = () => {
                 Choose the perfect plan for your property management needs with transparent, all-inclusive pricing.
               </p>
               
-              <div className="grid grid-cols-1 gap-8">
+              <div className="grid grid-cols-1 gap-8 max-w-2xl mx-auto">
                 <div className="relative group">
                   <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
                   <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">

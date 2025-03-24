@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Calendar } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 
 interface ContactProps {
   selectedPlan?: string | null;
@@ -189,6 +190,22 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                     </div>
                   </div>
                 )}
+                
+                <div className="mt-8 p-4 bg-white/10 rounded-lg border border-white/20">
+                  <h4 className="font-medium mb-2">Schedule a Demo</h4>
+                  <p className="text-white/80 mb-4">
+                    See our AI-powered property management platform in action with a personalized demo.
+                  </p>
+                  <Link to="/contact?subject=Request%20a%20Demo">
+                    <ZenoraButton 
+                      variant="glass" 
+                      size="lg" 
+                      className="w-full"
+                    >
+                      <Calendar className="mr-2 h-4 w-4" /> Book a Demo
+                    </ZenoraButton>
+                  </Link>
+                </div>
                 
                 <div className="mt-12">
                   <h4 className="font-medium mb-4">Connect With Us</h4>
