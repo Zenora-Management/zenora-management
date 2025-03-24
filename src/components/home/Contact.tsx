@@ -1,9 +1,14 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
-const Contact = () => {
+interface ContactProps {
+  selectedPlan?: string | null;
+}
+
+const Contact = ({ selectedPlan }: ContactProps) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,6 +18,41 @@ const Contact = () => {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  
+  // Set the subject based on the selected plan
+  useEffect(() => {
+    if (selectedPlan) {
+      let planName = "";
+      switch (selectedPlan) {
+        case "client":
+          planName = "Client Plan";
+          break;
+        case "referral":
+          planName = "Referral Discount Plan";
+          break;
+        case "transfer":
+          planName = "Transfer Discount Plan";
+          break;
+        case "enterprise":
+          planName = "Enterprise Plan";
+          break;
+        default:
+          planName = selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1);
+      }
+      
+      setFormData(prev => ({
+        ...prev,
+        subject: `Inquiry about ${planName}`
+      }));
+      
+      // Show a toast notification
+      toast({
+        title: "Plan Selected",
+        description: `You've selected the ${planName}. Please complete the form to proceed.`,
+        variant: "default",
+      });
+    }
+  }, [selectedPlan]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -54,11 +94,13 @@ const Contact = () => {
           </div>
           
           <h2 className="zenora-heading bg-clip-text text-transparent bg-zenora-gradient">
-            Contact Our Team
+            {selectedPlan ? "Complete Your Reservation" : "Contact Our Team"}
           </h2>
           
           <p className="zenora-subheading">
-            Have questions about our services or ready to get started? Our team is here to help you transform your property management experience.
+            {selectedPlan 
+              ? "We're excited to help you get started with your selected plan. Please fill out the form below to complete your reservation."
+              : "Have questions about our services or ready to get started? Our team is here to help you transform your property management experience."}
           </p>
         </div>
 
@@ -116,6 +158,38 @@ const Contact = () => {
                   </div>
                 </div>
                 
+                {selectedPlan && (
+                  <div className="mt-8 p-4 bg-white/10 rounded-lg border border-white/20">
+                    <h4 className="font-medium mb-2">Selected Plan Information</h4>
+                    <div>
+                      {selectedPlan === "client" && (
+                        <div>
+                          <p className="font-semibold">Client Plan</p>
+                          <p className="text-white/80">$1,999/year - Base plan for single property owners</p>
+                        </div>
+                      )}
+                      {selectedPlan === "referral" && (
+                        <div>
+                          <p className="font-semibold">Referral Discount Plan</p>
+                          <p className="text-white/80">$1,499/year - $500 discount for referred clients</p>
+                        </div>
+                      )}
+                      {selectedPlan === "transfer" && (
+                        <div>
+                          <p className="font-semibold">Transfer Discount Plan</p>
+                          <p className="text-white/80">$1,499/year - $500 discount for clients switching from another management company</p>
+                        </div>
+                      )}
+                      {selectedPlan === "enterprise" && (
+                        <div>
+                          <p className="font-semibold">Enterprise Plan</p>
+                          <p className="text-white/80">Custom pricing for portfolio investors with 10+ properties</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
                 <div className="mt-12">
                   <h4 className="font-medium mb-4">Connect With Us</h4>
                   <div className="flex gap-4">
@@ -135,7 +209,9 @@ const Contact = () => {
           {/* Contact Form */}
           <div className="animate-slide-up">
             <div className="zenora-card h-full p-8">
-              <h3 className="text-2xl font-bold mb-6">Send Us a Message</h3>
+              <h3 className="text-2xl font-bold mb-6">
+                {selectedPlan ? "Complete Your Reservation" : "Send Us a Message"}
+              </h3>
               
               {isSubmitted ? (
                 <div className="h-full flex flex-col items-center justify-center py-8">
@@ -197,10 +273,14 @@ const Contact = () => {
                       className="zenora-input"
                     >
                       <option value="">Select a topic</option>
-                      <option value="Pricing">Pricing Information</option>
-                      <option value="Feature">Feature Inquiry</option>
-                      <option value="Support">Technical Support</option>
-                      <option value="Demo">Request a Demo</option>
+                      <option value="Pricing Information">Pricing Information</option>
+                      <option value="Feature Inquiry">Feature Inquiry</option>
+                      <option value="Technical Support">Technical Support</option>
+                      <option value="Request a Demo">Request a Demo</option>
+                      <option value="Inquiry about Client Plan">Inquiry about Client Plan</option>
+                      <option value="Inquiry about Referral Discount Plan">Inquiry about Referral Discount Plan</option>
+                      <option value="Inquiry about Transfer Discount Plan">Inquiry about Transfer Discount Plan</option>
+                      <option value="Inquiry about Enterprise Plan">Inquiry about Enterprise Plan</option>
                       <option value="Other">Other</option>
                     </select>
                   </div>
@@ -217,7 +297,7 @@ const Contact = () => {
                       onChange={handleChange}
                       required
                       className="zenora-input min-h-[120px]"
-                      placeholder="How can we help you?"
+                      placeholder={selectedPlan ? "Please tell us more about your property management needs..." : "How can we help you?"}
                     ></textarea>
                   </div>
                   
@@ -237,7 +317,7 @@ const Contact = () => {
                       </>
                     ) : (
                       <>
-                        <Send className="mr-2 h-4 w-4" /> Send Message
+                        <Send className="mr-2 h-4 w-4" /> {selectedPlan ? "Complete Reservation" : "Send Message"}
                       </>
                     )}
                   </ZenoraButton>

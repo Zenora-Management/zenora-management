@@ -3,9 +3,12 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Link } from "react-router-dom";
-import { Check, Settings, Clock, LineChart, Shield, Users } from "lucide-react";
+import { Check, Settings, Clock, LineChart, Shield, Users, Star, Gift, ArrowRight, RefreshCw } from "lucide-react";
+import { useState } from "react";
 
 const PropertyManagement = () => {
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -174,46 +177,215 @@ const PropertyManagement = () => {
             </div>
             
             <div>
-              <h2 className="text-3xl font-bold mb-6">Pricing Plans</h2>
-              <p className="text-muted-foreground mb-6">
-                Zenora offers transparent, flexible pricing plans designed to meet the needs of all property owners, from single-unit landlords to large portfolio investors.
+              <h2 className="text-3xl font-bold mb-10 text-center">Pricing Plans</h2>
+              <p className="text-muted-foreground mb-8 text-center max-w-lg mx-auto">
+                Choose the perfect plan for your property management needs with transparent, all-inclusive pricing.
               </p>
               
-              <div className="space-y-4">
-                <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4">
-                  <h3 className="text-lg font-bold mb-1">Essential Plan</h3>
-                  <p className="text-muted-foreground mb-2">Perfect for single property owners</p>
-                  <p className="font-semibold text-zenora-purple mb-3">8% of monthly rent</p>
-                  <Link to="/contact">
-                    <ZenoraButton variant="outline" size="sm" className="w-full">
-                      Get Started
-                    </ZenoraButton>
-                  </Link>
-                </div>
-                
-                <div className="border-2 border-zenora-purple rounded-lg p-4 relative">
-                  <div className="absolute -top-3 left-4 bg-background px-2 text-sm font-medium text-zenora-purple">
-                    Most Popular
+              <div className="grid grid-cols-1 gap-8">
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                  <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">Client Plan</h3>
+                        <p className="text-muted-foreground">For single property owners</p>
+                      </div>
+                      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-2 rounded-full">
+                        <Star className="h-5 w-5" />
+                      </div>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <span className="text-3xl font-extrabold">$1,999</span>
+                      <span className="text-muted-foreground">/year</span>
+                    </div>
+                    
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>All Zenora management features included</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>AI rent analysis included</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>Tenant screening included</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>Maintenance coordination</span>
+                      </li>
+                    </ul>
+                    
+                    <Link to={`/contact?plan=client`}>
+                      <ZenoraButton
+                        variant="default"
+                        size="lg"
+                        className="w-full group-hover:shadow-lg transition-all duration-300"
+                      >
+                        Choose <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </ZenoraButton>
+                    </Link>
                   </div>
-                  <h3 className="text-lg font-bold mb-1">Professional Plan</h3>
-                  <p className="text-muted-foreground mb-2">Ideal for 2-10 properties</p>
-                  <p className="font-semibold text-zenora-purple mb-3">7% of monthly rent</p>
-                  <Link to="/contact">
-                    <ZenoraButton variant="default" size="sm" className="w-full">
-                      Get Started
-                    </ZenoraButton>
-                  </Link>
                 </div>
                 
-                <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4">
-                  <h3 className="text-lg font-bold mb-1">Enterprise Plan</h3>
-                  <p className="text-muted-foreground mb-2">For portfolio investors (10+ properties)</p>
-                  <p className="font-semibold text-zenora-purple mb-3">Custom Pricing</p>
-                  <Link to="/contact">
-                    <ZenoraButton variant="outline" size="sm" className="w-full">
-                      Contact Us
-                    </ZenoraButton>
-                  </Link>
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-pink-500 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                  <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
+                    <div className="absolute -top-3 left-4 bg-gradient-to-r from-amber-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-full">
+                      SAVE $500
+                    </div>
+                    
+                    <div className="flex items-center justify-between mb-4 mt-2">
+                      <div>
+                        <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-pink-500">Referral Discount</h3>
+                        <p className="text-muted-foreground">For referred clients</p>
+                      </div>
+                      <div className="bg-gradient-to-r from-amber-500 to-pink-500 text-white p-2 rounded-full">
+                        <Gift className="h-5 w-5" />
+                      </div>
+                    </div>
+                    
+                    <div className="mb-4 flex items-end">
+                      <span className="text-3xl font-extrabold">$1,499</span>
+                      <span className="text-muted-foreground">/year</span>
+                      <span className="text-sm text-muted-foreground line-through ml-2">$1,999</span>
+                    </div>
+                    
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>$500 off yearly base price</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>All Client Plan features included</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>Priority support</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>Must be referred by existing client</span>
+                      </li>
+                    </ul>
+                    
+                    <Link to={`/contact?plan=referral`}>
+                      <ZenoraButton
+                        variant="default"
+                        size="lg"
+                        className="w-full group-hover:shadow-lg transition-all duration-300"
+                      >
+                        Choose <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </ZenoraButton>
+                    </Link>
+                  </div>
+                </div>
+                
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-teal-500 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                  <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
+                    <div className="absolute -top-3 left-4 bg-gradient-to-r from-blue-600 to-teal-500 text-white px-3 py-1 text-xs font-bold rounded-full">
+                      SAVE $500
+                    </div>
+                    
+                    <div className="flex items-center justify-between mb-4 mt-2">
+                      <div>
+                        <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500">Transfer Discount</h3>
+                        <p className="text-muted-foreground">For clients switching to Zenora</p>
+                      </div>
+                      <div className="bg-gradient-to-r from-blue-600 to-teal-500 text-white p-2 rounded-full">
+                        <RefreshCw className="h-5 w-5" />
+                      </div>
+                    </div>
+                    
+                    <div className="mb-4 flex items-end">
+                      <span className="text-3xl font-extrabold">$1,499</span>
+                      <span className="text-muted-foreground">/year</span>
+                      <span className="text-sm text-muted-foreground line-through ml-2">$1,999</span>
+                    </div>
+                    
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>$500 off yearly for transfers</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>All Client Plan features included</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>Free property transition assistance</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>Coming from another management company</span>
+                      </li>
+                    </ul>
+                    
+                    <Link to={`/contact?plan=transfer`}>
+                      <ZenoraButton
+                        variant="default"
+                        size="lg"
+                        className="w-full group-hover:shadow-lg transition-all duration-300"
+                      >
+                        Choose <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </ZenoraButton>
+                    </Link>
+                  </div>
+                </div>
+                
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-slate-600 to-gray-600 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                  <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="text-xl font-bold">Enterprise Plan</h3>
+                        <p className="text-muted-foreground">For portfolio investors (10+ properties)</p>
+                      </div>
+                      <div className="bg-gradient-to-r from-slate-600 to-gray-600 text-white p-2 rounded-full">
+                        <Users className="h-5 w-5" />
+                      </div>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <span className="text-xl font-semibold">Custom Pricing</span>
+                    </div>
+                    
+                    <ul className="space-y-3 mb-6">
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>Unlimited properties</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>Advanced portfolio analytics</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>Dedicated account manager</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span>Custom reporting and API access</span>
+                      </li>
+                    </ul>
+                    
+                    <Link to={`/contact?plan=enterprise`}>
+                      <ZenoraButton
+                        variant="default"
+                        size="lg"
+                        className="w-full group-hover:shadow-lg transition-all duration-300"
+                      >
+                        Choose <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </ZenoraButton>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
