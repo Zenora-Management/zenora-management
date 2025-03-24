@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
   Home, 
@@ -14,22 +13,55 @@ import {
   Bell,
   LayoutDashboard,
   Search,
-  Plus
+  Plus,
+  AlertTriangle,
+  ShieldCheck,
+  HelpCircle,
+  MessageSquare
 } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
+import { authBypass } from "@/utils/auth-bypass";
+import { toast } from "@/hooks/use-toast";
 
 const Admin = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isTestMode, setIsTestMode] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const isBypassEnabled = authBypass.isEnabled();
+      const isAdmin = authBypass.isAdmin();
+      
+      setIsTestMode(isBypassEnabled);
+      
+      if (!isBypassEnabled) {
+        toast({
+          title: "Authentication required",
+          description: "Please log in to access the admin portal.",
+          variant: "destructive",
+        });
+        navigate('/login');
+      } else if (!isAdmin) {
+        toast({
+          title: "Access denied",
+          description: "You don't have administrative privileges.",
+          variant: "destructive",
+        });
+        navigate('/dashboard');
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
 
   const handleLogout = () => {
-    // In a real app, this would handle authentication logout
+    authBypass.disable();
     navigate("/");
   };
 
-  // Mock data for admin dashboard
   const recentProperties = [
     {
       id: 1,
@@ -80,7 +112,6 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zenora-dark">
-      {/* Header */}
       <header className="bg-white dark:bg-black shadow-sm fixed top-0 left-0 right-0 z-20">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-4">
@@ -108,6 +139,13 @@ const Admin = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            {isTestMode && (
+              <div className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs font-medium flex items-center">
+                <AlertTriangle size={12} className="mr-1" />
+                Admin Mode
+              </div>
+            )}
+          
             <div className="relative hidden md:block w-64">
               <input
                 type="search"
@@ -127,7 +165,7 @@ const Admin = () => {
             <div className="relative">
               <button className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
                 <div className="h-8 w-8 rounded-full bg-zenora-gradient flex items-center justify-center text-white font-semibold">
-                  A
+                  <ShieldCheck className="h-4 w-4" />
                 </div>
                 <span className="hidden sm:block text-sm font-medium">Admin</span>
                 <ChevronDown size={16} />
@@ -138,7 +176,6 @@ const Admin = () => {
       </header>
 
       <div className="pt-16 flex">
-        {/* Sidebar */}
         <aside
           className={`fixed inset-y-0 pt-16 left-0 z-10 w-64 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-300 ease-in-out ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -204,6 +241,20 @@ const Admin = () => {
                   </button>
                 </Link>
                 
+                <Link to="/help">
+                  <button className="flex items-center w-full px-3 py-2 rounded-md text-sm text-foreground hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
+                    <HelpCircle className="mr-3 h-5 w-5" />
+                    <span>Help & Support</span>
+                  </button>
+                </Link>
+
+                <Link to="/contact">
+                  <button className="flex items-center w-full px-3 py-2 rounded-md text-sm text-foreground hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
+                    <MessageSquare className="mr-3 h-5 w-5" />
+                    <span>Contact Us</span>
+                  </button>
+                </Link>
+                
                 <button 
                   onClick={handleLogout}
                   className="flex items-center w-full px-3 py-2 rounded-md text-sm text-foreground hover:bg-gray-100 dark:hover:bg-zenora-dark/50"
@@ -216,7 +267,7 @@ const Admin = () => {
               <div className="mt-6 p-4 bg-gray-50 dark:bg-zenora-dark/50 rounded-lg">
                 <div className="flex items-start gap-3">
                   <div className="p-2 bg-zenora-purple/10 rounded-lg">
-                    <User className="h-5 w-5 text-zenora-purple" />
+                    <ShieldCheck className="h-5 w-5 text-zenora-purple" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Admin Access</p>
@@ -228,8 +279,27 @@ const Admin = () => {
           </div>
         </aside>
 
-        {/* Main content */}
         <main className={`flex-1 p-6 md:p-8 lg:p-10 transition-all duration-300 ${isSidebarOpen ? "md:ml-64" : ""}`}>
+          {isTestMode && (
+            <div className="mb-6 p-4 border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800 rounded-lg">
+              <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 mb-2">
+                <AlertTriangle size={18} />
+                <h2 className="font-semibold">Admin Test Mode Active</h2>
+              </div>
+              <p className="text-sm text-amber-700 dark:text-amber-400">
+                You're viewing the admin portal in test mode. All data is simulated.
+              </p>
+              <div className="mt-2">
+                <button 
+                  onClick={handleLogout} 
+                  className="text-xs text-amber-800 dark:text-amber-300 underline hover:no-underline"
+                >
+                  Exit Test Mode
+                </button>
+              </div>
+            </div>
+          )}
+        
           {activeTab === "dashboard" && (
             <div className="space-y-6 animate-fade-in">
               <div className="flex items-center gap-3 mb-6">
@@ -239,7 +309,6 @@ const Admin = () => {
                 <h2 className="text-xl font-semibold">Admin Dashboard</h2>
               </div>
               
-              {/* Stats cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
                   { label: "Total Users", value: "128", change: "+12%" },
@@ -257,7 +326,6 @@ const Admin = () => {
                 ))}
               </div>
               
-              {/* Recent activity */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="zenora-card p-6">
                   <h3 className="text-lg font-medium mb-4">Recent Properties</h3>
@@ -345,7 +413,6 @@ const Admin = () => {
                 </div>
               </div>
               
-              {/* System status */}
               <div className="zenora-card p-6">
                 <h3 className="text-lg font-medium mb-4">System Status</h3>
                 
@@ -459,3 +526,4 @@ const Admin = () => {
 };
 
 export default Admin;
+

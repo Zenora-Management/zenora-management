@@ -2,23 +2,26 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, User, Building, ShieldCheck } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type AuthMode = "login" | "signup";
+type UserType = "user" | "admin";
 
 interface AuthFormProps {
   mode: AuthMode;
+  userType: UserType;
 }
 
-const AuthForm = ({ mode }: AuthFormProps) => {
+const AuthForm = ({ mode, userType }: AuthFormProps) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
+    companyCode: ""
   });
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,13 +41,13 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       toast({
         title: mode === "login" ? "Welcome back!" : "Account created!",
         description: mode === "login" 
-          ? "You've successfully signed in." 
+          ? `You've successfully signed in as a ${userType === "admin" ? "administrator" : "property owner"}.` 
           : "Your account has been created successfully.",
         variant: "default",
       });
       
-      // Redirect to dashboard on successful auth
-      navigate("/dashboard");
+      // Redirect to appropriate dashboard based on user type
+      navigate(userType === "admin" ? "/admin" : "/dashboard");
     }, 1500);
   };
   
@@ -57,16 +60,22 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       <div className="zenora-card p-8">
         <div className="text-center mb-8">
           <div className="mx-auto h-12 w-12 rounded-full bg-zenora-gradient flex items-center justify-center shadow-lg mb-4">
-            <span className="font-bold text-white text-xl">Z</span>
+            {userType === "admin" ? (
+              <ShieldCheck className="h-6 w-6 text-white" />
+            ) : (
+              <Building className="h-6 w-6 text-white" />
+            )}
           </div>
           
           <h1 className="text-2xl font-bold mb-2">
             {mode === "login" ? "Sign In" : "Sign Up"}
+            {userType === "admin" && mode === "login" && " as Administrator"}
+            {userType === "user" && mode === "login" && " as Property Owner"}
           </h1>
           
           <p className="text-muted-foreground">
             {mode === "login" 
-              ? "Sign in to access your dashboard" 
+              ? `Sign in to access your ${userType === "admin" ? "admin portal" : "dashboard"}` 
               : "Join Zenora to start managing your properties"
             }
           </p>
@@ -144,6 +153,32 @@ const AuthForm = ({ mode }: AuthFormProps) => {
               </button>
             </div>
           </div>
+          
+          {userType === "admin" && (
+            <div>
+              <label htmlFor="companyCode" className="block text-sm font-medium mb-1">
+                Administrator Code
+              </label>
+              <div className="relative">
+                <input
+                  id="companyCode"
+                  name="companyCode"
+                  type="text"
+                  value={formData.companyCode}
+                  onChange={handleChange}
+                  required
+                  className="zenora-input pl-10"
+                  placeholder="Enter company admin code"
+                />
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                This code is provided by Zenora to authorized administrators only.
+              </p>
+            </div>
+          )}
           
           {mode === "login" && (
             <div className="flex justify-end">

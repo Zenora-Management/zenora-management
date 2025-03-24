@@ -6,6 +6,7 @@ import AuthForm from "@/components/auth/AuthForm";
 import { useEffect, useState } from "react";
 import { authBypass } from "@/utils/auth-bypass";
 import { ZenoraButton } from "@/components/ui/button-zenora";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const Login = () => {
   const [isTestEnvironment, setIsTestEnvironment] = useState(false);
   const [bypassClicks, setBypassClicks] = useState(0);
   const [showBypass, setShowBypass] = useState(false);
+  const [loginType, setLoginType] = useState<"user" | "admin">("user");
 
   // Check if it's a development/test environment
   useEffect(() => {
@@ -25,9 +27,9 @@ const Login = () => {
   }, []);
 
   // Handle bypass login for testing
-  const handleBypassLogin = () => {
-    if (authBypass.enable()) {
-      navigate('/dashboard');
+  const handleBypassLogin = (type: "user" | "admin") => {
+    if (authBypass.enable(type)) {
+      navigate(type === "admin" ? "/admin" : "/dashboard");
     }
   };
 
@@ -72,21 +74,48 @@ const Login = () => {
           </div>
           
           <div className="animate-scale-in">
-            <AuthForm mode={isSignUp ? "signup" : "login"} />
+            {!isSignUp && (
+              <Tabs defaultValue="user" onValueChange={(value) => setLoginType(value as "user" | "admin")} className="w-full mb-6">
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="user">Property Owner</TabsTrigger>
+                  <TabsTrigger value="admin">Administrator</TabsTrigger>
+                </TabsList>
+                <TabsContent value="user">
+                  <AuthForm mode="login" userType="user" />
+                </TabsContent>
+                <TabsContent value="admin">
+                  <AuthForm mode="login" userType="admin" />
+                </TabsContent>
+              </Tabs>
+            )}
+            
+            {isSignUp && (
+              <AuthForm mode="signup" userType="user" />
+            )}
           </div>
           
           {isTestEnvironment && showBypass && (
             <div className="mt-8 text-center">
               <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
                 <p className="text-xs text-amber-600 mb-2">Testing Environment Only</p>
-                <ZenoraButton
-                  variant="outline"
-                  size="sm"
-                  onClick={handleBypassLogin}
-                  className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white"
-                >
-                  Bypass Login (Testing)
-                </ZenoraButton>
+                <div className="flex justify-center gap-4">
+                  <ZenoraButton
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleBypassLogin("user")}
+                    className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white"
+                  >
+                    Bypass as User
+                  </ZenoraButton>
+                  <ZenoraButton
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleBypassLogin("admin")}
+                    className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white"
+                  >
+                    Bypass as Admin
+                  </ZenoraButton>
+                </div>
               </div>
             </div>
           )}

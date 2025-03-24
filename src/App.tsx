@@ -13,6 +13,9 @@ import Features from "./pages/Features";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import PropertyManagement from "./pages/PropertyManagement";
+import Settings from "./pages/Settings";
+import Help from "./pages/Help";
+import Upgrade from "./pages/Upgrade";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +35,9 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/property-management" element={<PropertyManagement />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/upgrade" element={<Upgrade />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

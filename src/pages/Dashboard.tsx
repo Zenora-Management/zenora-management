@@ -12,7 +12,11 @@ import {
   User,
   ChevronDown,
   Bell,
-  AlertTriangle
+  AlertTriangle,
+  HelpCircle,
+  MessageSquare,
+  ShieldCheck,
+  Building
 } from "lucide-react";
 import AIRentAnalysis from "@/components/dashboard/AIRentAnalysis";
 import PropertyList from "@/components/dashboard/PropertyList";
@@ -45,6 +49,9 @@ const Dashboard = () => {
           variant: "destructive",
         });
         navigate('/login');
+      } else if (authBypass.isAdmin()) {
+        // If they're an admin, redirect them to the admin dashboard
+        navigate('/admin');
       }
     };
     
@@ -99,7 +106,7 @@ const Dashboard = () => {
             {isTestMode && (
               <div className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs font-medium flex items-center">
                 <AlertTriangle size={12} className="mr-1" />
-                Test Mode
+                Property Owner Mode
               </div>
             )}
             
@@ -111,7 +118,7 @@ const Dashboard = () => {
             <div className="relative">
               <button className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
                 <div className="h-8 w-8 rounded-full bg-zenora-gradient flex items-center justify-center text-white font-semibold">
-                  JD
+                  <Building className="h-4 w-4" />
                 </div>
                 <span className="hidden sm:block text-sm font-medium">John Doe</span>
                 <ChevronDown size={16} />
@@ -173,6 +180,20 @@ const Dashboard = () => {
                   <button className="flex items-center w-full px-3 py-2 rounded-md text-sm text-foreground hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
                     <Settings className="mr-3 h-5 w-5" />
                     <span>Settings</span>
+                  </button>
+                </Link>
+                
+                <Link to="/help">
+                  <button className="flex items-center w-full px-3 py-2 rounded-md text-sm text-foreground hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
+                    <HelpCircle className="mr-3 h-5 w-5" />
+                    <span>Help & Support</span>
+                  </button>
+                </Link>
+
+                <Link to="/contact">
+                  <button className="flex items-center w-full px-3 py-2 rounded-md text-sm text-foreground hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
+                    <MessageSquare className="mr-3 h-5 w-5" />
+                    <span>Contact Us</span>
                   </button>
                 </Link>
                 

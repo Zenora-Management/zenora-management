@@ -4,27 +4,34 @@ import { toast } from "@/hooks/use-toast";
 // Check if we're in development mode
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-// Simple session storage key for bypass token
+// Simple session storage keys for bypass token
 const BYPASS_KEY = 'zenora_bypass_auth';
+const USER_TYPE_KEY = 'zenora_user_type';
+
+// Type for user roles
+type UserType = "user" | "admin";
 
 /**
  * Enables bypass login functionality for development and testing
  */
 export const authBypass = {
   /**
-   * Enable the bypass functionality
+   * Enable the bypass functionality with a specified user type
+   * @param userType The type of user to bypass as (user or admin)
    * @returns {boolean} Whether the bypass was successful
    */
-  enable: (): boolean => {
+  enable: (userType: UserType = "user"): boolean => {
     if (!isDevelopment) {
       console.warn('Auth bypass attempted in production environment');
       return false;
     }
     
     sessionStorage.setItem(BYPASS_KEY, 'true');
+    sessionStorage.setItem(USER_TYPE_KEY, userType);
+    
     toast({
       title: "Testing mode activated",
-      description: "Bypass login is now enabled for testing purposes.",
+      description: `Bypass login is enabled (${userType === "admin" ? "Administrator" : "Property Owner"} mode).`,
       variant: "default",
     });
     
@@ -36,6 +43,7 @@ export const authBypass = {
    */
   disable: (): void => {
     sessionStorage.removeItem(BYPASS_KEY);
+    sessionStorage.removeItem(USER_TYPE_KEY);
     
     if (isDevelopment) {
       toast({
@@ -55,15 +63,32 @@ export const authBypass = {
   },
   
   /**
+   * Get the current user type for this bypass session
+   * @returns {UserType} The user type (defaults to "user" if not set)
+   */
+  getUserType: (): UserType => {
+    return (sessionStorage.getItem(USER_TYPE_KEY) as UserType) || "user";
+  },
+  
+  /**
+   * Check if bypass is enabled and user is an admin
+   * @returns {boolean} Whether bypass is enabled and user is an admin
+   */
+  isAdmin: (): boolean => {
+    return authBypass.isEnabled() && authBypass.getUserType() === "admin";
+  },
+  
+  /**
    * Toggle the bypass functionality
+   * @param userType The type of user to bypass as when enabling
    * @returns {boolean} The new state (true = enabled, false = disabled)
    */
-  toggle: (): boolean => {
+  toggle: (userType: UserType = "user"): boolean => {
     if (authBypass.isEnabled()) {
       authBypass.disable();
       return false;
     } else {
-      return authBypass.enable();
+      return authBypass.enable(userType);
     }
   }
 };
