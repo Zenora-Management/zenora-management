@@ -2,7 +2,7 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { CheckCircle, Shield, UserCheck, FileText, Clock } from "lucide-react";
+import { CheckCircle, Shield, UserCheck, FileText } from "lucide-react";
 
 const TenantScreening = () => {
   return (
@@ -84,7 +84,7 @@ const TenantScreening = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center p-6">
                 <div className="bg-zenora-purple/10 h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Clock className="h-8 w-8 text-zenora-purple" />
+                  <Shield className="h-8 w-8 text-zenora-purple" />
                 </div>
                 <h3 className="text-xl font-bold mb-3">Lightning Fast</h3>
                 <p className="text-muted-foreground">
@@ -167,111 +167,6 @@ const TenantScreening = () => {
             </div>
           </div>
           
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-6">Screening Packages</h2>
-            <p className="text-muted-foreground max-w-3xl mx-auto mb-12">
-              Choose the screening package that best meets your needs
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden">
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">Basic</h3>
-                  <p className="text-muted-foreground mb-4">Essential verification</p>
-                  <div className="text-3xl font-bold mb-6">$29<span className="text-muted-foreground text-base font-normal">/screening</span></div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Credit check</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Eviction history</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Identity verification</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Basic Zenora Score</span>
-                    </li>
-                  </ul>
-                  
-                  <ZenoraButton variant="outline" className="w-full">Select Package</ZenoraButton>
-                </div>
-              </div>
-              
-              <div className="bg-zenora-gradient p-1 rounded-xl">
-                <div className="bg-white dark:bg-zenora-dark rounded-lg h-full p-6">
-                  <div className="bg-zenora-purple text-white text-xs font-bold uppercase py-1 px-3 rounded-full inline-block mb-4">Most Popular</div>
-                  <h3 className="text-xl font-bold mb-2">Standard</h3>
-                  <p className="text-muted-foreground mb-4">Comprehensive verification</p>
-                  <div className="text-3xl font-bold mb-6">$49<span className="text-muted-foreground text-base font-normal">/screening</span></div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>All Basic features</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Criminal background check</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Income verification</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Employment verification</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Advanced Zenora Score</span>
-                    </li>
-                  </ul>
-                  
-                  <ZenoraButton className="w-full">Select Package</ZenoraButton>
-                </div>
-              </div>
-              
-              <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden">
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">Premium</h3>
-                  <p className="text-muted-foreground mb-4">Complete protection</p>
-                  <div className="text-3xl font-bold mb-6">$79<span className="text-muted-foreground text-base font-normal">/screening</span></div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>All Standard features</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Rental history verification</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Previous landlord references</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Social media screening</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Premium Zenora Score with AI insights</span>
-                    </li>
-                  </ul>
-                  
-                  <ZenoraButton variant="outline" className="w-full">Select Package</ZenoraButton>
-                </div>
-              </div>
-            </div>
-          </div>
-          
           <div className="bg-zenora-gradient p-1 rounded-xl">
             <div className="bg-white dark:bg-zenora-dark rounded-lg p-8 text-center">
               <h2 className="text-2xl font-bold mb-4">Ready to find your ideal tenants?</h2>
@@ -279,9 +174,9 @@ const TenantScreening = () => {
                 Start using our AI-powered tenant screening today and make confident leasing decisions.
               </p>
               <ZenoraButton size="lg">
-                Start Screening Now
+                Get Started Now
               </ZenoraButton>
-              <p className="text-sm text-muted-foreground mt-4">Volume discounts available for property managers.</p>
+              <p className="text-sm text-muted-foreground mt-4">Available with all Zenora property management plans.</p>
             </div>
           </div>
         </div>

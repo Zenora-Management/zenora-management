@@ -1,8 +1,18 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -59,9 +69,89 @@ const Navbar = () => {
           <Link to="/features" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/features' ? 'text-zenora-purple font-medium' : ''}`}>
             Features
           </Link>
-          <Link to="/property-management" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/property-management' ? 'text-zenora-purple font-medium' : ''}`}>
-            Services
-          </Link>
+          
+          {/* Services Dropdown Menu */}
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className={`text-foreground hover:text-zenora-purple transition-colors bg-transparent ${
+                  ['/property-management', '/ai-rent-analysis', '/tenant-screening', '/maintenance'].includes(location.pathname) 
+                    ? 'text-zenora-purple font-medium' 
+                    : ''
+                }`}>
+                  Services
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid gap-3 p-4 w-[400px]">
+                    <li className="row-span-3">
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/property-management"
+                          className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                        >
+                          <div className="mb-2 mt-4 text-lg font-medium">
+                            Property Management
+                          </div>
+                          <p className="text-sm leading-tight text-muted-foreground">
+                            Comprehensive property management solutions for landlords and property owners
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/ai-rent-analysis"
+                          className={cn(
+                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            location.pathname === '/ai-rent-analysis' ? "bg-accent" : ""
+                          )}
+                        >
+                          <div className="text-sm font-medium leading-none">AI Rent Analysis</div>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                            Optimize rental pricing with AI-powered market analysis
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/tenant-screening"
+                          className={cn(
+                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            location.pathname === '/tenant-screening' ? "bg-accent" : ""
+                          )}
+                        >
+                          <div className="text-sm font-medium leading-none">Tenant Screening</div>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                            Comprehensive background checks for potential tenants
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/maintenance"
+                          className={cn(
+                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            location.pathname === '/maintenance' ? "bg-accent" : ""
+                          )}
+                        >
+                          <div className="text-sm font-medium leading-none">Maintenance Coordination</div>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                            Streamline property maintenance with our AI-powered system
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+          
           <Link to="/about" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/about' ? 'text-zenora-purple font-medium' : ''}`}>
             About
           </Link>
@@ -109,12 +199,38 @@ const Navbar = () => {
             >
               Features
             </Link>
-            <Link 
-              to="/property-management"
-              className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/property-management' ? 'text-zenora-purple font-medium' : ''}`}
-            >
-              Services
-            </Link>
+            
+            {/* Mobile Services Section */}
+            <div className="border-t border-b border-gray-200 dark:border-gray-700 py-2 my-1">
+              <div className="font-medium py-1 text-foreground">Services</div>
+              <div className="pl-4 flex flex-col gap-2">
+                <Link 
+                  to="/property-management"
+                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/property-management' ? 'text-zenora-purple font-medium' : ''}`}
+                >
+                  Property Management
+                </Link>
+                <Link 
+                  to="/ai-rent-analysis"
+                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/ai-rent-analysis' ? 'text-zenora-purple font-medium' : ''}`}
+                >
+                  AI Rent Analysis
+                </Link>
+                <Link 
+                  to="/tenant-screening"
+                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/tenant-screening' ? 'text-zenora-purple font-medium' : ''}`}
+                >
+                  Tenant Screening
+                </Link>
+                <Link 
+                  to="/maintenance"
+                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/maintenance' ? 'text-zenora-purple font-medium' : ''}`}
+                >
+                  Maintenance Coordination
+                </Link>
+              </div>
+            </div>
+            
             <Link 
               to="/about"
               className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/about' ? 'text-zenora-purple font-medium' : ''}`}

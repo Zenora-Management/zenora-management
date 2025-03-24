@@ -62,7 +62,7 @@ const Maintenance = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <ZenoraButton size="lg">Schedule Demo</ZenoraButton>
+                <ZenoraButton size="lg">Get Started</ZenoraButton>
                 <ZenoraButton size="lg" variant="outline">Learn More</ZenoraButton>
               </div>
             </div>
@@ -213,111 +213,6 @@ const Maintenance = () => {
             </div>
           </div>
           
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-6">Maintenance Coordination Pricing</h2>
-            <p className="text-muted-foreground max-w-3xl mx-auto mb-12">
-              Choose the plan that fits your property portfolio
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden">
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">Essential</h3>
-                  <p className="text-muted-foreground mb-4">For small portfolios</p>
-                  <div className="text-3xl font-bold mb-6">$19<span className="text-muted-foreground text-base font-normal">/month</span></div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Up to 5 properties</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Basic maintenance tracking</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Tenant request portal</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Email notifications</span>
-                    </li>
-                  </ul>
-                  
-                  <ZenoraButton variant="outline" className="w-full">Select Plan</ZenoraButton>
-                </div>
-              </div>
-              
-              <div className="bg-zenora-gradient p-1 rounded-xl">
-                <div className="bg-white dark:bg-zenora-dark rounded-lg h-full p-6">
-                  <div className="bg-zenora-purple text-white text-xs font-bold uppercase py-1 px-3 rounded-full inline-block mb-4">Most Popular</div>
-                  <h3 className="text-xl font-bold mb-2">Professional</h3>
-                  <p className="text-muted-foreground mb-4">For growing portfolios</p>
-                  <div className="text-3xl font-bold mb-6">$49<span className="text-muted-foreground text-base font-normal">/month</span></div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Up to 20 properties</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>AI priority assessment</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Vendor management</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Cost tracking & reporting</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Mobile app access</span>
-                    </li>
-                  </ul>
-                  
-                  <ZenoraButton className="w-full">Select Plan</ZenoraButton>
-                </div>
-              </div>
-              
-              <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden">
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">Enterprise</h3>
-                  <p className="text-muted-foreground mb-4">For large portfolios</p>
-                  <div className="text-3xl font-bold mb-6">$149<span className="text-muted-foreground text-base font-normal">/month</span></div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Unlimited properties</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>All Professional features</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Preventive maintenance planning</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Advanced analytics & insights</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>API access for integration</span>
-                    </li>
-                  </ul>
-                  
-                  <ZenoraButton variant="outline" className="w-full">Contact Sales</ZenoraButton>
-                </div>
-              </div>
-            </div>
-          </div>
-          
           <div className="bg-zenora-gradient p-1 rounded-xl">
             <div className="bg-white dark:bg-zenora-dark rounded-lg p-8 text-center">
               <h2 className="text-2xl font-bold mb-4">Ready to streamline your maintenance process?</h2>
@@ -327,7 +222,7 @@ const Maintenance = () => {
               <ZenoraButton size="lg">
                 Get Started Today
               </ZenoraButton>
-              <p className="text-sm text-muted-foreground mt-4">14-day free trial available on all plans.</p>
+              <p className="text-sm text-muted-foreground mt-4">Available with all Zenora property management plans.</p>
             </div>
           </div>
         </div>

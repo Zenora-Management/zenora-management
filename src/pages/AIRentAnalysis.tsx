@@ -116,111 +116,6 @@ const AIRentAnalysis = () => {
             </div>
           </div>
           
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-6">AI Rent Analysis Pricing</h2>
-            <p className="text-muted-foreground max-w-3xl mx-auto mb-12">
-              Choose the plan that's right for your portfolio size and analysis needs
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden">
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">Basic</h3>
-                  <p className="text-muted-foreground mb-4">For individual property owners</p>
-                  <div className="text-3xl font-bold mb-6">$29<span className="text-muted-foreground text-base font-normal">/month</span></div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Up to 5 properties</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Monthly analysis updates</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Basic market reports</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Email support</span>
-                    </li>
-                  </ul>
-                  
-                  <ZenoraButton variant="outline" className="w-full">Select Plan</ZenoraButton>
-                </div>
-              </div>
-              
-              <div className="bg-zenora-gradient p-1 rounded-xl">
-                <div className="bg-white dark:bg-zenora-dark rounded-lg h-full p-6">
-                  <div className="bg-zenora-purple text-white text-xs font-bold uppercase py-1 px-3 rounded-full inline-block mb-4">Most Popular</div>
-                  <h3 className="text-xl font-bold mb-2">Professional</h3>
-                  <p className="text-muted-foreground mb-4">For small to medium portfolios</p>
-                  <div className="text-3xl font-bold mb-6">$79<span className="text-muted-foreground text-base font-normal">/month</span></div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Up to 25 properties</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Weekly analysis updates</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Advanced market reports</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Priority email & phone support</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Seasonal trend analysis</span>
-                    </li>
-                  </ul>
-                  
-                  <ZenoraButton className="w-full">Select Plan</ZenoraButton>
-                </div>
-              </div>
-              
-              <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden">
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">Enterprise</h3>
-                  <p className="text-muted-foreground mb-4">For large portfolios</p>
-                  <div className="text-3xl font-bold mb-6">$199<span className="text-muted-foreground text-base font-normal">/month</span></div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Unlimited properties</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Real-time analysis updates</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Premium market reports</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Dedicated account manager</span>
-                    </li>
-                    <li className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-zenora-purple mr-2" />
-                      <span>Custom API integration</span>
-                    </li>
-                  </ul>
-                  
-                  <ZenoraButton variant="outline" className="w-full">Contact Sales</ZenoraButton>
-                </div>
-              </div>
-            </div>
-          </div>
-          
           <div className="bg-zenora-gradient p-1 rounded-xl">
             <div className="bg-white dark:bg-zenora-dark rounded-lg p-8 text-center">
               <h2 className="text-2xl font-bold mb-4">Ready to optimize your rental pricing?</h2>
@@ -228,9 +123,9 @@ const AIRentAnalysis = () => {
                 Start using our AI-powered rent analysis tool today and make data-driven decisions that maximize your rental income.
               </p>
               <ZenoraButton size="lg">
-                Get Started Free
+                Get Started Now
               </ZenoraButton>
-              <p className="text-sm text-muted-foreground mt-4">No credit card required. 14-day free trial.</p>
+              <p className="text-sm text-muted-foreground mt-4">Available with all Zenora property management plans.</p>
             </div>
           </div>
         </div>
