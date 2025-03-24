@@ -1,5 +1,5 @@
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AuthForm from "@/components/auth/AuthForm";
@@ -9,6 +9,8 @@ import { ZenoraButton } from "@/components/ui/button-zenora";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isSignUp = location.pathname === "/signup";
   const [isTestEnvironment, setIsTestEnvironment] = useState(false);
   const [bypassClicks, setBypassClicks] = useState(0);
   const [showBypass, setShowBypass] = useState(false);
@@ -16,6 +18,10 @@ const Login = () => {
   // Check if it's a development/test environment
   useEffect(() => {
     setIsTestEnvironment(process.env.NODE_ENV === 'development');
+    // In development, show bypass button more easily
+    if (process.env.NODE_ENV === 'development') {
+      setShowBypass(true);
+    }
   }, []);
 
   // Handle bypass login for testing
@@ -54,16 +60,19 @@ const Login = () => {
               onClick={handleLogoClick}
             >
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-zenora-gradient">
-                Welcome Back
+                {isSignUp ? "Create Your Account" : "Welcome Back"}
               </h1>
             </div>
             <p className="text-muted-foreground">
-              Sign in to access your AI-powered property management dashboard
+              {isSignUp 
+                ? "Sign up to access your AI-powered property management dashboard" 
+                : "Sign in to access your AI-powered property management dashboard"
+              }
             </p>
           </div>
           
           <div className="animate-scale-in">
-            <AuthForm mode="login" />
+            <AuthForm mode={isSignUp ? "signup" : "login"} />
           </div>
           
           {isTestEnvironment && showBypass && (
@@ -74,7 +83,7 @@ const Login = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleBypassLogin}
-                  className="border-amber-500 text-amber-600 hover:bg-amber-500 hover:text-white"
+                  className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white"
                 >
                   Bypass Login (Testing)
                 </ZenoraButton>
@@ -83,7 +92,7 @@ const Login = () => {
           )}
           
           <div className="text-center mt-8 text-sm text-muted-foreground">
-            By signing in, you agree to our{" "}
+            By {isSignUp ? "signing up" : "signing in"}, you agree to our{" "}
             <Link to="/terms" className="text-zenora-purple hover:underline">
               Terms of Service
             </Link>{" "}

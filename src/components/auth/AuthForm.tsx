@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 type AuthMode = "login" | "signup";
 
@@ -32,6 +33,16 @@ const AuthForm = ({ mode }: AuthFormProps) => {
     // Simulate authentication process
     setTimeout(() => {
       setLoading(false);
+      
+      // Show success toast
+      toast({
+        title: mode === "login" ? "Welcome back!" : "Account created!",
+        description: mode === "login" 
+          ? "You've successfully signed in." 
+          : "Your account has been created successfully.",
+        variant: "default",
+      });
+      
       // Redirect to dashboard on successful auth
       navigate("/dashboard");
     }, 1500);
@@ -50,7 +61,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
           </div>
           
           <h1 className="text-2xl font-bold mb-2">
-            {mode === "login" ? "Welcome Back" : "Create Your Account"}
+            {mode === "login" ? "Sign In" : "Sign Up"}
           </h1>
           
           <p className="text-muted-foreground">
