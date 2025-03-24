@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -32,23 +33,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --radius: 0.75rem;
   }
 
   .dark {
@@ -79,14 +64,6 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -96,6 +73,120 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  html {
+    @apply scroll-smooth;
+  }
+}
+
+@layer components {
+  .zenora-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .zenora-card {
+    @apply bg-white dark:bg-zenora-dark rounded-xl shadow-lg overflow-hidden border border-slate-100 dark:border-slate-800 transition-all duration-300;
+  }
+
+  .zenora-glass {
+    @apply bg-glass-card backdrop-blur-lg border border-white/10 rounded-xl shadow-md;
+  }
+
+  .zenora-button {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors 
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 
+    disabled:pointer-events-none ring-offset-background;
+  }
+
+  .zenora-button-primary {
+    @apply zenora-button bg-zenora-gradient text-white hover:opacity-90;
+  }
+
+  .zenora-button-secondary {
+    @apply zenora-button bg-white text-zenora-purple border border-zenora-purple hover:bg-zenora-purple hover:text-white;
+  }
+
+  .zenora-input {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm 
+    ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium 
+    placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 
+    focus-visible:ring-zenora-light focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .zenora-section {
+    @apply py-16 sm:py-24;
+  }
+
+  .zenora-heading {
+    @apply text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-6;
+  }
+
+  .zenora-subheading {
+    @apply text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10;
+  }
+}
+
+/* Add custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-zenora-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-zenora-medium rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-zenora-purple;
+}
+
+/* Smooth transitions */
+.fade-in {
+  animation: fadeIn 0.5s ease-in forwards;
+}
+
+.scale-up {
+  animation: scaleUp 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Custom utilities */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
