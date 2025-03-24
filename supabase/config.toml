@@ -34,14 +34,11 @@ port = 54327
 vector_port = 54328
 backend = "postgres"
 
-[[functions]]
-name = "stripe-checkout"
+[functions.stripe-checkout]
 verify_jwt = true
 
-[[functions]]
-name = "stripe-webhook"
+[functions.stripe-webhook]
 verify_jwt = false
 
-[[functions]]
-name = "stripe-manage-subscription"
+[functions.stripe-manage-subscription]
 verify_jwt = true

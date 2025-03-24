@@ -270,13 +270,13 @@ const Upgrade = () => {
                         variant={plan.popular ? "default" : "outline"}
                         onClick={() => handleSelectPlan(plan.id)}
                         disabled={
-                          createCheckoutSession.isLoading || 
+                          createCheckoutSession.isPending || 
                           (isSubscriptionActive && subscription?.plan_type === plan.id)
                         }
                       >
                         {isSubscriptionActive && subscription?.plan_type === plan.id
                           ? 'Current Plan'
-                          : createCheckoutSession.isLoading
+                          : createCheckoutSession.isPending
                             ? 'Processing...'
                             : 'Select Plan'}
                       </ZenoraButton>

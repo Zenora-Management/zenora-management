@@ -23,7 +23,11 @@ const PropertyManagement = () => {
                 Our AI-powered platform helps you manage your properties efficiently, 
                 save time, and maximize returns with intelligent insights.
               </p>
-              <ZenoraButton as={Link} to="/signup" size="lg">
+              <ZenoraButton 
+                as={Link} 
+                to="/signup" 
+                size="lg"
+              >
                 Start Free Trial
               </ZenoraButton>
             </div>
@@ -35,7 +39,7 @@ const PropertyManagement = () => {
           <div className="zenora-container">
             <h2 className="text-3xl font-bold text-center mb-16">Everything You Need to Manage Your Properties</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
                   title: "AI Rent Analysis",
@@ -176,7 +180,7 @@ const PropertyManagement = () => {
           <div className="zenora-container">
             <h2 className="text-3xl font-bold text-center mb-16">What Our Customers Say</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
                   quote: "Zenora has completely transformed how I manage my rental properties. The AI rent analysis alone has increased my revenue by 15%.",
