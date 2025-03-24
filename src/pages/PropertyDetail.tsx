@@ -24,8 +24,9 @@ const PropertyDetail = () => {
           throw new Error("Property ID is required");
         }
         
+        // Use type assertion to bypass TypeScript's type checking for Supabase
         const { data, error } = await supabase
-          .from('properties')
+          .from('properties' as any)
           .select('*')
           .eq('id', id)
           .single();
