@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
@@ -43,14 +44,16 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
   as?: React.ElementType
+  to?: string  // Add the 'to' prop to support React Router links
 }
 
 const ZenoraButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, animation, asChild = false, as: Component, ...props }, ref) => {
+  ({ className, variant, size, animation, asChild = false, as: Component, to, ...props }, ref) => {
     if (Component) {
       return (
         <Component
           className={cn(buttonVariants({ variant, size, animation, className }))}
+          to={to}  // Pass the 'to' prop to the Component (e.g., Link)
           {...props}
         />
       );
