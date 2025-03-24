@@ -3,8 +3,9 @@ import React from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { ZenoraButton } from '@/components/ui/button-zenora';
-import { Check } from 'lucide-react';
+import { Check, Sparkles, Star, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const PropertyManagement = () => {
   return (
@@ -86,15 +87,17 @@ const PropertyManagement = () => {
         <section className="py-20 bg-gray-50 dark:bg-zenora-dark/30">
           <div className="zenora-container">
             <h2 className="text-3xl font-bold text-center mb-4">Simple, Transparent Pricing</h2>
-            <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-16">
+            <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-4">
               Choose the plan that fits your needs. All plans include our core features with no hidden fees.
             </p>
+            <p className="text-center font-semibold text-zenora-purple mb-16">Billed annually</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
                   name: "Starter",
-                  price: "$29",
+                  price: "$290",
+                  pricePerMonth: "$24",
                   description: "Perfect for small landlords with a few properties",
                   features: [
                     "Up to 5 properties",
@@ -104,11 +107,13 @@ const PropertyManagement = () => {
                     "Email support"
                   ],
                   button: "Get Started",
-                  popular: false
+                  popular: false,
+                  icon: <Star className="h-6 w-6 text-amber-500" />
                 },
                 {
                   name: "Professional",
-                  price: "$79",
+                  price: "$790",
+                  pricePerMonth: "$66",
                   description: "Ideal for growing property portfolios",
                   features: [
                     "Up to 20 properties",
@@ -119,11 +124,13 @@ const PropertyManagement = () => {
                     "Priority support"
                   ],
                   button: "Get Started",
-                  popular: true
+                  popular: true,
+                  icon: <Sparkles className="h-6 w-6 text-zenora-purple" />
                 },
                 {
                   name: "Enterprise",
-                  price: "$199",
+                  price: "$1,990",
+                  pricePerMonth: "$166",
                   description: "Comprehensive solution for property management companies",
                   features: [
                     "Unlimited properties",
@@ -135,40 +142,72 @@ const PropertyManagement = () => {
                     "Dedicated account manager"
                   ],
                   button: "Contact Sales",
-                  popular: false
+                  popular: false,
+                  icon: <Zap className="h-6 w-6 text-blue-500" />
                 }
               ].map((plan, index) => (
                 <div 
                   key={index} 
-                  className={`zenora-card p-8 relative ${plan.popular ? 'border-zenora-purple ring-2 ring-zenora-purple' : ''}`}
+                  className={cn(
+                    "relative rounded-2xl overflow-hidden transition-all duration-300 group hover:shadow-xl", 
+                    plan.popular 
+                      ? "shadow-lg border-2 border-zenora-purple transform hover:-translate-y-1" 
+                      : "shadow-md border border-gray-200 dark:border-gray-800"
+                  )}
                 >
                   {plan.popular && (
-                    <div className="absolute top-0 right-0 bg-zenora-purple text-white py-1 px-3 text-sm font-medium rounded-bl-lg rounded-tr-lg">
+                    <div className="absolute top-0 right-0 bg-zenora-purple text-white py-2 px-4 text-sm font-medium rounded-bl-xl">
                       Most Popular
                     </div>
                   )}
-                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <div className="flex items-end mb-4">
-                    <span className="text-4xl font-extrabold">{plan.price}</span>
-                    <span className="text-muted-foreground ml-1 mb-1">/month</span>
+                  <div className={cn(
+                    "p-1",
+                    plan.popular ? "bg-zenora-gradient" : ""
+                  )}>
+                    <div className="bg-white dark:bg-zenora-dark rounded-xl p-8">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className={cn(
+                          "rounded-full w-10 h-10 flex items-center justify-center",
+                          plan.popular ? "bg-zenora-purple/10" : "bg-gray-100 dark:bg-gray-800"
+                        )}>
+                          {plan.icon}
+                        </div>
+                        <h3 className="text-2xl font-bold">{plan.name}</h3>
+                      </div>
+                      
+                      <div className="mb-6">
+                        <div className="flex items-end">
+                          <span className="text-4xl font-extrabold">{plan.price}</span>
+                          <span className="text-muted-foreground ml-2 mb-1">/year</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">Just {plan.pricePerMonth}/mo, billed annually</p>
+                      </div>
+                      
+                      <p className="text-muted-foreground mb-6">{plan.description}</p>
+                      
+                      <ul className="space-y-4 mb-8">
+                        {plan.features.map((feature, i) => (
+                          <li key={i} className="flex items-start">
+                            <Check className={cn(
+                              "h-5 w-5 shrink-0 mr-2 mt-0.5",
+                              plan.popular ? "text-zenora-purple" : "text-green-500"
+                            )} />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      
+                      <ZenoraButton 
+                        className="w-full"
+                        variant={plan.popular ? "default" : "outline"}
+                        as={Link}
+                        to="/signup"
+                        animation={plan.popular ? "glow" : "none"}
+                      >
+                        {plan.button}
+                      </ZenoraButton>
+                    </div>
                   </div>
-                  <p className="text-muted-foreground mb-6">{plan.description}</p>
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start">
-                        <Check className="h-5 w-5 text-zenora-purple shrink-0 mr-2" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <ZenoraButton 
-                    className="w-full"
-                    variant={plan.popular ? "default" : "outline"}
-                    as={Link}
-                    to="/signup"
-                  >
-                    {plan.button}
-                  </ZenoraButton>
                 </div>
               ))}
             </div>

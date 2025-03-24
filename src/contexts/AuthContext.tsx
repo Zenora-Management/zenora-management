@@ -9,12 +9,16 @@ type AuthContextType = {
   session: Session | null;
   user: User | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string, isAdmin?: boolean) => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signOut: () => Promise<void>;
+  checkIsAdmin: (user: User) => boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Admin email for special handling
+const ADMIN_EMAIL = "zenoramgmt@gmail.com";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -35,11 +39,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             title: "Welcome back!",
             description: "You've successfully signed in to your account."
           });
+          
+          // Redirect to appropriate dashboard based on user role
+          if (session?.user && checkIsAdmin(session.user)) {
+            navigate('/admin');
+          } else {
+            navigate('/dashboard');
+          }
         } else if (event === 'SIGNED_OUT') {
           toast({
             title: "Signed out",
             description: "You've been successfully signed out."
           });
+          navigate('/');
         }
       }
     );
@@ -52,11 +64,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
-  const signIn = async (email: string, password: string) => {
+  const checkIsAdmin = (user: User): boolean => {
+    return user.email === ADMIN_EMAIL;
+  };
+
+  const signIn = async (email: string, password: string, isAdmin: boolean = false) => {
     try {
       setLoading(true);
+      
+      // Special handling for admin account creation on first login
+      if (isAdmin && email === ADMIN_EMAIL) {
+        // Check if admin exists first
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          // Create admin account if it doesn't exist
+          const { error: signUpError } = await supabase.auth.signUp({ 
+            email: ADMIN_EMAIL,
+            password,
+            options: {
+              data: {
+                full_name: "Zenora Admin",
+                is_admin: true
+              }
+            }
+          });
+          
+          if (signUpError) throw signUpError;
+        }
+      }
+      
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
@@ -68,8 +107,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw error;
       }
       
-      navigate('/dashboard');
-    } catch (error) {
+      // Navigate is handled in the auth state change listener
+    } catch (error: any) {
       console.error('Error signing in:', error);
       throw error;
     } finally {
@@ -80,12 +119,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
       setLoading(true);
+      
+      // Check if trying to sign up as admin - reject if not through admin login
+      if (email === ADMIN_EMAIL) {
+        toast({
+          title: "Invalid email",
+          description: "This email address is reserved. Please use a different one.",
+          variant: "destructive",
+        });
+        throw new Error("This email address is reserved");
+      }
+      
       const { error } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
           data: {
             full_name: fullName,
+            is_admin: false
           }
         }
       });
@@ -105,7 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       
       navigate('/login');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error signing up:', error);
       throw error;
     } finally {
@@ -131,7 +182,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ session, user, loading, signIn, signUp, signOut, checkIsAdmin }}>
       {children}
     </AuthContext.Provider>
   );

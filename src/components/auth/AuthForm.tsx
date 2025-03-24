@@ -4,6 +4,10 @@ import { Link } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Eye, EyeOff, Lock, Mail, User, Building, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type AuthMode = "login" | "signup";
 type UserType = "user" | "admin";
@@ -13,37 +17,60 @@ interface AuthFormProps {
   userType: UserType;
 }
 
+// Pre-set admin credentials for demo purposes
+const ADMIN_EMAIL = "zenoramgmt@gmail.com";
+const ADMIN_PASSWORD = "Zenora101!";
+
+const loginSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  companyCode: z.string().optional(),
+});
+
+const signupSchema = loginSchema.extend({
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+});
+
 const AuthForm = ({ mode, userType }: AuthFormProps) => {
   const { signIn, signUp, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    companyCode: ""
+  const [autoFilledAdmin, setAutoFilledAdmin] = useState(false);
+  
+  const formSchema = mode === "login" ? loginSchema : signupSchema;
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: userType === "admin" ? ADMIN_EMAIL : "",
+      password: userType === "admin" ? ADMIN_PASSWORD : "",
+      name: "",
+      companyCode: "",
+    }
   });
   
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       if (mode === "login") {
-        await signIn(formData.email, formData.password);
+        await signIn(values.email, values.password, userType === "admin");
       } else {
-        await signUp(formData.email, formData.password, formData.name);
+        await signUp(values.email, values.password, values.name || "");
       }
     } catch (error) {
       console.error("Authentication error:", error);
+      // Error handling is done in the AuthContext
     }
   };
   
   const togglePasswordVisibility = () => {
     setShowPassword(prev => !prev);
+  };
+
+  // Auto-fill admin credentials when admin mode is selected
+  const handleAdminAutoFill = () => {
+    if (userType === "admin" && !autoFilledAdmin) {
+      form.setValue("email", ADMIN_EMAIL);
+      form.setValue("password", ADMIN_PASSWORD);
+      setAutoFilledAdmin(true);
+    }
   };
 
   return (
@@ -52,7 +79,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         <div className="text-center mb-8">
           <div className="mx-auto h-12 w-12 rounded-full bg-zenora-gradient flex items-center justify-center shadow-lg mb-4">
             {userType === "admin" ? (
-              <ShieldCheck className="h-6 w-6 text-white" />
+              <ShieldCheck className="h-6 w-6 text-white" onClick={handleAdminAutoFill} />
             ) : (
               <Building className="h-6 w-6 text-white" />
             )}
@@ -72,131 +99,144 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
           </p>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === "signup" && (
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-1">
-                Full Name
-              </label>
-              <div className="relative">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="zenora-input pl-10"
-                  placeholder="John Doe"
-                />
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
-                  <User className="h-5 w-5" />
-                </div>
-              </div>
-            </div>
-          )}
-          
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1">
-              Email
-            </label>
-            <div className="relative">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="zenora-input pl-10"
-                placeholder="john@example.com"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            {mode === "signup" && (
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <div className="relative">
+                      <FormControl>
+                        <input
+                          {...field}
+                          type="text"
+                          className="zenora-input pl-10"
+                          placeholder="John Doe"
+                        />
+                      </FormControl>
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                        <User className="h-5 w-5" />
+                      </div>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
-                <Mail className="h-5 w-5" />
-              </div>
-            </div>
-          </div>
-          
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-1">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="zenora-input pl-10"
-                placeholder="••••••••"
-              />
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
-                <Lock className="h-5 w-5" />
-              </div>
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"
-                onClick={togglePasswordVisibility}
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-            </div>
-          </div>
-          
-          {userType === "admin" && (
-            <div>
-              <label htmlFor="companyCode" className="block text-sm font-medium mb-1">
-                Administrator Code
-              </label>
-              <div className="relative">
-                <input
-                  id="companyCode"
-                  name="companyCode"
-                  type="text"
-                  value={formData.companyCode}
-                  onChange={handleChange}
-                  required
-                  className="zenora-input pl-10"
-                  placeholder="Enter company admin code"
-                />
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                This code is provided by Zenora to authorized administrators only.
-              </p>
-            </div>
-          )}
-          
-          {mode === "login" && (
-            <div className="flex justify-end">
-              <Link to="/forgot-password" className="text-sm text-zenora-purple hover:underline">
-                Forgot password?
-              </Link>
-            </div>
-          )}
-          
-          <ZenoraButton 
-            type="submit" 
-            className="w-full"
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                {mode === "login" ? "Signing in..." : "Creating account..."}
-              </>
-            ) : (
-              mode === "login" ? "Sign In" : "Create Account"
             )}
-          </ZenoraButton>
-        </form>
+            
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <div className="relative">
+                    <FormControl>
+                      <input
+                        {...field}
+                        type="email"
+                        className="zenora-input pl-10"
+                        placeholder="john@example.com"
+                      />
+                    </FormControl>
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                      <Mail className="h-5 w-5" />
+                    </div>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <div className="relative">
+                    <FormControl>
+                      <input
+                        {...field}
+                        type={showPassword ? "text" : "password"}
+                        className="zenora-input pl-10"
+                        placeholder="••••••••"
+                      />
+                    </FormControl>
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                      <Lock className="h-5 w-5" />
+                    </div>
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground"
+                      onClick={togglePasswordVisibility}
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            {userType === "admin" && (
+              <FormField
+                control={form.control}
+                name="companyCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Administrator Code</FormLabel>
+                    <div className="relative">
+                      <FormControl>
+                        <input
+                          {...field}
+                          type="text"
+                          className="zenora-input pl-10"
+                          placeholder="Enter company admin code"
+                        />
+                      </FormControl>
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                        <ShieldCheck className="h-5 w-5" />
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {userType === "admin" && "For Zenora demo, use any code."}
+                    </p>
+                  </FormItem>
+                )}
+              />
+            )}
+            
+            {mode === "login" && (
+              <div className="flex justify-end">
+                <Link to="/forgot-password" className="text-sm text-zenora-purple hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+            )}
+            
+            <ZenoraButton 
+              type="submit" 
+              className="w-full"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {mode === "login" ? "Signing in..." : "Creating account..."}
+                </>
+              ) : (
+                mode === "login" ? "Sign In" : "Create Account"
+              )}
+            </ZenoraButton>
+          </form>
+        </Form>
         
         <div className="mt-6">
           <div className="relative">

@@ -4,19 +4,20 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { ZenoraButton } from '@/components/ui/button-zenora';
-import { Check, ChevronRight, ExternalLink, AlertTriangle } from 'lucide-react';
+import { Check, ChevronRight, ExternalLink, AlertTriangle, Sparkles, Star, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { toast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 
 const Upgrade = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
+  const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('year');
   const { 
     subscription, 
     isLoading, 
@@ -52,6 +53,10 @@ const Upgrade = () => {
         month: '$29',
         year: '$290'
       },
+      pricePerMonth: {
+        month: '$29',
+        year: '$24'
+      },
       savings: '17%',
       features: [
         'Up to 5 properties',
@@ -60,7 +65,8 @@ const Upgrade = () => {
         'Maintenance tracking',
         'Email support'
       ],
-      popular: false
+      popular: false,
+      icon: <Star className="h-6 w-6 text-amber-500" />
     },
     {
       id: 'professional',
@@ -69,6 +75,10 @@ const Upgrade = () => {
       price: {
         month: '$79',
         year: '$790'
+      },
+      pricePerMonth: {
+        month: '$79',
+        year: '$66'
       },
       savings: '17%',
       features: [
@@ -79,7 +89,8 @@ const Upgrade = () => {
         'Financial reporting',
         'Priority support'
       ],
-      popular: true
+      popular: true,
+      icon: <Sparkles className="h-6 w-6 text-zenora-purple" />
     },
     {
       id: 'enterprise',
@@ -87,7 +98,11 @@ const Upgrade = () => {
       description: 'Comprehensive solution for property management companies',
       price: {
         month: '$199',
-        year: '$1990'
+        year: '$1,990'
+      },
+      pricePerMonth: {
+        month: '$199',
+        year: '$166'
       },
       savings: '17%',
       features: [
@@ -99,7 +114,8 @@ const Upgrade = () => {
         'API access',
         'Dedicated account manager'
       ],
-      popular: false
+      popular: false,
+      icon: <Zap className="h-6 w-6 text-blue-500" />
     }
   ];
   
@@ -169,14 +185,19 @@ const Upgrade = () => {
       
       <main className="flex-grow py-12">
         <div className="zenora-container">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             <h1 className="text-3xl font-bold mb-8">Upgrade Your Subscription</h1>
             
             {/* Current Plan */}
             {!isLoading && (
-              <Card className="mb-8">
-                <CardHeader>
-                  <CardTitle>Current Plan: {currentPlan.name}</CardTitle>
+              <Card className="mb-12 border border-zenora-purple/30">
+                <CardHeader className="bg-gradient-to-r from-zenora-purple/10 to-transparent">
+                  <CardTitle className="flex items-center gap-2">
+                    <div className="bg-zenora-purple/20 p-1.5 rounded-full">
+                      <Sparkles className="h-5 w-5 text-zenora-purple" />
+                    </div>
+                    Current Plan: {currentPlan.name}
+                  </CardTitle>
                   {subscription && (
                     <CardDescription>
                       Status: {subscription.status}
@@ -186,9 +207,9 @@ const Upgrade = () => {
                     </CardDescription>
                   )}
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   {currentPlan.features.length > 0 ? (
-                    <ul className="space-y-2">
+                    <ul className="space-y-3 grid grid-cols-1 md:grid-cols-2">
                       {currentPlan.features.map((feature, index) => (
                         <li key={index} className="flex items-start">
                           <Check className="h-5 w-5 text-zenora-purple shrink-0 mr-2" />
@@ -201,7 +222,7 @@ const Upgrade = () => {
                   )}
                 </CardContent>
                 {isSubscriptionActive && (
-                  <CardFooter>
+                  <CardFooter className="border-t border-gray-100 dark:border-gray-800 pt-6">
                     <ZenoraButton
                       variant="outline" 
                       onClick={handleCancelSubscription}
@@ -214,19 +235,19 @@ const Upgrade = () => {
             )}
             
             {/* Subscription Options */}
-            <div className="mb-8">
-              <div className="flex justify-center mb-8">
+            <div className="mb-16">
+              <div className="flex justify-center mb-12">
                 <Tabs 
-                  defaultValue="month" 
+                  defaultValue="year" 
                   value={billingInterval}
                   onValueChange={(value) => setBillingInterval(value as 'month' | 'year')}
                   className="w-full max-w-md"
                 >
-                  <TabsList className="grid w-full grid-cols-2">
+                  <TabsList className="grid w-full grid-cols-2 p-1">
                     <TabsTrigger value="month">Monthly Billing</TabsTrigger>
-                    <TabsTrigger value="year">
+                    <TabsTrigger value="year" className="relative">
                       Yearly Billing
-                      <span className="ml-2 rounded-full bg-zenora-purple/10 px-2 py-0.5 text-xs text-zenora-purple">
+                      <span className="absolute -top-3 right-0 rounded-full bg-zenora-purple px-2 py-0.5 text-xs text-white shadow-md">
                         Save 17%
                       </span>
                     </TabsTrigger>
@@ -234,60 +255,88 @@ const Upgrade = () => {
                 </Tabs>
               </div>
               
-              <div className="grid md:grid-cols-3 gap-8">
+              <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
                 {plans.map((plan) => (
-                  <Card key={plan.id} className={`relative ${plan.popular ? 'border-zenora-purple ring-2 ring-zenora-purple' : ''}`}>
+                  <div 
+                    key={plan.id} 
+                    className={cn(
+                      "relative rounded-2xl overflow-hidden transition-all duration-300 group hover:shadow-xl", 
+                      plan.popular 
+                        ? "shadow-lg border-2 border-zenora-purple transform hover:-translate-y-1" 
+                        : "shadow-md border border-gray-200 dark:border-gray-800"
+                    )}
+                  >
                     {plan.popular && (
-                      <div className="absolute top-0 right-0 bg-zenora-purple text-white py-1 px-3 text-sm font-medium rounded-bl-lg rounded-tr-lg">
+                      <div className="absolute top-0 right-0 bg-zenora-purple text-white py-2 px-4 text-sm font-medium rounded-bl-xl z-10">
                         Most Popular
                       </div>
                     )}
-                    <CardHeader>
-                      <CardTitle>{plan.name}</CardTitle>
-                      <CardDescription>{plan.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="mb-4">
-                        <span className="text-3xl font-bold">{plan.price[billingInterval]}</span>
-                        <span className="text-muted-foreground">/{billingInterval}</span>
-                        {billingInterval === 'year' && (
-                          <p className="text-sm text-zenora-purple mt-1">Save {plan.savings} with annual billing</p>
-                        )}
+                    <div className={cn(
+                      "p-1",
+                      plan.popular ? "bg-zenora-gradient" : ""
+                    )}>
+                      <div className="bg-white dark:bg-zenora-dark rounded-xl p-8">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className={cn(
+                            "rounded-full w-10 h-10 flex items-center justify-center",
+                            plan.popular ? "bg-zenora-purple/10" : "bg-gray-100 dark:bg-gray-800"
+                          )}>
+                            {plan.icon}
+                          </div>
+                          <h3 className="text-2xl font-bold">{plan.name}</h3>
+                        </div>
+                        
+                        <div className="mb-6">
+                          <div className="flex items-end">
+                            <span className="text-4xl font-extrabold">{plan.price[billingInterval]}</span>
+                            <span className="text-muted-foreground ml-2 mb-1">/{billingInterval}</span>
+                          </div>
+                          {billingInterval === 'year' && (
+                            <p className="text-sm text-zenora-purple mt-1">
+                              Just {plan.pricePerMonth.year}/mo, billed annually
+                            </p>
+                          )}
+                        </div>
+                        
+                        <p className="text-muted-foreground mb-6">{plan.description}</p>
+                        
+                        <ul className="space-y-4 mb-8">
+                          {plan.features.map((feature, index) => (
+                            <li key={index} className="flex items-start">
+                              <Check className={cn(
+                                "h-5 w-5 shrink-0 mr-2 mt-0.5",
+                                plan.popular ? "text-zenora-purple" : "text-green-500"
+                              )} />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        
+                        <ZenoraButton 
+                          className="w-full" 
+                          variant={plan.popular ? "default" : "outline"}
+                          onClick={() => handleSelectPlan(plan.id)}
+                          disabled={
+                            createCheckoutSession.isPending || 
+                            (isSubscriptionActive && subscription?.plan_type === plan.id)
+                          }
+                          animation={plan.popular ? "glow" : "none"}
+                        >
+                          {isSubscriptionActive && subscription?.plan_type === plan.id
+                            ? 'Current Plan'
+                            : createCheckoutSession.isPending
+                              ? 'Processing...'
+                              : 'Select Plan'}
+                        </ZenoraButton>
                       </div>
-                      
-                      <ul className="space-y-2 mb-6">
-                        {plan.features.map((feature, index) => (
-                          <li key={index} className="flex items-start">
-                            <Check className="h-5 w-5 text-zenora-purple shrink-0 mr-2" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                    <CardFooter>
-                      <ZenoraButton 
-                        className="w-full" 
-                        variant={plan.popular ? "default" : "outline"}
-                        onClick={() => handleSelectPlan(plan.id)}
-                        disabled={
-                          createCheckoutSession.isPending || 
-                          (isSubscriptionActive && subscription?.plan_type === plan.id)
-                        }
-                      >
-                        {isSubscriptionActive && subscription?.plan_type === plan.id
-                          ? 'Current Plan'
-                          : createCheckoutSession.isPending
-                            ? 'Processing...'
-                            : 'Select Plan'}
-                      </ZenoraButton>
-                    </CardFooter>
-                  </Card>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
             
             {/* FAQs */}
-            <div className="mt-12">
+            <div className="mt-16">
               <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
               
               <div className="space-y-4">
