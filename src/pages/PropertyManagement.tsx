@@ -180,17 +180,18 @@ const PropertyManagement = () => {
             </div>
           </div>
           
-          {/* Pricing section with updated centering */}
+          {/* Pricing section - UPDATED to show cards in a row instead of a column */}
           <div className="mb-20">
             <h2 className="text-3xl font-bold text-center mb-10">Pricing Plans</h2>
             <p className="text-muted-foreground mb-8 text-center max-w-3xl mx-auto">
               Choose the perfect plan for your property management needs with transparent, all-inclusive pricing.
             </p>
             
-            <div className="flex flex-col items-center gap-8 max-w-md mx-auto">
-              <div className="relative group w-full">
+            {/* Updated this section to use grid with 4 columns on larger screens */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
+                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800 h-full flex flex-col">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">Client Plan</h3>
@@ -206,7 +207,7 @@ const PropertyManagement = () => {
                     <span className="text-muted-foreground">/year</span>
                   </div>
                   
-                  <ul className="space-y-3 mb-6">
+                  <ul className="space-y-3 mb-6 flex-grow">
                     <li className="flex items-start">
                       <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>All Zenora management features included</span>
@@ -225,7 +226,7 @@ const PropertyManagement = () => {
                     </li>
                   </ul>
                   
-                  <Link to={`/contact?plan=client`}>
+                  <Link to={`/contact?plan=client`} className="mt-auto">
                     <ZenoraButton
                       variant="default"
                       size="lg"
@@ -237,9 +238,9 @@ const PropertyManagement = () => {
                 </div>
               </div>
               
-              <div className="relative group w-full">
+              <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-pink-500 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
+                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800 h-full flex flex-col">
                   <div className="absolute -top-3 left-4 bg-gradient-to-r from-amber-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-full">
                     SAVE $500
                   </div>
@@ -260,7 +261,7 @@ const PropertyManagement = () => {
                     <span className="text-sm text-muted-foreground line-through ml-2">$1,999</span>
                   </div>
                   
-                  <ul className="space-y-3 mb-6">
+                  <ul className="space-y-3 mb-6 flex-grow">
                     <li className="flex items-start">
                       <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>$500 off yearly base price</span>
@@ -279,7 +280,7 @@ const PropertyManagement = () => {
                     </li>
                   </ul>
                   
-                  <Link to={`/contact?plan=referral`}>
+                  <Link to={`/contact?plan=referral`} className="mt-auto">
                     <ZenoraButton
                       variant="default"
                       size="lg"
@@ -291,9 +292,9 @@ const PropertyManagement = () => {
                 </div>
               </div>
               
-              <div className="relative group w-full">
+              <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-teal-500 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
+                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800 h-full flex flex-col">
                   <div className="absolute -top-3 left-4 bg-gradient-to-r from-blue-600 to-teal-500 text-white px-3 py-1 text-xs font-bold rounded-full">
                     SAVE $500
                   </div>
@@ -314,7 +315,7 @@ const PropertyManagement = () => {
                     <span className="text-sm text-muted-foreground line-through ml-2">$1,999</span>
                   </div>
                   
-                  <ul className="space-y-3 mb-6">
+                  <ul className="space-y-3 mb-6 flex-grow">
                     <li className="flex items-start">
                       <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>$500 off yearly for transfers</span>
@@ -333,7 +334,7 @@ const PropertyManagement = () => {
                     </li>
                   </ul>
                   
-                  <Link to={`/contact?plan=transfer`}>
+                  <Link to={`/contact?plan=transfer`} className="mt-auto">
                     <ZenoraButton
                       variant="default"
                       size="lg"
@@ -345,9 +346,9 @@ const PropertyManagement = () => {
                 </div>
               </div>
               
-              <div className="relative group w-full">
+              <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-slate-600 to-gray-600 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
-                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
+                <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800 h-full flex flex-col">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-xl font-bold">Enterprise Plan</h3>
@@ -362,7 +363,7 @@ const PropertyManagement = () => {
                     <span className="text-xl font-semibold">Custom Pricing</span>
                   </div>
                   
-                  <ul className="space-y-3 mb-6">
+                  <ul className="space-y-3 mb-6 flex-grow">
                     <li className="flex items-start">
                       <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>Unlimited properties</span>
@@ -381,7 +382,7 @@ const PropertyManagement = () => {
                     </li>
                   </ul>
                   
-                  <Link to={`/contact?plan=enterprise`}>
+                  <Link to={`/contact?plan=enterprise`} className="mt-auto">
                     <ZenoraButton
                       variant="default"
                       size="lg"
