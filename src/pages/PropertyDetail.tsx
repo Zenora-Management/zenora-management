@@ -6,7 +6,7 @@ import { Building, ChevronLeft, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import PropertyForm from "@/components/properties/PropertyForm";
-import { Property } from "@/hooks/useProperties";
+import { Property } from "@/types/database";
 
 const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,7 +34,7 @@ const PropertyDetail = () => {
           throw error;
         }
         
-        setProperty(data as Property);
+        setProperty(data as unknown as Property);
       } catch (error: any) {
         console.error("Error fetching property:", error);
         setError(error.message || "Failed to load property");

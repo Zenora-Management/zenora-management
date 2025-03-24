@@ -43,9 +43,13 @@ const PropertyForm = ({ property, isEditing = false }: PropertyFormProps) => {
           ...formData
         });
       } else {
+        if (!user?.id) {
+          throw new Error("User must be logged in to create a property");
+        }
+        
         await createProperty.mutateAsync({
           ...formData,
-          owner_id: user?.id || ""
+          owner_id: user.id
         });
       }
       

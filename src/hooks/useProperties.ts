@@ -3,18 +3,9 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { Property } from '@/types/database';
 
-export type Property = {
-  id: string;
-  name: string;
-  address: string;
-  type: string;
-  units: number;
-  occupancy_rate: number;
-  status: string;
-  created_at?: string;
-  updated_at?: string;
-};
+export type { Property };
 
 export function useProperties() {
   const queryClient = useQueryClient();
@@ -32,13 +23,13 @@ export function useProperties() {
         throw error;
       }
       
-      return data as Property[];
+      return data as unknown as Property[];
     },
   });
   
   // Create a new property
   const createProperty = useMutation({
-    mutationFn: async (newProperty: Omit<Property, 'id'>) => {
+    mutationFn: async (newProperty: Omit<Property, 'id' | 'created_at' | 'updated_at'>) => {
       const { data, error } = await supabase
         .from('properties')
         .insert([newProperty])
@@ -48,7 +39,7 @@ export function useProperties() {
         throw error;
       }
       
-      return data[0] as Property;
+      return data[0] as unknown as Property;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
@@ -87,7 +78,7 @@ export function useProperties() {
         throw error;
       }
       
-      return data[0] as Property;
+      return data[0] as unknown as Property;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
