@@ -178,12 +178,12 @@ const PropertyManagement = () => {
             
             <div>
               <h2 className="text-3xl font-bold mb-10 text-center">Pricing Plans</h2>
-              <p className="text-muted-foreground mb-8 text-center max-w-lg mx-auto">
+              <p className="text-muted-foreground mb-8 text-center">
                 Choose the perfect plan for your property management needs with transparent, all-inclusive pricing.
               </p>
               
-              <div className="grid grid-cols-1 gap-8 max-w-2xl mx-auto">
-                <div className="relative group">
+              <div className="flex flex-col items-center gap-8">
+                <div className="relative group w-full max-w-md">
                   <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
                   <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
                     <div className="flex items-center justify-between mb-4">
@@ -232,7 +232,7 @@ const PropertyManagement = () => {
                   </div>
                 </div>
                 
-                <div className="relative group">
+                <div className="relative group w-full max-w-md">
                   <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-pink-500 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
                   <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
                     <div className="absolute -top-3 left-4 bg-gradient-to-r from-amber-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-full">
@@ -286,7 +286,7 @@ const PropertyManagement = () => {
                   </div>
                 </div>
                 
-                <div className="relative group">
+                <div className="relative group w-full max-w-md">
                   <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-teal-500 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
                   <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
                     <div className="absolute -top-3 left-4 bg-gradient-to-r from-blue-600 to-teal-500 text-white px-3 py-1 text-xs font-bold rounded-full">
@@ -340,7 +340,7 @@ const PropertyManagement = () => {
                   </div>
                 </div>
                 
-                <div className="relative group">
+                <div className="relative group w-full max-w-md">
                   <div className="absolute -inset-1 bg-gradient-to-r from-slate-600 to-gray-600 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300"></div>
                   <div className="relative bg-white dark:bg-zenora-dark rounded-xl p-6 shadow-xl border border-gray-100 dark:border-gray-800">
                     <div className="flex items-center justify-between mb-4">

@@ -37,6 +37,9 @@ const Contact = ({ selectedPlan }: ContactProps) => {
         case "enterprise":
           planName = "Enterprise Plan";
           break;
+        case "demo":
+          planName = "Demo Request";
+          break;
         default:
           planName = selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1);
       }
@@ -48,8 +51,10 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       
       // Show a toast notification
       toast({
-        title: "Plan Selected",
-        description: `You've selected the ${planName}. Please complete the form to proceed.`,
+        title: selectedPlan === "demo" ? "Demo Requested" : "Plan Selected",
+        description: selectedPlan === "demo" 
+          ? "You've requested a demo. Please complete the form to schedule." 
+          : `You've selected the ${planName}. Please complete the form to proceed.`,
         variant: "default",
       });
     }
@@ -159,7 +164,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   </div>
                 </div>
                 
-                {selectedPlan && (
+                {selectedPlan && selectedPlan !== "demo" && (
                   <div className="mt-8 p-4 bg-white/10 rounded-lg border border-white/20">
                     <h4 className="font-medium mb-2">Selected Plan Information</h4>
                     <div>
@@ -196,7 +201,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   <p className="text-white/80 mb-4">
                     See our AI-powered property management platform in action with a personalized demo.
                   </p>
-                  <Link to="/contact?subject=Request%20a%20Demo">
+                  <Link to="/contact?subject=demo">
                     <ZenoraButton 
                       variant="glass" 
                       size="lg" 
