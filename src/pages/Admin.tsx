@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -22,6 +23,14 @@ import {
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { authBypass } from "@/utils/auth-bypass";
 import { toast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -162,15 +171,34 @@ const Admin = () => {
               <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
             </button>
             
-            <div className="relative">
-              <button className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
-                <div className="h-8 w-8 rounded-full bg-zenora-gradient flex items-center justify-center text-white font-semibold">
-                  <ShieldCheck className="h-4 w-4" />
-                </div>
-                <span className="hidden sm:block text-sm font-medium">Admin</span>
-                <ChevronDown size={16} />
-              </button>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
+                  <div className="h-8 w-8 rounded-full bg-zenora-gradient flex items-center justify-center text-white font-semibold">
+                    <ShieldCheck className="h-4 w-4" />
+                  </div>
+                  <span className="hidden sm:block text-sm font-medium">Admin</span>
+                  <ChevronDown size={16} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Admin Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
@@ -279,6 +307,7 @@ const Admin = () => {
           </div>
         </aside>
 
+        {/* Main content with improved centering */}
         <main className={`flex-1 p-6 md:p-8 lg:p-10 transition-all duration-300 ${isSidebarOpen ? "md:ml-64" : ""}`}>
           {isTestMode && (
             <div className="mb-6 p-4 border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800 rounded-lg">
@@ -300,225 +329,227 @@ const Admin = () => {
             </div>
           )}
         
-          {activeTab === "dashboard" && (
-            <div className="space-y-6 animate-fade-in">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-zenora-purple/10 rounded-lg">
-                  <LayoutDashboard className="h-5 w-5 text-zenora-purple" />
-                </div>
-                <h2 className="text-xl font-semibold">Admin Dashboard</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { label: "Total Users", value: "128", change: "+12%" },
-                  { label: "Properties", value: "256", change: "+8%" },
-                  { label: "Reports Generated", value: "893", change: "+15%" },
-                  { label: "AI Analyses", value: "1,243", change: "+27%" }
-                ].map((stat, i) => (
-                  <div key={i} className="zenora-card p-6">
-                    <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
-                    <div className="flex items-end justify-between">
-                      <p className="text-3xl font-bold">{stat.value}</p>
-                      <p className="text-sm text-green-600">{stat.change}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="zenora-card p-6">
-                  <h3 className="text-lg font-medium mb-4">Recent Properties</h3>
-                  
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-3 px-2">Property</th>
-                          <th className="text-left py-3 px-2">Owner</th>
-                          <th className="text-left py-3 px-2">Date</th>
-                          <th className="text-left py-3 px-2">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {recentProperties.map((property) => (
-                          <tr 
-                            key={property.id} 
-                            className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-zenora-dark/50"
-                          >
-                            <td className="py-3 px-2 font-medium">{property.name}</td>
-                            <td className="py-3 px-2">{property.owner}</td>
-                            <td className="py-3 px-2">{new Date(property.date).toLocaleDateString()}</td>
-                            <td className="py-3 px-2">
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                property.status === "active"
-                                  ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                                  : property.status === "pending"
-                                  ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-                                  : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                              }`}>
-                                {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  
-                  <div className="mt-4 text-right">
-                    <Link to="/admin/properties">
-                      <ZenoraButton variant="outline" size="sm">View All Properties</ZenoraButton>
-                    </Link>
-                  </div>
-                </div>
-                
-                <div className="zenora-card p-6">
-                  <h3 className="text-lg font-medium mb-4">Recent Users</h3>
-                  
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-3 px-2">User</th>
-                          <th className="text-left py-3 px-2">Joined</th>
-                          <th className="text-left py-3 px-2">Properties</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {recentUsers.map((user) => (
-                          <tr 
-                            key={user.id} 
-                            className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-zenora-dark/50"
-                          >
-                            <td className="py-3 px-2">
-                              <div>
-                                <div className="font-medium">{user.name}</div>
-                                <div className="text-xs text-muted-foreground">{user.email}</div>
-                              </div>
-                            </td>
-                            <td className="py-3 px-2">{new Date(user.joined).toLocaleDateString()}</td>
-                            <td className="py-3 px-2">{user.properties}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  
-                  <div className="mt-4 text-right">
-                    <Link to="/admin/users">
-                      <ZenoraButton variant="outline" size="sm">View All Users</ZenoraButton>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="zenora-card p-6">
-                <h3 className="text-lg font-medium mb-4">System Status</h3>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div className="p-4 bg-gray-50 dark:bg-zenora-dark/30 rounded-lg">
-                    <div className="flex justify-between items-center mb-2">
-                      <p className="font-medium">AI Engine</p>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                        Operational
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Last updated: {new Date().toLocaleTimeString()}
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 bg-gray-50 dark:bg-zenora-dark/30 rounded-lg">
-                    <div className="flex justify-between items-center mb-2">
-                      <p className="font-medium">Database</p>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                        Operational
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Load: 32%
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 bg-gray-50 dark:bg-zenora-dark/30 rounded-lg">
-                    <div className="flex justify-between items-center mb-2">
-                      <p className="font-medium">API Services</p>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                        Operational
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Response time: 86ms
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {activeTab === "properties" && (
-            <div className="space-y-6 animate-fade-in">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
+          <div className="w-full mx-auto max-w-6xl">
+            {activeTab === "dashboard" && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 bg-zenora-purple/10 rounded-lg">
-                    <Home className="h-5 w-5 text-zenora-purple" />
+                    <LayoutDashboard className="h-5 w-5 text-zenora-purple" />
                   </div>
-                  <h2 className="text-xl font-semibold">Manage Properties</h2>
+                  <h2 className="text-xl font-semibold">Admin Dashboard</h2>
                 </div>
                 
-                <ZenoraButton size="sm">
-                  <Plus className="h-4 w-4 mr-2" /> Add Property
-                </ZenoraButton>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[
+                    { label: "Total Users", value: "128", change: "+12%" },
+                    { label: "Properties", value: "256", change: "+8%" },
+                    { label: "Reports Generated", value: "893", change: "+15%" },
+                    { label: "AI Analyses", value: "1,243", change: "+27%" }
+                  ].map((stat, i) => (
+                    <div key={i} className="zenora-card p-6">
+                      <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
+                      <div className="flex items-end justify-between">
+                        <p className="text-3xl font-bold">{stat.value}</p>
+                        <p className="text-sm text-green-600">{stat.change}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="zenora-card p-6">
+                    <h3 className="text-lg font-medium mb-4">Recent Properties</h3>
+                    
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="text-left py-3 px-2">Property</th>
+                            <th className="text-left py-3 px-2">Owner</th>
+                            <th className="text-left py-3 px-2">Date</th>
+                            <th className="text-left py-3 px-2">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {recentProperties.map((property) => (
+                            <tr 
+                              key={property.id} 
+                              className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-zenora-dark/50"
+                            >
+                              <td className="py-3 px-2 font-medium">{property.name}</td>
+                              <td className="py-3 px-2">{property.owner}</td>
+                              <td className="py-3 px-2">{new Date(property.date).toLocaleDateString()}</td>
+                              <td className="py-3 px-2">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  property.status === "active"
+                                    ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                                    : property.status === "pending"
+                                    ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                    : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                                }`}>
+                                  {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <div className="mt-4 text-right">
+                      <Link to="/admin/properties">
+                        <ZenoraButton variant="outline" size="sm">View All Properties</ZenoraButton>
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  <div className="zenora-card p-6">
+                    <h3 className="text-lg font-medium mb-4">Recent Users</h3>
+                    
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="text-left py-3 px-2">User</th>
+                            <th className="text-left py-3 px-2">Joined</th>
+                            <th className="text-left py-3 px-2">Properties</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {recentUsers.map((user) => (
+                            <tr 
+                              key={user.id} 
+                              className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-zenora-dark/50"
+                            >
+                              <td className="py-3 px-2">
+                                <div>
+                                  <div className="font-medium">{user.name}</div>
+                                  <div className="text-xs text-muted-foreground">{user.email}</div>
+                                </div>
+                              </td>
+                              <td className="py-3 px-2">{new Date(user.joined).toLocaleDateString()}</td>
+                              <td className="py-3 px-2">{user.properties}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <div className="mt-4 text-right">
+                      <Link to="/admin/users">
+                        <ZenoraButton variant="outline" size="sm">View All Users</ZenoraButton>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="zenora-card p-6">
+                  <h3 className="text-lg font-medium mb-4">System Status</h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div className="p-4 bg-gray-50 dark:bg-zenora-dark/30 rounded-lg">
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="font-medium">AI Engine</p>
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                          Operational
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Last updated: {new Date().toLocaleTimeString()}
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 bg-gray-50 dark:bg-zenora-dark/30 rounded-lg">
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="font-medium">Database</p>
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                          Operational
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Load: 32%
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 bg-gray-50 dark:bg-zenora-dark/30 rounded-lg">
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="font-medium">API Services</p>
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                          Operational
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Response time: 86ms
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              
-              <div className="zenora-card p-6">
-                <p className="text-muted-foreground text-center py-8">
-                  Properties management interface would be displayed here
-                </p>
+            )}
+            
+            {activeTab === "properties" && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-zenora-purple/10 rounded-lg">
+                      <Home className="h-5 w-5 text-zenora-purple" />
+                    </div>
+                    <h2 className="text-xl font-semibold">Manage Properties</h2>
+                  </div>
+                  
+                  <ZenoraButton size="sm">
+                    <Plus className="h-4 w-4 mr-2" /> Add Property
+                  </ZenoraButton>
+                </div>
+                
+                <div className="zenora-card p-6">
+                  <p className="text-muted-foreground text-center py-8">
+                    Properties management interface would be displayed here
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
-          
-          {activeTab === "users" && (
-            <div className="space-y-6 animate-fade-in">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
+            )}
+            
+            {activeTab === "users" && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-zenora-purple/10 rounded-lg">
+                      <Users className="h-5 w-5 text-zenora-purple" />
+                    </div>
+                    <h2 className="text-xl font-semibold">Manage Users</h2>
+                  </div>
+                  
+                  <ZenoraButton size="sm">
+                    <Plus className="h-4 w-4 mr-2" /> Add User
+                  </ZenoraButton>
+                </div>
+                
+                <div className="zenora-card p-6">
+                  <p className="text-muted-foreground text-center py-8">
+                    User management interface would be displayed here
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            {activeTab === "reports" && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 bg-zenora-purple/10 rounded-lg">
-                    <Users className="h-5 w-5 text-zenora-purple" />
+                    <FileText className="h-5 w-5 text-zenora-purple" />
                   </div>
-                  <h2 className="text-xl font-semibold">Manage Users</h2>
+                  <h2 className="text-xl font-semibold">Report Management</h2>
                 </div>
                 
-                <ZenoraButton size="sm">
-                  <Plus className="h-4 w-4 mr-2" /> Add User
-                </ZenoraButton>
-              </div>
-              
-              <div className="zenora-card p-6">
-                <p className="text-muted-foreground text-center py-8">
-                  User management interface would be displayed here
-                </p>
-              </div>
-            </div>
-          )}
-          
-          {activeTab === "reports" && (
-            <div className="space-y-6 animate-fade-in">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-zenora-purple/10 rounded-lg">
-                  <FileText className="h-5 w-5 text-zenora-purple" />
+                <div className="zenora-card p-6">
+                  <p className="text-muted-foreground text-center py-8">
+                    Reports management interface would be displayed here
+                  </p>
                 </div>
-                <h2 className="text-xl font-semibold">Report Management</h2>
               </div>
-              
-              <div className="zenora-card p-6">
-                <p className="text-muted-foreground text-center py-8">
-                  Reports management interface would be displayed here
-                </p>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </main>
       </div>
     </div>
@@ -526,4 +557,3 @@ const Admin = () => {
 };
 
 export default Admin;
-

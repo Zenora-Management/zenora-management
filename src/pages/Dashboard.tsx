@@ -24,6 +24,14 @@ import ReportGenerator from "@/components/dashboard/ReportGenerator";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { authBypass } from "@/utils/auth-bypass";
 import { toast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -115,15 +123,34 @@ const Dashboard = () => {
               <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
             </button>
             
-            <div className="relative">
-              <button className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
-                <div className="h-8 w-8 rounded-full bg-zenora-gradient flex items-center justify-center text-white font-semibold">
-                  <Building className="h-4 w-4" />
-                </div>
-                <span className="hidden sm:block text-sm font-medium">John Doe</span>
-                <ChevronDown size={16} />
-              </button>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zenora-dark/50">
+                  <div className="h-8 w-8 rounded-full bg-zenora-gradient flex items-center justify-center text-white font-semibold">
+                    <Building className="h-4 w-4" />
+                  </div>
+                  <span className="hidden sm:block text-sm font-medium">John Doe</span>
+                  <ChevronDown size={16} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
@@ -248,7 +275,10 @@ const Dashboard = () => {
             </div>
           )}
           
-          {renderContent()}
+          {/* Ensure content is centered properly */}
+          <div className="w-full mx-auto max-w-6xl">
+            {renderContent()}
+          </div>
         </main>
       </div>
     </div>
