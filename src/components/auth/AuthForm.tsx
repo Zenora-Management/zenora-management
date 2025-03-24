@@ -1,9 +1,9 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Eye, EyeOff, Lock, Mail, User, Building, ShieldCheck } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 type AuthMode = "login" | "signup";
 type UserType = "user" | "admin";
@@ -14,8 +14,7 @@ interface AuthFormProps {
 }
 
 const AuthForm = ({ mode, userType }: AuthFormProps) => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const { signIn, signUp, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -29,26 +28,18 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     
-    // Simulate authentication process
-    setTimeout(() => {
-      setLoading(false);
-      
-      // Show success toast
-      toast({
-        title: mode === "login" ? "Welcome back!" : "Account created!",
-        description: mode === "login" 
-          ? `You've successfully signed in as a ${userType === "admin" ? "administrator" : "property owner"}.` 
-          : "Your account has been created successfully.",
-        variant: "default",
-      });
-      
-      // Redirect to appropriate dashboard based on user type
-      navigate(userType === "admin" ? "/admin" : "/dashboard");
-    }, 1500);
+    try {
+      if (mode === "login") {
+        await signIn(formData.email, formData.password);
+      } else {
+        await signUp(formData.email, formData.password, formData.name);
+      }
+    } catch (error) {
+      console.error("Authentication error:", error);
+    }
   };
   
   const togglePasswordVisibility = () => {

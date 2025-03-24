@@ -22,8 +22,7 @@ import AIRentAnalysis from "@/components/dashboard/AIRentAnalysis";
 import PropertyList from "@/components/dashboard/PropertyList";
 import ReportGenerator from "@/components/dashboard/ReportGenerator";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { authBypass } from "@/utils/auth-bypass";
-import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,43 +34,10 @@ import {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isTestMode, setIsTestMode] = useState(false);
-
-  // Check if user is authenticated
-  useEffect(() => {
-    const checkAuth = () => {
-      // In a real app, this would check an actual auth token
-      // For now, we're allowing access if bypass is enabled
-      const isBypassEnabled = authBypass.isEnabled();
-      setIsTestMode(isBypassEnabled);
-      
-      if (!isBypassEnabled) {
-        // Redirect to login if not in bypass mode
-        // This would normally check for a valid auth token
-        toast({
-          title: "Authentication required",
-          description: "Please log in to access the dashboard.",
-          variant: "destructive",
-        });
-        navigate('/login');
-      } else if (authBypass.isAdmin()) {
-        // If they're an admin, redirect them to the admin dashboard
-        navigate('/admin');
-      }
-    };
-    
-    checkAuth();
-  }, [navigate]);
-
-  const handleLogout = () => {
-    // Disable bypass if it was enabled
-    authBypass.disable();
-    // In a real app, this would handle authentication logout
-    navigate("/");
-  };
 
   // Render the appropriate component based on the active tab
   const renderContent = () => {
@@ -111,13 +77,6 @@ const Dashboard = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            {isTestMode && (
-              <div className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs font-medium flex items-center">
-                <AlertTriangle size={12} className="mr-1" />
-                Property Owner Mode
-              </div>
-            )}
-            
             <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zenora-dark/50 relative">
               <Bell size={20} />
               <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
@@ -129,7 +88,9 @@ const Dashboard = () => {
                   <div className="h-8 w-8 rounded-full bg-zenora-gradient flex items-center justify-center text-white font-semibold">
                     <Building className="h-4 w-4" />
                   </div>
-                  <span className="hidden sm:block text-sm font-medium">John Doe</span>
+                  <span className="hidden sm:block text-sm font-medium">
+                    {user?.email?.split('@')[0] || 'User'}
+                  </span>
                   <ChevronDown size={16} />
                 </button>
               </DropdownMenuTrigger>
@@ -145,7 +106,7 @@ const Dashboard = () => {
                   <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
+                <DropdownMenuItem onClick={() => signOut()}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
@@ -225,7 +186,7 @@ const Dashboard = () => {
                 </Link>
                 
                 <button 
-                  onClick={handleLogout}
+                  onClick={() => signOut()}
                   className="flex items-center w-full px-3 py-2 rounded-md text-sm text-foreground hover:bg-gray-100 dark:hover:bg-zenora-dark/50"
                 >
                   <LogOut className="mr-3 h-5 w-5" />
@@ -255,26 +216,6 @@ const Dashboard = () => {
 
         {/* Main content */}
         <main className={`flex-1 p-6 md:p-8 lg:p-10 transition-all duration-300 ${isSidebarOpen ? "md:ml-64" : ""}`}>
-          {isTestMode && (
-            <div className="mb-6 p-4 border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800 rounded-lg">
-              <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 mb-2">
-                <AlertTriangle size={18} />
-                <h2 className="font-semibold">Test Mode Active</h2>
-              </div>
-              <p className="text-sm text-amber-700 dark:text-amber-400">
-                You're viewing this dashboard in test mode. All data is simulated.
-              </p>
-              <div className="mt-2">
-                <button 
-                  onClick={handleLogout} 
-                  className="text-xs text-amber-800 dark:text-amber-300 underline hover:no-underline"
-                >
-                  Exit Test Mode
-                </button>
-              </div>
-            </div>
-          )}
-          
           {/* Ensure content is centered properly */}
           <div className="w-full mx-auto max-w-6xl">
             {renderContent()}
