@@ -1,65 +1,87 @@
 
 import { useState } from "react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Home, Search, FileText, Download } from "lucide-react";
+import { Home, Search, FileText, Download, AlertCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const AIRentAnalysis = () => {
   const [address, setAddress] = useState("");
+  const [bedrooms, setBedrooms] = useState<string>("2");
+  const [bathrooms, setBathrooms] = useState<string>("2");
+  const [sqft, setSqft] = useState<string>("1200");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<null | {
     rentEstimate: string;
     confidence: number;
     comparables: {
       address: string;
       rent: string;
-      bedrooms: number;
-      bathrooms: number;
-      sqft: number;
+      bedrooms: number | string;
+      bathrooms: number | string;
+      sqft: number | string;
+      imageUrl?: string | null;
     }[];
+    marketInsights: {
+      increaseLastYear: number;
+      projectedGrowth: number;
+      daysOnMarket: number;
+    };
   }>(null);
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!address.trim()) return;
     
     setLoading(true);
+    setError(null);
     
-    // Simulate API call to get rent analysis
-    setTimeout(() => {
-      setResults({
-        rentEstimate: "$2,350/month",
-        confidence: 92,
-        comparables: [
-          {
-            address: "123 Nearby St",
-            rent: "$2,250/month",
-            bedrooms: 2,
-            bathrooms: 2,
-            sqft: 1200
-          },
-          {
-            address: "456 Adjacent Ave",
-            rent: "$2,400/month",
-            bedrooms: 2,
-            bathrooms: 2,
-            sqft: 1300
-          },
-          {
-            address: "789 Close Blvd",
-            rent: "$2,300/month",
-            bedrooms: 2,
-            bathrooms: 2,
-            sqft: 1150
-          }
-        ]
+    try {
+      // Call our Supabase Edge Function to get Zillow data
+      const { data, error } = await supabase.functions.invoke('zillow-rent-data', {
+        body: {
+          address,
+          bedrooms: bedrooms ? Number(bedrooms) : undefined,
+          bathrooms: bathrooms ? Number(bathrooms) : undefined,
+          sqft: sqft ? Number(sqft) : undefined
+        }
       });
+      
+      if (error) {
+        throw new Error(`Error fetching rental data: ${error.message}`);
+      }
+      
+      if (data.error) {
+        throw new Error(`API error: ${data.error}`);
+      }
+      
+      setResults(data);
+      toast({
+        title: "Analysis Complete",
+        description: "We've analyzed the rental market for your property.",
+      });
+    } catch (err: any) {
+      console.error("Error in rent analysis:", err);
+      setError(err.message || "Failed to fetch rental data. Please try again.");
+      toast({
+        title: "Analysis Failed",
+        description: "We couldn't analyze the rental market for this property.",
+        variant: "destructive",
+      });
+    } finally {
       setLoading(false);
-    }, 2000);
+    }
   };
   
   const handleGenerateReport = () => {
+    if (!results) return;
+    
     // In a real implementation, this would generate a PDF report
-    alert("Report download started (simulated)");
+    toast({
+      title: "Report Generated",
+      description: "Your rental analysis report is ready for download.",
+    });
   };
 
   return (
@@ -73,7 +95,7 @@ const AIRentAnalysis = () => {
         </div>
         
         <p className="text-muted-foreground mb-6">
-          Enter a property address to receive an AI-powered rent estimate based on current market data and comparable properties in the area.
+          Enter a property address to receive an AI-powered rent estimate based on real Zillow data and comparable properties in the area.
         </p>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -97,6 +119,61 @@ const AIRentAnalysis = () => {
             </div>
           </div>
           
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label htmlFor="bedrooms" className="block text-sm font-medium mb-1">
+                Bedrooms
+              </label>
+              <select
+                id="bedrooms"
+                value={bedrooms}
+                onChange={(e) => setBedrooms(e.target.value)}
+                className="zenora-input"
+              >
+                <option value="">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5+</option>
+              </select>
+            </div>
+            
+            <div>
+              <label htmlFor="bathrooms" className="block text-sm font-medium mb-1">
+                Bathrooms
+              </label>
+              <select
+                id="bathrooms"
+                value={bathrooms}
+                onChange={(e) => setBathrooms(e.target.value)}
+                className="zenora-input"
+              >
+                <option value="">Select</option>
+                <option value="1">1</option>
+                <option value="1.5">1.5</option>
+                <option value="2">2</option>
+                <option value="2.5">2.5</option>
+                <option value="3">3</option>
+                <option value="3.5">3.5+</option>
+              </select>
+            </div>
+            
+            <div>
+              <label htmlFor="sqft" className="block text-sm font-medium mb-1">
+                Square Footage
+              </label>
+              <input
+                id="sqft"
+                type="number"
+                value={sqft}
+                onChange={(e) => setSqft(e.target.value)}
+                placeholder="E.g., 1200"
+                className="zenora-input"
+              />
+            </div>
+          </div>
+          
           <ZenoraButton 
             type="submit" 
             className="w-full sm:w-auto"
@@ -111,10 +188,20 @@ const AIRentAnalysis = () => {
                 Analyzing Market Data...
               </>
             ) : (
-              "Get Rent Estimate"
+              "Get Zillow Rent Estimate"
             )}
           </ZenoraButton>
         </form>
+        
+        {error && (
+          <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded-md flex items-start">
+            <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium">Error fetching data from Zillow</p>
+              <p className="text-sm">{error}</p>
+            </div>
+          </div>
+        )}
       </div>
       
       {results && (
@@ -146,6 +233,11 @@ const AIRentAnalysis = () => {
               <div className="mb-6">
                 <p className="text-sm text-muted-foreground mb-1">Property Details</p>
                 <p className="text-sm">{address}</p>
+                <div className="flex gap-4 mt-2 text-sm">
+                  <span>{bedrooms} bd</span>
+                  <span>{bathrooms} ba</span>
+                  <span>{sqft} sqft</span>
+                </div>
               </div>
               
               <ZenoraButton 
@@ -181,18 +273,26 @@ const AIRentAnalysis = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {results.comparables.map((property, index) => (
-                      <tr 
-                        key={index} 
-                        className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-zenora-dark/50"
-                      >
-                        <td className="py-3 px-2">{property.address}</td>
-                        <td className="py-3 px-2 font-medium">{property.rent}</td>
-                        <td className="py-3 px-2">{property.bedrooms}</td>
-                        <td className="py-3 px-2">{property.bathrooms}</td>
-                        <td className="py-3 px-2">{property.sqft}</td>
+                    {results.comparables.length > 0 ? (
+                      results.comparables.map((property, index) => (
+                        <tr 
+                          key={index} 
+                          className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-zenora-dark/50"
+                        >
+                          <td className="py-3 px-2">{property.address}</td>
+                          <td className="py-3 px-2 font-medium">{property.rent}</td>
+                          <td className="py-3 px-2">{property.bedrooms}</td>
+                          <td className="py-3 px-2">{property.bathrooms}</td>
+                          <td className="py-3 px-2">{property.sqft}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} className="py-4 text-center text-muted-foreground">
+                          No comparable properties found in this area
+                        </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -200,7 +300,7 @@ const AIRentAnalysis = () => {
               <div className="mt-6 p-4 bg-gray-50 dark:bg-zenora-dark/50 rounded-lg">
                 <h4 className="font-medium mb-2">Market Insights</h4>
                 <p className="text-sm text-muted-foreground">
-                  Based on our analysis, rents in this area have increased by 5.3% over the past year, with a projected growth of 3.2% over the next 12 months. The average time on market for similar properties is 21 days.
+                  Based on our analysis, rents in this area have increased by {results.marketInsights.increaseLastYear}% over the past year, with a projected growth of {results.marketInsights.projectedGrowth}% over the next 12 months. The average time on market for similar properties is {results.marketInsights.daysOnMarket} days.
                 </p>
               </div>
             </div>

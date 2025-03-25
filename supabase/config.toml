@@ -46,3 +46,6 @@ verify_jwt = false
 
 [functions.stripe-manage-subscription]
 verify_jwt = true
+
+[functions.zillow-rent-data]
+verify_jwt = false
