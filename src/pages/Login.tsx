@@ -15,7 +15,7 @@ const Login = () => {
   const [isTestEnvironment, setIsTestEnvironment] = useState(false);
   const [bypassClicks, setBypassClicks] = useState(0);
   const [showBypass, setShowBypass] = useState(false);
-  const [loginType, setLoginType] = useState<"user" | "admin">("user");
+  const [loginType, setLoginType] = useState<"regular" | "admin">("regular");
 
   // Check if it's a development/test environment
   useEffect(() => {
@@ -27,7 +27,7 @@ const Login = () => {
   }, []);
 
   // Handle bypass login for testing
-  const handleBypassLogin = (type: "user" | "admin") => {
+  const handleBypassLogin = (type: "regular" | "admin") => {
     if (authBypass.enable(type)) {
       navigate(type === "admin" ? "/admin" : "/dashboard");
     }
@@ -75,13 +75,13 @@ const Login = () => {
           
           <div className="animate-scale-in">
             {!isSignUp && (
-              <Tabs defaultValue="user" onValueChange={(value) => setLoginType(value as "user" | "admin")} className="w-full mb-6">
+              <Tabs defaultValue="regular" onValueChange={(value) => setLoginType(value as "regular" | "admin")} className="w-full mb-6">
                 <TabsList className="grid w-full grid-cols-2 mb-4">
-                  <TabsTrigger value="user">Property Owner</TabsTrigger>
+                  <TabsTrigger value="regular">Property Owner</TabsTrigger>
                   <TabsTrigger value="admin">Administrator</TabsTrigger>
                 </TabsList>
-                <TabsContent value="user">
-                  <AuthForm mode="login" userType="user" />
+                <TabsContent value="regular">
+                  <AuthForm mode="login" userType="regular" />
                 </TabsContent>
                 <TabsContent value="admin">
                   <AuthForm mode="login" userType="admin" />
@@ -90,7 +90,7 @@ const Login = () => {
             )}
             
             {isSignUp && (
-              <AuthForm mode="signup" userType="user" />
+              <AuthForm mode="signup" userType="regular" />
             )}
           </div>
           
@@ -102,7 +102,7 @@ const Login = () => {
                   <ZenoraButton
                     variant="outline"
                     size="sm"
-                    onClick={() => handleBypassLogin("user")}
+                    onClick={() => handleBypassLogin("regular")}
                     className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white"
                   >
                     Bypass as User

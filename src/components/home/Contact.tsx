@@ -72,14 +72,16 @@ const Contact = ({ selectedPlan }: ContactProps) => {
     
     try {
       // Send the form data to Supabase
-      const { error } = await supabase.from('contact_messages').insert([
-        {
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message
-        }
-      ]);
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject,
+            message: formData.message
+          }
+        ]);
       
       if (error) throw error;
       

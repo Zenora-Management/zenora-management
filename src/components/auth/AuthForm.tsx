@@ -48,34 +48,38 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   // Use the appropriate schema and initial values based on the mode
   const isSignup = mode === "signup";
   
-  // Define the form with conditional type
-  const form = isSignup
-    ? useForm<SignupFormValues>({
-        resolver: zodResolver(signupSchema),
-        defaultValues: {
-          email: "",
-          password: "",
-          companyCode: "",
-          fullName: "",
-        }
-      })
-    : useForm<LoginFormValues>({
-        resolver: zodResolver(loginSchema),
-        defaultValues: {
-          email: userType === "admin" ? ADMIN_EMAIL : "",
-          password: userType === "admin" ? ADMIN_PASSWORD : "",
-          companyCode: "",
-        }
-      });
+  // Define login form
+  const loginForm = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: userType === "admin" ? ADMIN_EMAIL : "",
+      password: userType === "admin" ? ADMIN_PASSWORD : "",
+      companyCode: "",
+    }
+  });
+
+  // Define signup form
+  const signupForm = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      companyCode: "",
+      fullName: "",
+    }
+  });
+  
+  // Use the appropriate form based on the mode
+  const form = isSignup ? signupForm : loginForm;
   
   // Auto-fill admin credentials if userType is admin
   useEffect(() => {
-    if (userType === "admin" && !autoFilledAdmin) {
-      form.setValue("email", ADMIN_EMAIL);
-      form.setValue("password", ADMIN_PASSWORD);
+    if (userType === "admin" && !autoFilledAdmin && !isSignup) {
+      loginForm.setValue("email", ADMIN_EMAIL);
+      loginForm.setValue("password", ADMIN_PASSWORD);
       setAutoFilledAdmin(true);
     }
-  }, [userType, form, autoFilledAdmin]);
+  }, [userType, loginForm, autoFilledAdmin, isSignup]);
   
   const onSubmit = async (values: LoginFormValues | SignupFormValues) => {
     try {
@@ -149,7 +153,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         
         {isSignup && (
           <FormField
-            control={form.control as any}
+            control={signupForm.control}
             name="fullName"
             render={({ field }) => (
               <FormItem>

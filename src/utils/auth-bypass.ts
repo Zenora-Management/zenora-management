@@ -9,7 +9,7 @@ const BYPASS_KEY = 'zenora_bypass_auth';
 const USER_TYPE_KEY = 'zenora_user_type';
 
 // Type for user roles
-type UserType = "user" | "admin";
+type UserType = "regular" | "admin";
 
 /**
  * Enables bypass login functionality for development and testing
@@ -17,10 +17,10 @@ type UserType = "user" | "admin";
 export const authBypass = {
   /**
    * Enable the bypass functionality with a specified user type
-   * @param userType The type of user to bypass as (user or admin)
+   * @param userType The type of user to bypass as (regular or admin)
    * @returns {boolean} Whether the bypass was successful
    */
-  enable: (userType: UserType = "user"): boolean => {
+  enable: (userType: UserType = "regular"): boolean => {
     if (!isDevelopment) {
       console.warn('Auth bypass attempted in production environment');
       return false;
@@ -64,10 +64,10 @@ export const authBypass = {
   
   /**
    * Get the current user type for this bypass session
-   * @returns {UserType} The user type (defaults to "user" if not set)
+   * @returns {UserType} The user type (defaults to "regular" if not set)
    */
   getUserType: (): UserType => {
-    return (sessionStorage.getItem(USER_TYPE_KEY) as UserType) || "user";
+    return (sessionStorage.getItem(USER_TYPE_KEY) as UserType) || "regular";
   },
   
   /**
@@ -83,7 +83,7 @@ export const authBypass = {
    * @param userType The type of user to bypass as when enabling
    * @returns {boolean} The new state (true = enabled, false = disabled)
    */
-  toggle: (userType: UserType = "user"): boolean => {
+  toggle: (userType: UserType = "regular"): boolean => {
     if (authBypass.isEnabled()) {
       authBypass.disable();
       return false;
