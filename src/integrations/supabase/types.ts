@@ -9,6 +9,77 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      client_settings: {
+        Row: {
+          client_id: string
+          created_at: string
+          show_ai_insights: boolean
+          show_documents: boolean
+          show_financials: boolean
+          show_maintenance: boolean
+          show_properties: boolean
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          show_ai_insights?: boolean
+          show_documents?: boolean
+          show_financials?: boolean
+          show_maintenance?: boolean
+          show_properties?: boolean
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          show_ai_insights?: boolean
+          show_documents?: boolean
+          show_financials?: boolean
+          show_maintenance?: boolean
+          show_properties?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_settings_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: true
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
@@ -36,6 +107,63 @@ export type Database = {
         }
         Relationships: []
       }
+      documents: {
+        Row: {
+          client_id: string
+          created_at: string
+          description: string | null
+          file_path: string
+          file_size: number
+          file_type: string
+          id: string
+          is_visible: boolean
+          name: string
+          property_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          description?: string | null
+          file_path: string
+          file_size: number
+          file_type: string
+          id?: string
+          is_visible?: boolean
+          name: string
+          property_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          description?: string | null
+          file_path?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          is_visible?: boolean
+          name?: string
+          property_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -62,6 +190,50 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      properties: {
+        Row: {
+          address: string
+          client_id: string
+          created_at: string
+          id: string
+          monthly_rent: number | null
+          name: string
+          status: string
+          units: number
+          updated_at: string
+        }
+        Insert: {
+          address: string
+          client_id: string
+          created_at?: string
+          id?: string
+          monthly_rent?: number | null
+          name: string
+          status?: string
+          units?: number
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          client_id?: string
+          created_at?: string
+          id?: string
+          monthly_rent?: number | null
+          name?: string
+          status?: string
+          units?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "properties_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
