@@ -11,6 +11,10 @@ const USER_TYPE_KEY = 'zenora_user_type';
 // Type for user roles
 type UserType = "regular" | "admin";
 
+// Subscriber system
+type Subscriber = (isEnabled: boolean) => void;
+const subscribers: Set<Subscriber> = new Set();
+
 /**
  * Enables bypass login functionality for development and testing
  */
@@ -30,6 +34,9 @@ export const authBypass = {
       variant: "default",
     });
     
+    // Notify subscribers
+    subscribers.forEach(subscriber => subscriber(true));
+    
     return true;
   },
   
@@ -45,6 +52,9 @@ export const authBypass = {
       description: "Bypass login has been disabled.",
       variant: "default",
     });
+    
+    // Notify subscribers
+    subscribers.forEach(subscriber => subscriber(false));
   },
   
   /**
@@ -83,5 +93,17 @@ export const authBypass = {
     } else {
       return authBypass.enable(userType);
     }
+  },
+  
+  /**
+   * Subscribe to changes in bypass state
+   * @param callback Function to call when bypass state changes
+   * @returns {Function} Unsubscribe function
+   */
+  subscribe: (callback: Subscriber): (() => void) => {
+    subscribers.add(callback);
+    return () => {
+      subscribers.delete(callback);
+    };
   }
 };

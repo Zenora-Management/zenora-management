@@ -18,7 +18,7 @@ const BypassButton = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsActive(authBypass.isActive());
+    setIsActive(authBypass.isEnabled());
     
     // Subscribe to changes
     const unsubscribe = authBypass.subscribe((active) => {
