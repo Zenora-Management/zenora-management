@@ -222,22 +222,22 @@ const Hero = () => {
             <motion.div 
               initial={{ opacity: 0, x: 20, y: 20 }}
               animate={{ opacity: 1, x: 0, y: 0 }}
-              transition={{ delay: 2.4, duration: 0.5 }}
+              transition={{ 
+                delay: 2.4, 
+                duration: 0.5,
+                y: {
+                  repeat: Infinity, 
+                  repeatDelay: 2,
+                  duration: 4
+                },
+                boxShadow: {
+                  repeat: Infinity, 
+                  repeatDelay: 2,
+                  duration: 4
+                }
+              }}
               className="absolute -top-4 -right-4 bg-white dark:bg-zenora-dark rounded-lg shadow-lg p-4 rotate-3"
               whileHover={{ scale: 1.05, rotate: 5 }}
-              animate={{ 
-                y: [0, -10, 0],
-                boxShadow: [
-                  "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-                  "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                  "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
-                ]
-              }}
-              transition={{ 
-                repeat: Infinity, 
-                repeatDelay: 2,
-                duration: 4 
-              }}
             >
               <div className="text-sm font-medium mb-1">Rent Analysis</div>
               <div className="text-xs text-muted-foreground">AI-recommended: $1,850/mo</div>
@@ -245,11 +245,9 @@ const Hero = () => {
             
             <motion.div 
               initial={{ opacity: 0, x: -20, y: -20 }}
-              animate={{ opacity: 1, x: 0, y: 0 }}
-              transition={{ delay: 2.6, duration: 0.5 }}
-              className="absolute bottom-12 -left-8 bg-white dark:bg-zenora-dark rounded-lg shadow-lg p-4 -rotate-6"
-              whileHover={{ scale: 1.05, rotate: -8 }}
               animate={{ 
+                opacity: 1, 
+                x: 0, 
                 y: [0, 10, 0],
                 boxShadow: [
                   "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
@@ -258,11 +256,23 @@ const Hero = () => {
                 ]
               }}
               transition={{ 
-                repeat: Infinity, 
-                repeatDelay: 3,
-                duration: 4,
-                delay: 1
+                delay: 2.6,
+                duration: 0.5,
+                y: {
+                  repeat: Infinity, 
+                  repeatDelay: 3,
+                  duration: 4,
+                  delay: 1
+                },
+                boxShadow: {
+                  repeat: Infinity, 
+                  repeatDelay: 3,
+                  duration: 4,
+                  delay: 1
+                }
               }}
+              className="absolute bottom-12 -left-8 bg-white dark:bg-zenora-dark rounded-lg shadow-lg p-4 -rotate-6"
+              whileHover={{ scale: 1.05, rotate: -8 }}
             >
               <div className="text-sm font-medium mb-1">Maintenance Alert</div>
               <div className="text-xs text-muted-foreground">Issue resolved in 24hrs</div>
