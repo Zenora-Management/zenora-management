@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Building, PieChart, User, HelpCircle, Zap } from "lucide-react";
+import { Building, PieChart, User, HelpCircle, Zap, Settings } from "lucide-react";
 
 const DashboardOverview = () => {
   return (
