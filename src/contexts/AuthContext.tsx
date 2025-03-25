@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -180,10 +181,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Step 2: After auth user is created, add user to clients table
       if (data.user) {
+        // Create client record with the user's information
         const clientData: InsertTables<'clients'> = {
           id: data.user.id,
           email: email,
-          full_name: fullName
+          full_name: fullName,
+          phone: null,
+          address: null
         };
 
         const { error: clientError } = await supabase
@@ -197,6 +201,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             description: "Your account was created but there was an issue setting up your profile. Please contact support.",
             variant: "destructive",
           });
+        } else {
+          console.log('Client record created successfully');
         }
       }
       

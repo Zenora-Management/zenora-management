@@ -1,3 +1,4 @@
+
 -- Create clients table to store user information
 CREATE TABLE IF NOT EXISTS public.clients (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
