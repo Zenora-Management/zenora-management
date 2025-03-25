@@ -50,7 +50,7 @@ function App() {
         
         {/* Protected routes - User Dashboard */}
         <Route
-          path="/dashboard/*"
+          path="/dashboard"
           element={
             <Auth>
               <Dashboard />
@@ -58,7 +58,10 @@ function App() {
           }
         />
         
-        {/* Protected routes that require membership */}
+        {/* Nested dashboard routes */}
+        <Route path="/dashboard/*" element={<Auth><Dashboard /></Auth>} />
+        
+        {/* Protected routes that require membership - using MembershipAuth */}
         <Route
           path="/dashboard/ai-rent-analysis"
           element={

@@ -1,5 +1,5 @@
 
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
@@ -95,9 +95,11 @@ const PremiumFeaturePaywall = ({ feature }: { feature: string }) => {
             <span>Financial Reporting</span>
           </li>
         </ul>
-        <ZenoraButton className="w-full sm:w-auto" href="/upgrade">
-          Upgrade Now
-        </ZenoraButton>
+        <Link to="/upgrade">
+          <ZenoraButton className="w-full sm:w-auto">
+            Upgrade Now
+          </ZenoraButton>
+        </Link>
       </div>
     </div>
   );
