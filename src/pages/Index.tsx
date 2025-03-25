@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -67,20 +66,6 @@ const Index = () => {
         
         <section id="features">
           <Features />
-          <motion.div 
-            className="text-center py-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link to="/features">
-              <ZenoraButton variant="outline" size="lg" className="group">
-                Explore All Features
-                <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </ZenoraButton>
-            </Link>
-          </motion.div>
         </section>
         
         <section id="about">

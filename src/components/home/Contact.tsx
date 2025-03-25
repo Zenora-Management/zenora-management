@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Mail, Phone, MapPin, Send, Calendar } from "lucide-react";
@@ -81,7 +80,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       console.log("Submitting contact form", formData);
       
       // Save to Supabase
-      const { error } = await supabase
+      const { error: supabaseError } = await supabase
         .from('contact_messages')
         .insert([
           {
@@ -92,7 +91,10 @@ const Contact = ({ selectedPlan }: ContactProps) => {
           }
         ]);
       
-      if (error) throw error;
+      if (supabaseError) {
+        console.error("Supabase error:", supabaseError);
+        throw new Error("Failed to save message to database");
+      }
       
       // Send email via edge function
       const isDemoRequest = selectedPlan === "demo" || formData.subject.toLowerCase().includes("demo");
@@ -114,14 +116,14 @@ const Contact = ({ selectedPlan }: ContactProps) => {
           }),
         }
       );
+
+      const responseData = await emailResponse.json();
       
       if (!emailResponse.ok) {
-        const errorData = await emailResponse.json();
-        console.error("Email API error response:", errorData);
-        throw new Error(errorData.error || "Failed to send email");
+        console.error("Email API error response:", responseData);
+        throw new Error(responseData.error || responseData.message || "Failed to send email");
       }
       
-      const responseData = await emailResponse.json();
       console.log("Email sent successfully:", responseData);
       
       // Show success message
@@ -144,9 +146,19 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       }, 5000);
     } catch (error) {
       console.error("Error sending message:", error);
+      
+      // Show a more detailed error message
+      let errorMessage = "There was a problem sending your message. ";
+      if (error.message.includes("database")) {
+        errorMessage += "We couldn't save your message. ";
+      } else if (error.message.includes("Gmail") || error.message.includes("email")) {
+        errorMessage += "We couldn't send the email notification. ";
+      }
+      errorMessage += "Please try again or contact us directly at zenoramgmt@gmail.com";
+      
       toast({
         title: "Error",
-        description: "There was a problem sending your message. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -298,10 +310,9 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   </p>
                   <a href="https://calendly.com/zenoramgmt/30min" target="_blank" rel="noopener noreferrer">
                     <ZenoraButton 
-                      variant="glass" 
+                      variant="default" 
                       size="lg" 
-                      className="w-full group"
-                      animation="glow"
+                      className="w-full group bg-zenora-gradient hover:opacity-90"
                     >
                       <Calendar className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" /> Book a Demo
                     </ZenoraButton>
@@ -446,7 +457,6 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                     size="lg" 
                     className="w-full sm:w-auto group"
                     disabled={isSubmitting}
-                    animation="glow"
                   >
                     {isSubmitting ? (
                       <>
