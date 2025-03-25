@@ -239,6 +239,7 @@ export type Database = {
         Row: {
           created_at: string
           current_period_end: string | null
+          has_access_permission: boolean
           id: string
           plan_interval: string
           plan_type: string
@@ -251,6 +252,7 @@ export type Database = {
         Insert: {
           created_at?: string
           current_period_end?: string | null
+          has_access_permission?: boolean
           id?: string
           plan_interval: string
           plan_type: string
@@ -263,6 +265,7 @@ export type Database = {
         Update: {
           created_at?: string
           current_period_end?: string | null
+          has_access_permission?: boolean
           id?: string
           plan_interval?: string
           plan_type?: string

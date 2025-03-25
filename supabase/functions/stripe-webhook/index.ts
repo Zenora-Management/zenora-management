@@ -82,7 +82,7 @@ serve(async (req) => {
             planInterval = "year";
           }
 
-          // Insert or update subscription record
+          // Insert or update subscription record with access permission enabled
           const { error } = await supabase
             .from("subscriptions")
             .upsert({
@@ -92,6 +92,7 @@ serve(async (req) => {
               plan_type: planType,
               plan_interval: planInterval,
               status: subscription.status,
+              has_access_permission: true, // Grant access with active subscription
               current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
               updated_at: new Date().toISOString(),
             }, { onConflict: "user_id" });
@@ -123,11 +124,15 @@ serve(async (req) => {
 
         const userId = subscriptionData.user_id;
 
+        // Set access permission based on subscription status
+        const hasAccess = subscription.status === 'active' || subscription.status === 'trialing';
+
         // Update subscription details
         const { error } = await supabase
           .from("subscriptions")
           .update({
             status: subscription.status,
+            has_access_permission: hasAccess,
             current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
             updated_at: new Date().toISOString(),
           })
@@ -159,11 +164,12 @@ serve(async (req) => {
 
         const userId = subscriptionData.user_id;
 
-        // Update subscription status
+        // Update subscription status and revoke access
         const { error } = await supabase
           .from("subscriptions")
           .update({
             status: "canceled",
+            has_access_permission: false, // Revoke access when subscription is canceled
             updated_at: new Date().toISOString(),
           })
           .eq("user_id", userId);

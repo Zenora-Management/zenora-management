@@ -21,8 +21,10 @@ import ContactPage from '@/pages/Contact';
 import EmailTestPage from '@/pages/EmailTest';
 import Dashboard from '@/pages/Dashboard';
 import Admin from '@/pages/Admin';
+import Upgrade from '@/pages/Upgrade';
 import Auth from '@/components/auth/Auth';
 import AdminAuth from '@/components/auth/AdminAuth';
+import MembershipAuth from '@/components/auth/MembershipAuth';
 import NotFound from '@/pages/NotFound';
 
 function App() {
@@ -44,6 +46,7 @@ function App() {
         <Route path="/careers" element={<Careers />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/email-test" element={<EmailTestPage />} />
+        <Route path="/upgrade" element={<Auth><Upgrade /></Auth>} />
         
         {/* Protected routes - User Dashboard */}
         <Route
@@ -52,6 +55,61 @@ function App() {
             <Auth>
               <Dashboard />
             </Auth>
+          }
+        />
+        
+        {/* Protected routes that require membership */}
+        <Route
+          path="/dashboard/ai-rent-analysis"
+          element={
+            <MembershipAuth>
+              <Dashboard />
+            </MembershipAuth>
+          }
+        />
+        
+        <Route
+          path="/dashboard/properties"
+          element={
+            <MembershipAuth>
+              <Dashboard />
+            </MembershipAuth>
+          }
+        />
+        
+        <Route
+          path="/dashboard/tenants"
+          element={
+            <MembershipAuth>
+              <Dashboard />
+            </MembershipAuth>
+          }
+        />
+        
+        <Route
+          path="/dashboard/documents"
+          element={
+            <MembershipAuth>
+              <Dashboard />
+            </MembershipAuth>
+          }
+        />
+        
+        <Route
+          path="/dashboard/financials"
+          element={
+            <MembershipAuth>
+              <Dashboard />
+            </MembershipAuth>
+          }
+        />
+        
+        <Route
+          path="/dashboard/reports"
+          element={
+            <MembershipAuth>
+              <Dashboard />
+            </MembershipAuth>
           }
         />
         

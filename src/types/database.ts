@@ -20,6 +20,7 @@ export interface Subscription {
   plan_type: string;
   plan_interval: string;
   status: string;
+  has_access_permission: boolean;
   current_period_end?: string;
   created_at: string;
   updated_at: string;

@@ -113,6 +113,9 @@ export function useSubscription() {
 
   // Check if subscription is active
   const isSubscriptionActive = subscription?.status === 'active' || subscription?.status === 'trialing';
+  
+  // Check if user has access permission
+  const hasAccessPermission = isSubscriptionActive && subscription?.has_access_permission;
 
   // Get subscription plan details
   const getPlanDetails = () => {
@@ -162,6 +165,30 @@ export function useSubscription() {
     }
   };
 
+  // Setup realtime subscription updates
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const channel = supabase
+      .channel('subscription-updates')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'subscriptions',
+        filter: `user_id=eq.${user.id}`
+      }, (payload) => {
+        console.log('Subscription update received:', payload);
+        queryClient.invalidateQueries({ queryKey: ['subscription', user.id] });
+      })
+      .subscribe((status) => {
+        console.log('Subscription realtime status:', status);
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, queryClient]);
+
   return {
     subscription,
     isLoading,
@@ -170,6 +197,7 @@ export function useSubscription() {
     createCheckoutSession,
     cancelSubscription,
     isSubscriptionActive,
+    hasAccessPermission,
     getPlanDetails
   };
 }
