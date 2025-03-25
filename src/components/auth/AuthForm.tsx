@@ -39,15 +39,20 @@ const signupSchema = z.object({
     .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
     .regex(/[0-9]/, { message: "Password must contain at least one number" }),
   confirmPassword: z.string(),
-  verificationCode: z.string().optional(),
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
 });
 
+// Define the verification schema for the second step
+const verificationSchema = z.object({
+  verificationCode: z.string().min(6, { message: "Please enter the 6-digit verification code" }),
+});
+
 // Define types based on the schemas
 type LoginFormValues = z.infer<typeof loginSchema>;
 type SignupFormValues = z.infer<typeof signupSchema>;
+type VerificationFormValues = z.infer<typeof verificationSchema>;
 
 const AuthForm = ({ mode, userType }: AuthFormProps) => {
   const { signIn, signUp, loading: authLoading } = useAuth();
@@ -56,7 +61,8 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   const [autoFilledAdmin, setAutoFilledAdmin] = useState(false);
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
-  const [showVerification, setShowVerification] = useState(false);
+  const [verificationStep, setVerificationStep] = useState(false);
+  const [tempUserData, setTempUserData] = useState<SignupFormValues | null>(null);
   const navigate = useNavigate();
   
   // Use the appropriate schema and initial values based on the mode
@@ -82,17 +88,24 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
       propertyAddress: "",
       password: "",
       confirmPassword: "",
+    }
+  });
+  
+  // Define verification form
+  const verificationForm = useForm<VerificationFormValues>({
+    resolver: zodResolver(verificationSchema),
+    defaultValues: {
       verificationCode: "",
     }
   });
   
-  // Use the appropriate form based on the mode
-  const form = isSignup ? signupForm : loginForm;
+  // Use the appropriate form based on the mode and step
+  const form = !isSignup ? loginForm : (verificationStep ? verificationForm : signupForm);
   
   // Reset form submission state when mode changes
   useEffect(() => {
     setFormSubmitting(false);
-    setShowVerification(false);
+    setVerificationStep(false);
     setVerificationSent(false);
   }, [mode, userType]);
   
@@ -109,22 +122,14 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   const isSubmitting = formSubmitting || authLoading;
 
   // Function to handle sending verification code
-  const handleSendVerificationCode = async () => {
+  const handleSendVerificationCode = async (phoneNumber: string) => {
     try {
-      // Validate the phone number field first
-      await signupForm.trigger('phoneNumber');
-      
-      if (signupForm.formState.errors.phoneNumber) {
-        return; // Don't proceed if there are validation errors
-      }
-      
       setFormSubmitting(true);
       
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setVerificationSent(true);
-      setShowVerification(true);
       
       toast({
         title: "Verification code sent",
@@ -150,50 +155,17 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     return true; // Assume address is valid for now
   };
   
-  const onSubmit = async (values: LoginFormValues | SignupFormValues) => {
-    // Prevent submission if already submitting
-    if (isSubmitting) {
-      return;
-    }
+  // Handle login submit
+  const onLoginSubmit = async (values: LoginFormValues) => {
+    if (isSubmitting) return;
     
     try {
       setFormSubmitting(true);
       
-      if (!isSignup) {
-        // Login flow
-        const loginValues = values as LoginFormValues;
-        console.log(`Submitting login with userType=${userType}, email=${loginValues.email}`);
-        
-        // Important: Pass isAdmin parameter based on userType
-        await signIn(
-          loginValues.email, 
-          loginValues.password, 
-          userType === "admin"
-        );
-      } else {
-        // Signup flow
-        const signupValues = values as SignupFormValues;
-        
-        // Verify address before signup
-        const isAddressValid = await verifyAddress(signupValues.propertyAddress);
-        if (!isAddressValid) {
-          toast({
-            title: "Invalid address",
-            description: "The property address you entered could not be verified",
-            variant: "destructive",
-          });
-          setFormSubmitting(false);
-          return;
-        }
-        
-        await signUp(
-          signupValues.email, 
-          signupValues.password, 
-          signupValues.fullName, 
-          signupValues.phoneNumber, 
-          signupValues.propertyAddress
-        );
-      }
+      console.log(`Submitting login with userType=${userType}, email=${values.email}`);
+      
+      // Important: Pass isAdmin parameter based on userType
+      await signIn(values.email, values.password, userType === "admin");
     } catch (error) {
       console.error("Authentication error:", error);
       toast({
@@ -205,12 +177,101 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
       setFormSubmitting(false);
     }
   };
+  
+  // Handle signup submit (first step)
+  const onSignupSubmit = async (values: SignupFormValues) => {
+    if (isSubmitting) return;
+    
+    try {
+      setFormSubmitting(true);
+      
+      // Verify address before proceeding
+      const isAddressValid = await verifyAddress(values.propertyAddress);
+      if (!isAddressValid) {
+        toast({
+          title: "Invalid address",
+          description: "The property address you entered could not be verified",
+          variant: "destructive",
+        });
+        setFormSubmitting(false);
+        return;
+      }
+      
+      // Store form values for later use
+      setTempUserData(values);
+      
+      // Send verification code and move to next step
+      await handleSendVerificationCode(values.phoneNumber);
+      setVerificationStep(true);
+      
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast({
+        title: "Signup failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setFormSubmitting(false);
+    }
+  };
+  
+  // Handle verification submit (second step)
+  const onVerificationSubmit = async (values: VerificationFormValues) => {
+    if (isSubmitting || !tempUserData) return;
+    
+    try {
+      setFormSubmitting(true);
+      
+      // In a real implementation, you would verify the code here
+      console.log("Verifying code:", values.verificationCode);
+      
+      // Proceed with actual signup using stored data
+      await signUp(
+        tempUserData.email,
+        tempUserData.password,
+        tempUserData.fullName,
+        tempUserData.phoneNumber,
+        tempUserData.propertyAddress
+      );
+      
+      toast({
+        title: "Account created!",
+        description: "Your phone has been verified. You can now log in.",
+      });
+      
+      // Navigate to dashboard or login page based on your app flow
+      navigate('/dashboard');
+      
+    } catch (error) {
+      console.error("Verification error:", error);
+      toast({
+        title: "Verification failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setFormSubmitting(false);
+    }
+  };
+  
+  // Resend verification code
+  const handleResendCode = async () => {
+    if (!tempUserData || isSubmitting) return;
+    
+    await handleSendVerificationCode(tempUserData.phoneNumber);
+  };
+  
+  // Handle back button from verification step
+  const handleBackToSignup = () => {
+    setVerificationStep(false);
+  };
 
   // Render login form
   if (!isSignup) {
     return (
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onLoginSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="email"
@@ -280,13 +341,80 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     );
   }
 
-  // *** SIGNUP FORM - Single Page ***
+  // Render verification step
+  if (verificationStep) {
+    return (
+      <Form {...verificationForm}>
+        <form onSubmit={verificationForm.handleSubmit(onVerificationSubmit)} className="space-y-4">
+          <div className="text-center mb-6">
+            <h3 className="text-lg font-semibold mb-2">Phone Verification</h3>
+            <p className="text-sm text-muted-foreground">
+              We've sent a 6-digit code to your phone number. Please enter it below to verify your account.
+            </p>
+          </div>
+          
+          <FormField
+            control={verificationForm.control}
+            name="verificationCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Verification Code</FormLabel>
+                <FormControl>
+                  <InputOTP maxLength={6} {...field}>
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <div className="flex items-center justify-between">
+            <button 
+              type="button"
+              onClick={handleBackToSignup}
+              className="text-sm text-zenora-purple hover:underline"
+              disabled={isSubmitting}
+            >
+              Back to Signup
+            </button>
+            
+            <button 
+              type="button" 
+              className="text-sm text-zenora-purple hover:underline"
+              onClick={handleResendCode}
+              disabled={isSubmitting}
+            >
+              Resend Code
+            </button>
+          </div>
+          
+          <ZenoraButton 
+            type="submit" 
+            className="w-full" 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Verifying..." : "Verify & Complete Signup"}
+          </ZenoraButton>
+        </form>
+      </Form>
+    );
+  }
+
+  // Render initial signup form
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <Form {...signupForm}>
+      <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
         {/* Personal Information */}
         <FormField
-          control={form.control}
+          control={signupForm.control}
           name="fullName"
           render={({ field }) => (
             <FormItem>
@@ -305,7 +433,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         />
         
         <FormField
-          control={form.control}
+          control={signupForm.control}
           name="email"
           render={({ field }) => (
             <FormItem>
@@ -324,7 +452,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         />
         
         <FormField
-          control={form.control}
+          control={signupForm.control}
           name="propertyAddress"
           render={({ field }) => (
             <FormItem>
@@ -348,7 +476,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         />
 
         <FormField
-          control={form.control}
+          control={signupForm.control}
           name="phoneNumber"
           render={({ field }) => (
             <FormItem>
@@ -367,7 +495,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         />
         
         <FormField
-          control={form.control}
+          control={signupForm.control}
           name="password"
           render={({ field }) => (
             <FormItem>
@@ -409,7 +537,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         />
         
         <FormField
-          control={form.control}
+          control={signupForm.control}
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
@@ -441,77 +569,19 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
           )}
         />
         
-        {/* Phone Verification (Optional) */}
-        <div className="border-t pt-4 mt-4">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-medium">Phone Verification (Optional)</h3>
-            {!showVerification && (
-              <ZenoraButton
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleSendVerificationCode}
-                disabled={isSubmitting || !form.getValues("phoneNumber")}
-              >
-                Send Code
-              </ZenoraButton>
-            )}
-          </div>
-          
-          {showVerification && (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                We've sent a 6-digit code to your phone. Enter it below to verify your phone number.
-              </p>
-              
-              <FormField
-                control={form.control}
-                name="verificationCode"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Verification Code</FormLabel>
-                    <FormControl>
-                      <InputOTP maxLength={6} {...field} value={field.value || ""}>
-                        <InputOTPGroup>
-                          <InputOTPSlot index={0} />
-                          <InputOTPSlot index={1} />
-                          <InputOTPSlot index={2} />
-                          <InputOTPSlot index={3} />
-                          <InputOTPSlot index={4} />
-                          <InputOTPSlot index={5} />
-                        </InputOTPGroup>
-                      </InputOTP>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="flex justify-end">
-                <button 
-                  type="button" 
-                  className="text-sm text-zenora-purple hover:underline"
-                  onClick={handleSendVerificationCode}
-                  disabled={isSubmitting}
-                >
-                  Resend Code
-                </button>
-              </div>
-            </div>
-          )}
-          
-          <p className="text-xs text-muted-foreground mt-2">
-            Verifying your phone number allows us to send you important property updates and maintenance alerts.
+        <div className="pt-2">
+          <p className="text-xs text-muted-foreground mb-4">
+            By signing up, you'll receive a verification code on your phone to complete your registration.
           </p>
+          
+          <ZenoraButton 
+            type="submit" 
+            className="w-full" 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Processing..." : "Sign Up"}
+          </ZenoraButton>
         </div>
-        
-        <ZenoraButton 
-          type="submit" 
-          className="w-full" 
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Processing..." : "Sign Up"}
-        </ZenoraButton>
       </form>
     </Form>
   );
