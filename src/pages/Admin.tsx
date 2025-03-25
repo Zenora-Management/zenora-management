@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -30,9 +31,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { 
-  Client, ClientSettings, Property, Document, 
-  Tables 
+  Client, ClientSettings, Tables 
 } from "@/types/supabase";
+import { ExtendedProperty, ExtendedDocument } from "@/types/admin";
 
 const Admin = () => {
   const { user } = useAuth();
@@ -61,11 +62,11 @@ const UsersManagement = () => {
   const [loading, setLoading] = useState(true);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [clientSettings, setClientSettings] = useState<ClientSettings | null>(null);
-  const [clientProperties, setClientProperties] = useState<Property[]>([]);
-  const [clientDocuments, setClientDocuments] = useState<Document[]>([]);
+  const [clientProperties, setClientProperties] = useState<ExtendedProperty[]>([]);
+  const [clientDocuments, setClientDocuments] = useState<ExtendedDocument[]>([]);
   const [manageClientOpen, setManageClientOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
-  const [newProperty, setNewProperty] = useState<Partial<Property>>({});
+  const [newProperty, setNewProperty] = useState<Partial<ExtendedProperty>>({});
   const [addPropertyOpen, setAddPropertyOpen] = useState(false);
   const [uploadDocumentOpen, setUploadDocumentOpen] = useState(false);
   const [documentFile, setDocumentFile] = useState<File | null>(null);
@@ -161,7 +162,7 @@ const UsersManagement = () => {
         throw propertiesError;
       }
       
-      setClientProperties(propertiesData as Property[] || []);
+      setClientProperties(propertiesData as ExtendedProperty[] || []);
       
       const { data: documentsData, error: documentsError } = await supabase
         .from('documents')
@@ -173,7 +174,7 @@ const UsersManagement = () => {
         throw documentsError;
       }
       
-      setClientDocuments(documentsData as Document[] || []);
+      setClientDocuments(documentsData as ExtendedDocument[] || []);
       
       setManageClientOpen(true);
     } catch (error) {
@@ -276,7 +277,7 @@ const UsersManagement = () => {
         .from('client_documents')
         .getPublicUrl(fileName);
       
-      const newDocument: Partial<Tables['documents']> = {
+      const newDocument: Partial<ExtendedDocument> = {
         client_id: selectedClient.id,
         name: documentName,
         description: documentDescription,
@@ -300,7 +301,10 @@ const UsersManagement = () => {
         throw docError;
       }
       
-      setClientDocuments([docData as Document, ...clientDocuments]);
+      // Add the file_url to the returned document
+      const docWithUrl = { ...docData, file_url: urlData.publicUrl } as ExtendedDocument;
+      
+      setClientDocuments([docWithUrl, ...clientDocuments]);
       
       setUploadDocumentOpen(false);
       setDocumentFile(null);
@@ -335,9 +339,10 @@ const UsersManagement = () => {
     }
     
     try {
-      const propertyData: Partial<Tables['properties']> = {
+      const propertyData: Partial<ExtendedProperty> = {
         client_id: selectedClient.id,
         address: newProperty.address,
+        name: newProperty.address,
         city: newProperty.city || "",
         state: newProperty.state || "",
         zip: newProperty.zip || "",
@@ -348,13 +353,25 @@ const UsersManagement = () => {
         year_built: newProperty.year_built || 0,
         status: newProperty.status || "active",
         rental_rate: newProperty.rental_rate || 0,
+        units: newProperty.units || 1,
+        monthly_rent: newProperty.rental_rate || 0,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
       
+      // Only send the fields that the API expects
+      const dbPropertyData = {
+        client_id: propertyData.client_id,
+        address: propertyData.address,
+        name: propertyData.name || propertyData.address,
+        status: propertyData.status,
+        units: propertyData.units,
+        monthly_rent: propertyData.monthly_rent
+      };
+      
       const { data, error } = await supabase
         .from('properties')
-        .insert([propertyData])
+        .insert([dbPropertyData])
         .select()
         .single();
       
@@ -362,7 +379,21 @@ const UsersManagement = () => {
         throw error;
       }
       
-      setClientProperties([data as Property, ...clientProperties]);
+      // Merge the returned data with the additional fields
+      const fullProperty: ExtendedProperty = {
+        ...data,
+        city: newProperty.city,
+        state: newProperty.state,
+        zip: newProperty.zip,
+        type: newProperty.type,
+        bedrooms: newProperty.bedrooms,
+        bathrooms: newProperty.bathrooms,
+        square_footage: newProperty.square_footage,
+        year_built: newProperty.year_built,
+        rental_rate: newProperty.rental_rate
+      };
+      
+      setClientProperties([fullProperty, ...clientProperties]);
       
       setAddPropertyOpen(false);
       setNewProperty({});
