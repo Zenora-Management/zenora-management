@@ -55,8 +55,8 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [autoFilledAdmin, setAutoFilledAdmin] = useState(false);
   const [formSubmitting, setFormSubmitting] = useState(false);
-  const [signupStep, setSignupStep] = useState<'personalInfo' | 'verification' | 'addressPassword'>('personalInfo');
   const [verificationSent, setVerificationSent] = useState(false);
+  const [showVerification, setShowVerification] = useState(false);
   const navigate = useNavigate();
   
   // Use the appropriate schema and initial values based on the mode
@@ -92,7 +92,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   // Reset form submission state when mode changes
   useEffect(() => {
     setFormSubmitting(false);
-    setSignupStep('personalInfo');
+    setShowVerification(false);
     setVerificationSent(false);
   }, [mode, userType]);
   
@@ -108,49 +108,23 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   // Derived loading state to prevent multiple submissions
   const isSubmitting = formSubmitting || authLoading;
 
-  // Function to handle verification code submission
-  const handleVerifyCode = async () => {
-    const verificationCode = signupForm.getValues("verificationCode");
-    if (!verificationCode || verificationCode.length < 6) {
-      toast({
-        title: "Invalid verification code",
-        description: "Please enter the 6-digit code sent to your phone",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // For development purposes, we'll just proceed to the next step
-    // In production, this would verify the code with an API
-    console.log("Verification code accepted:", verificationCode);
-    toast({
-      title: "Verification successful",
-      description: "Please continue with your address and password",
-    });
-    setSignupStep('addressPassword');
-  };
-
   // Function to handle sending verification code
   const handleSendVerificationCode = async () => {
     try {
-      // Validate the personal info fields first
-      await signupForm.trigger(['fullName', 'email', 'phoneNumber']);
+      // Validate the phone number field first
+      await signupForm.trigger('phoneNumber');
       
-      if (signupForm.formState.errors.fullName || 
-          signupForm.formState.errors.email || 
-          signupForm.formState.errors.phoneNumber) {
+      if (signupForm.formState.errors.phoneNumber) {
         return; // Don't proceed if there are validation errors
       }
       
-      // In a real app, you'd call an API to send a verification code
-      // For now, we'll simulate sending a code
       setFormSubmitting(true);
       
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setVerificationSent(true);
-      setSignupStep('verification');
+      setShowVerification(true);
       
       toast({
         title: "Verification code sent",
@@ -166,12 +140,6 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     } finally {
       setFormSubmitting(false);
     }
-  };
-
-  // For development purposes only - skip verification step
-  const handleSkipVerification = () => {
-    console.log("Development mode: Skipping verification");
-    setSignupStep('addressPassword');
   };
 
   // Function to verify address using Google Maps API
@@ -203,12 +171,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
           userType === "admin"
         );
       } else {
-        // Signup flow - only final step submits the form
-        if (signupStep !== 'addressPassword') {
-          setFormSubmitting(false);
-          return;
-        }
-        
+        // Signup flow
         const signupValues = values as SignupFormValues;
         
         // Verify address before signup
@@ -317,100 +280,188 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     );
   }
 
-  // *** SIGNUP FORM ***
+  // *** SIGNUP FORM - Single Page ***
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {/* Step 1: Personal Information */}
-        {signupStep === 'personalInfo' && (
-          <>
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        <User size={18} />
-                      </span>
-                      <Input placeholder="John Doe" {...field} className="pl-10" disabled={isSubmitting} />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        <Mail size={18} />
-                      </span>
-                      <Input placeholder="your.email@example.com" {...field} className="pl-10" disabled={isSubmitting} />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="phoneNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        <Phone size={18} />
-                      </span>
-                      <Input placeholder="(123) 456-7890" {...field} className="pl-10" disabled={isSubmitting} />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="flex space-x-2">
-              <ZenoraButton 
-                type="button" 
-                className="flex-1" 
-                onClick={handleSendVerificationCode}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Processing..." : "Send Verification Code"}
-              </ZenoraButton>
-              
-              {/* Development-only button to skip verification */}
-              <ZenoraButton 
-                type="button" 
-                variant="outline"
-                onClick={handleSkipVerification}
-                disabled={isSubmitting}
-              >
-                Skip (Dev Only)
-              </ZenoraButton>
-            </div>
-          </>
-        )}
+        {/* Personal Information */}
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Full Name</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    <User size={18} />
+                  </span>
+                  <Input placeholder="John Doe" {...field} className="pl-10" disabled={isSubmitting} />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         
-        {/* Step 2: Verification Code */}
-        {signupStep === 'verification' && (
-          <>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    <Mail size={18} />
+                  </span>
+                  <Input placeholder="your.email@example.com" {...field} className="pl-10" disabled={isSubmitting} />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="propertyAddress"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Property Address</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    <MapPin size={18} />
+                  </span>
+                  <Input 
+                    placeholder="123 Main St, City, State ZIP" 
+                    {...field} 
+                    className="pl-10"
+                    disabled={isSubmitting} 
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone Number</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    <Phone size={18} />
+                  </span>
+                  <Input placeholder="(123) 456-7890" {...field} className="pl-10" disabled={isSubmitting} />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Secure Password</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    <Lock size={18} />
+                  </span>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    {...field}
+                    className="pl-10"
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={isSubmitting}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </FormControl>
+              <div className="text-xs text-muted-foreground mt-2 space-y-1">
+                <p>Password requirements:</p>
+                <ul className="list-disc list-inside pl-2">
+                  <li>At least 8 characters</li>
+                  <li>At least one uppercase letter (A-Z)</li>
+                  <li>At least one lowercase letter (a-z)</li>
+                  <li>At least one number (0-9)</li>
+                </ul>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    <KeyRound size={18} />
+                  </span>
+                  <Input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    {...field}
+                    className="pl-10"
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    disabled={isSubmitting}
+                  >
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        {/* Phone Verification (Optional) */}
+        <div className="border-t pt-4 mt-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-medium">Phone Verification (Optional)</h3>
+            {!showVerification && (
+              <ZenoraButton
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleSendVerificationCode}
+                disabled={isSubmitting || !form.getValues("phoneNumber")}
+              >
+                Send Code
+              </ZenoraButton>
+            )}
+          </div>
+          
+          {showVerification && (
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Verification</h3>
               <p className="text-sm text-muted-foreground">
-                We've sent a 6-digit code to your phone. Please enter it below to continue.
+                We've sent a 6-digit code to your phone. Enter it below to verify your phone number.
               </p>
               
               <FormField
@@ -436,152 +487,31 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                 )}
               />
               
-              <div className="flex flex-col space-y-2">
-                <ZenoraButton 
+              <div className="flex justify-end">
+                <button 
                   type="button" 
-                  className="w-full" 
-                  onClick={handleVerifyCode}
+                  className="text-sm text-zenora-purple hover:underline"
+                  onClick={handleSendVerificationCode}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Processing..." : "Verify Code"}
-                </ZenoraButton>
-                
-                <div className="flex justify-between">
-                  <button 
-                    type="button" 
-                    className="text-sm text-zenora-purple hover:underline"
-                    onClick={handleSendVerificationCode}
-                    disabled={isSubmitting}
-                  >
-                    Resend Code
-                  </button>
-                  
-                  <button 
-                    type="button" 
-                    className="text-sm text-zenora-purple hover:underline"
-                    onClick={handleSkipVerification}
-                    disabled={isSubmitting}
-                  >
-                    Skip Verification (Dev Only)
-                  </button>
-                </div>
+                  Resend Code
+                </button>
               </div>
             </div>
-          </>
-        )}
+          )}
+          
+          <p className="text-xs text-muted-foreground mt-2">
+            Verifying your phone number allows us to send you important property updates and maintenance alerts.
+          </p>
+        </div>
         
-        {/* Step 3: Address and Password */}
-        {signupStep === 'addressPassword' && (
-          <>
-            <FormField
-              control={form.control}
-              name="propertyAddress"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Property Address</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        <MapPin size={18} />
-                      </span>
-                      <Input 
-                        placeholder="123 Main St, City, State ZIP" 
-                        {...field} 
-                        className="pl-10"
-                        disabled={isSubmitting} 
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Secure Password</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        <Lock size={18} />
-                      </span>
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        {...field}
-                        className="pl-10"
-                        disabled={isSubmitting}
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                        onClick={() => setShowPassword(!showPassword)}
-                        disabled={isSubmitting}
-                      >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                  </FormControl>
-                  <div className="text-xs text-muted-foreground mt-2 space-y-1">
-                    <p>Password requirements:</p>
-                    <ul className="list-disc list-inside pl-2">
-                      <li>At least 8 characters</li>
-                      <li>At least one uppercase letter (A-Z)</li>
-                      <li>At least one lowercase letter (a-z)</li>
-                      <li>At least one number (0-9)</li>
-                    </ul>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        <KeyRound size={18} />
-                      </span>
-                      <Input
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        {...field}
-                        className="pl-10"
-                        disabled={isSubmitting}
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        disabled={isSubmitting}
-                      >
-                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <ZenoraButton 
-              type="button" 
-              className="w-full" 
-              onClick={form.handleSubmit(onSubmit)}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Processing..." : "Sign Up"}
-            </ZenoraButton>
-          </>
-        )}
+        <ZenoraButton 
+          type="submit" 
+          className="w-full" 
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Processing..." : "Sign Up"}
+        </ZenoraButton>
       </form>
     </Form>
   );
