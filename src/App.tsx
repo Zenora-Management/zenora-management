@@ -32,7 +32,6 @@ import Maintenance from "./pages/Maintenance";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PropertyDetail from "./pages/PropertyDetail";
 import PropertyCreate from "./pages/PropertyCreate";
-import BypassButton from "./components/ui/BypassButton";
 
 const queryClient = new QueryClient();
 
@@ -44,42 +43,43 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Login />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/dashboard/properties/:id" element={<ProtectedRoute><PropertyDetail /></ProtectedRoute>} />
-            <Route path="/dashboard/properties/add" element={<ProtectedRoute><PropertyCreate /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute isAdmin><Admin /></ProtectedRoute>} />
             <Route path="/features" element={<Features />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            
-            {/* Service Landing Pages */}
-            <Route path="/property-management" element={<PropertyManagement />} />
-            <Route path="/property-management/details" element={<PropertyManagementDetail />} />
-            <Route path="/ai-rent-analysis" element={<ProtectedRoute><AIRentAnalysis /></ProtectedRoute>} />
-            <Route path="/ai-rent-analysis/details" element={<AIRentAnalysisDetail />} />
-            <Route path="/tenant-screening" element={<ProtectedRoute><TenantScreening /></ProtectedRoute>} />
-            <Route path="/tenant-screening/details" element={<TenantScreeningDetail />} />
-            <Route path="/maintenance" element={<ProtectedRoute><Maintenance /></ProtectedRoute>} />
-            <Route path="/maintenance/details" element={<MaintenanceDetail />} />
-            
-            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/upgrade" element={<ProtectedRoute><Upgrade /></ProtectedRoute>} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/cookies" element={<Cookies />} />
             <Route path="/security" element={<Security />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/help" element={<Help />} />
             
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            {/* Service Landing Pages */}
+            <Route path="/property-management" element={<PropertyManagement />} />
+            <Route path="/property-management/details" element={<PropertyManagementDetail />} />
+            <Route path="/ai-rent-analysis/details" element={<AIRentAnalysisDetail />} />
+            <Route path="/tenant-screening/details" element={<TenantScreeningDetail />} />
+            <Route path="/maintenance/details" element={<MaintenanceDetail />} />
+            
+            {/* Protected User Routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/dashboard/properties/:id" element={<ProtectedRoute><PropertyDetail /></ProtectedRoute>} />
+            <Route path="/dashboard/properties/add" element={<ProtectedRoute><PropertyCreate /></ProtectedRoute>} />
+            <Route path="/ai-rent-analysis" element={<ProtectedRoute><AIRentAnalysis /></ProtectedRoute>} />
+            <Route path="/tenant-screening" element={<ProtectedRoute><TenantScreening /></ProtectedRoute>} />
+            <Route path="/maintenance" element={<ProtectedRoute><Maintenance /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/upgrade" element={<ProtectedRoute><Upgrade /></ProtectedRoute>} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<ProtectedRoute isAdmin><Admin /></ProtectedRoute>} />
+            
+            {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          
-          {/* Global Bypass Button - Only visible in development */}
-          {process.env.NODE_ENV === 'development' && <BypassButton />}
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
