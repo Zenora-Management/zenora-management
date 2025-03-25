@@ -25,8 +25,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authChangeInProgress, setAuthChangeInProgress] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Helper function to avoid navigation conflicts
+  const safeNavigate = (path: string) => {
+    // Only navigate if we're not already on that path
+    if (location.pathname !== path) {
+      navigate(path);
+    }
+  };
 
   useEffect(() => {
     async function setupAuth() {
@@ -35,8 +44,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // Set up auth state listener FIRST
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          (event, currentSession) => {
+          async (event, currentSession) => {
             console.log('Auth state changed:', event);
+            
+            // Set auth change flag to prevent duplicate navigation
+            setAuthChangeInProgress(true);
+            
             setSession(currentSession);
             setUser(currentSession?.user ?? null);
             
@@ -50,9 +63,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               if (!location.pathname.startsWith('/dashboard') && !location.pathname.startsWith('/admin')) {
                 // Redirect to appropriate dashboard based on user role
                 if (currentSession?.user && checkIsAdmin(currentSession.user)) {
-                  navigate('/admin');
+                  safeNavigate('/admin');
                 } else {
-                  navigate('/dashboard');
+                  safeNavigate('/dashboard');
                 }
               }
             } else if (event === 'SIGNED_OUT') {
@@ -60,13 +73,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 title: "Signed out",
                 description: "You've been successfully signed out."
               });
-              navigate('/');
+              safeNavigate('/');
             } else if (event === 'USER_UPDATED') {
               toast({
                 title: "Account updated",
                 description: "Your account information has been updated."
               });
             }
+            
+            // Clear auth change flag with a slight delay to prevent race conditions
+            setTimeout(() => setAuthChangeInProgress(false), 100);
           }
         );
 
@@ -90,9 +106,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // Only redirect if on login page or root
           if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/') {
             if (checkIsAdmin(initialSession.user)) {
-              navigate('/admin');
+              safeNavigate('/admin');
             } else {
-              navigate('/dashboard');
+              safeNavigate('/dashboard');
             }
           }
         }
@@ -120,6 +136,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string, isAdmin: boolean = false) => {
+    if (authChangeInProgress) {
+      console.log("Auth change already in progress, aborting sign in");
+      return;
+    }
+    
     try {
       setLoading(true);
       
@@ -164,7 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw error;
       }
       
-      // Navigate is handled in the auth state change listener
+      // Navigation is handled in the auth state change listener
     } catch (error: any) {
       console.error('Error signing in:', error);
       throw error;
@@ -174,6 +195,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    if (authChangeInProgress) {
+      console.log("Auth change already in progress, aborting sign up");
+      return;
+    }
+    
     try {
       setLoading(true);
       
@@ -242,7 +268,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "Please check your email to confirm your account."
       });
       
-      navigate('/login');
+      // Use our safe navigation function
+      safeNavigate('/login');
     } catch (error: any) {
       console.error('Error signing up:', error);
       throw error;
@@ -252,6 +279,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    if (authChangeInProgress) {
+      console.log("Auth change already in progress, aborting sign out");
+      return;
+    }
+    
     try {
       setLoading(true);
       const { error } = await supabase.auth.signOut();
@@ -259,7 +291,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error("Sign out error:", error);
         throw error;
       }
-      navigate('/');
+      // Navigation is handled in the auth state change listener
     } catch (error) {
       console.error('Error signing out:', error);
       toast({

@@ -40,10 +40,10 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 const AuthForm = ({ mode, userType }: AuthFormProps) => {
-  const { signIn, signUp, loading } = useAuth();
+  const { signIn, signUp, loading: authLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [autoFilledAdmin, setAutoFilledAdmin] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [formSubmitting, setFormSubmitting] = useState(false);
   const navigate = useNavigate();
   
   // Use the appropriate schema and initial values based on the mode
@@ -73,6 +73,11 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   // Use the appropriate form based on the mode
   const form = isSignup ? signupForm : loginForm;
   
+  // Reset form submission state when mode changes
+  useEffect(() => {
+    setFormSubmitting(false);
+  }, [mode, userType]);
+  
   // Auto-fill admin credentials if userType is admin
   useEffect(() => {
     if (userType === "admin" && !autoFilledAdmin && !isSignup) {
@@ -82,11 +87,17 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     }
   }, [userType, loginForm, autoFilledAdmin, isSignup]);
   
+  // Derived loading state to prevent multiple submissions
+  const isSubmitting = formSubmitting || authLoading;
+  
   const onSubmit = async (values: LoginFormValues | SignupFormValues) => {
-    if (submitting) return; // Prevent multiple submissions
+    // Prevent submission if already submitting
+    if (isSubmitting) {
+      return;
+    }
     
     try {
-      setSubmitting(true);
+      setFormSubmitting(true);
       
       if (!isSignup) {
         // Login flow
@@ -105,7 +116,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         variant: "destructive",
       });
     } finally {
-      setSubmitting(false);
+      setFormSubmitting(false);
     }
   };
 
@@ -122,7 +133,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                 <Input
                   placeholder="your.email@example.com"
                   {...field}
-                  disabled={userType === "admin" && !!autoFilledAdmin || submitting || loading}
+                  disabled={userType === "admin" && !!autoFilledAdmin || isSubmitting}
                 />
               </FormControl>
               <FormMessage />
@@ -142,13 +153,13 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     {...field}
-                    disabled={userType === "admin" && !!autoFilledAdmin || submitting || loading}
+                    disabled={userType === "admin" && !!autoFilledAdmin || isSubmitting}
                   />
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                     onClick={() => setShowPassword(!showPassword)}
-                    disabled={submitting || loading}
+                    disabled={isSubmitting}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -167,7 +178,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} disabled={submitting || loading} />
+                  <Input placeholder="John Doe" {...field} disabled={isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -178,9 +189,9 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         <ZenoraButton 
           type="submit" 
           className="w-full" 
-          disabled={submitting || loading}
+          disabled={isSubmitting}
         >
-          {submitting || loading ? "Processing..." : isSignup ? "Sign Up" : "Log In"}
+          {isSubmitting ? "Processing..." : isSignup ? "Sign Up" : "Log In"}
         </ZenoraButton>
       </form>
     </Form>
