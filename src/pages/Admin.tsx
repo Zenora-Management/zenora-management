@@ -103,11 +103,16 @@ const UsersManagement = () => {
         event: '*',
         schema: 'public',
         table: 'clients'
-      }, () => {
-        console.log('Client data changed, reloading...');
+      }, (payload) => {
+        console.log('Realtime update received:', payload);
         loadClients();
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Realtime subscription status:', status);
+        if (status !== 'SUBSCRIBED') {
+          console.error('Failed to subscribe to realtime updates');
+        }
+      });
 
     return () => {
       supabase.removeChannel(channel);

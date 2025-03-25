@@ -19,6 +19,7 @@ const AdminAuth = ({ children }: AdminAuthProps) => {
   }
 
   if (!checkIsAdmin(user)) {
+    console.log('User is not an admin:', user.email);
     return <Navigate to="/dashboard" replace />;
   }
 

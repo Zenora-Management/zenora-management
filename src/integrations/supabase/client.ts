@@ -12,5 +12,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     storage: localStorage,
     detectSessionInUrl: true,
     flowType: 'implicit'
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10
+    }
   }
 });
