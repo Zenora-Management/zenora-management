@@ -120,7 +120,9 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
       return;
     }
 
-    // For now we'll just proceed to the next step without actual verification
+    // For development purposes, we'll just proceed to the next step
+    // In production, this would verify the code with an API
+    console.log("Verification code accepted:", verificationCode);
     toast({
       title: "Verification successful",
       description: "Please continue with your address and password",
@@ -164,6 +166,12 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     } finally {
       setFormSubmitting(false);
     }
+  };
+
+  // For development purposes only - skip verification step
+  const handleSkipVerification = () => {
+    console.log("Development mode: Skipping verification");
+    setSignupStep('addressPassword');
   };
 
   // Function to verify address using Google Maps API
@@ -272,10 +280,14 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                      <Lock size={18} />
+                    </span>
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
                       {...field}
+                      className="pl-10"
                       disabled={userType === "admin" && !!autoFilledAdmin || isSubmitting}
                     />
                     <button
@@ -308,7 +320,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   // *** SIGNUP FORM ***
   return (
     <Form {...form}>
-      <form className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Step 1: Personal Information */}
         {signupStep === 'personalInfo' && (
           <>
@@ -369,14 +381,26 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
               )}
             />
             
-            <ZenoraButton 
-              type="button" 
-              className="w-full" 
-              onClick={handleSendVerificationCode}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Processing..." : "Send Verification Code"}
-            </ZenoraButton>
+            <div className="flex space-x-2">
+              <ZenoraButton 
+                type="button" 
+                className="flex-1" 
+                onClick={handleSendVerificationCode}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Processing..." : "Send Verification Code"}
+              </ZenoraButton>
+              
+              {/* Development-only button to skip verification */}
+              <ZenoraButton 
+                type="button" 
+                variant="outline"
+                onClick={handleSkipVerification}
+                disabled={isSubmitting}
+              >
+                Skip (Dev Only)
+              </ZenoraButton>
+            </div>
           </>
         )}
         
@@ -422,14 +446,25 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                   {isSubmitting ? "Processing..." : "Verify Code"}
                 </ZenoraButton>
                 
-                <button 
-                  type="button" 
-                  className="text-sm text-zenora-purple hover:underline"
-                  onClick={handleSendVerificationCode}
-                  disabled={isSubmitting}
-                >
-                  Resend Code
-                </button>
+                <div className="flex justify-between">
+                  <button 
+                    type="button" 
+                    className="text-sm text-zenora-purple hover:underline"
+                    onClick={handleSendVerificationCode}
+                    disabled={isSubmitting}
+                  >
+                    Resend Code
+                  </button>
+                  
+                  <button 
+                    type="button" 
+                    className="text-sm text-zenora-purple hover:underline"
+                    onClick={handleSkipVerification}
+                    disabled={isSubmitting}
+                  >
+                    Skip Verification (Dev Only)
+                  </button>
+                </div>
               </div>
             </div>
           </>
