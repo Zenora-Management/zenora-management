@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import {
   NavigationMenu,
@@ -13,11 +13,13 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -75,7 +77,7 @@ const Navbar = () => {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuTrigger className={`text-foreground hover:text-zenora-purple transition-colors bg-transparent ${
-                  ['/property-management', '/ai-rent-analysis', '/tenant-screening', '/maintenance'].includes(location.pathname) 
+                  ['/property-management', '/property-management/details', '/ai-rent-analysis', '/ai-rent-analysis/details', '/tenant-screening', '/tenant-screening/details', '/maintenance', '/maintenance/details'].includes(location.pathname) 
                     ? 'text-zenora-purple font-medium' 
                     : ''
                 }`}>
@@ -86,7 +88,7 @@ const Navbar = () => {
                     <li className="row-span-3">
                       <NavigationMenuLink asChild>
                         <Link
-                          to="/property-management"
+                          to="/property-management/details"
                           className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
                         >
                           <div className="mb-2 mt-4 text-lg font-medium">
@@ -101,10 +103,10 @@ const Navbar = () => {
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
-                          to="/ai-rent-analysis"
+                          to="/ai-rent-analysis/details"
                           className={cn(
                             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            location.pathname === '/ai-rent-analysis' ? "bg-accent" : ""
+                            location.pathname === '/ai-rent-analysis' || location.pathname === '/ai-rent-analysis/details' ? "bg-accent" : ""
                           )}
                         >
                           <div className="text-sm font-medium leading-none">AI Rent Analysis</div>
@@ -117,10 +119,10 @@ const Navbar = () => {
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
-                          to="/tenant-screening"
+                          to="/tenant-screening/details"
                           className={cn(
                             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            location.pathname === '/tenant-screening' ? "bg-accent" : ""
+                            location.pathname === '/tenant-screening' || location.pathname === '/tenant-screening/details' ? "bg-accent" : ""
                           )}
                         >
                           <div className="text-sm font-medium leading-none">Tenant Screening</div>
@@ -133,10 +135,10 @@ const Navbar = () => {
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
-                          to="/maintenance"
+                          to="/maintenance/details"
                           className={cn(
                             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            location.pathname === '/maintenance' ? "bg-accent" : ""
+                            location.pathname === '/maintenance' || location.pathname === '/maintenance/details' ? "bg-accent" : ""
                           )}
                         >
                           <div className="text-sm font-medium leading-none">Maintenance Coordination</div>
@@ -161,16 +163,31 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link to="/login">
-            <ZenoraButton variant="outline" size="default">
-              Log In
-            </ZenoraButton>
-          </Link>
-          <Link to="/signup">
-            <ZenoraButton variant="default" size="default">
-              Sign Up
-            </ZenoraButton>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/dashboard">
+                <ZenoraButton variant="outline" size="default">
+                  Dashboard
+                </ZenoraButton>
+              </Link>
+              <ZenoraButton variant="default" size="default" onClick={signOut}>
+                Sign Out
+              </ZenoraButton>
+            </>
+          ) : (
+            <>
+              <Link to="/login">
+                <ZenoraButton variant="outline" size="default">
+                  Log In
+                </ZenoraButton>
+              </Link>
+              <Link to="/signup">
+                <ZenoraButton variant="default" size="default">
+                  Sign Up
+                </ZenoraButton>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile menu button */}
@@ -205,26 +222,26 @@ const Navbar = () => {
               <div className="font-medium py-1 text-foreground">Services</div>
               <div className="pl-4 flex flex-col gap-2">
                 <Link 
-                  to="/property-management"
-                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/property-management' ? 'text-zenora-purple font-medium' : ''}`}
+                  to="/property-management/details"
+                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/property-management' || location.pathname === '/property-management/details' ? 'text-zenora-purple font-medium' : ''}`}
                 >
                   Property Management
                 </Link>
                 <Link 
-                  to="/ai-rent-analysis"
-                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/ai-rent-analysis' ? 'text-zenora-purple font-medium' : ''}`}
+                  to="/ai-rent-analysis/details"
+                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/ai-rent-analysis' || location.pathname === '/ai-rent-analysis/details' ? 'text-zenora-purple font-medium' : ''}`}
                 >
                   AI Rent Analysis
                 </Link>
                 <Link 
-                  to="/tenant-screening"
-                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/tenant-screening' ? 'text-zenora-purple font-medium' : ''}`}
+                  to="/tenant-screening/details"
+                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/tenant-screening' || location.pathname === '/tenant-screening/details' ? 'text-zenora-purple font-medium' : ''}`}
                 >
                   Tenant Screening
                 </Link>
                 <Link 
-                  to="/maintenance"
-                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/maintenance' ? 'text-zenora-purple font-medium' : ''}`}
+                  to="/maintenance/details"
+                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/maintenance' || location.pathname === '/maintenance/details' ? 'text-zenora-purple font-medium' : ''}`}
                 >
                   Maintenance Coordination
                 </Link>
@@ -244,16 +261,31 @@ const Navbar = () => {
               Contact
             </Link>
             <div className="flex flex-col gap-2 mt-2">
-              <Link to="/login">
-                <ZenoraButton variant="outline" size="default" className="w-full">
-                  Log In
-                </ZenoraButton>
-              </Link>
-              <Link to="/signup">
-                <ZenoraButton variant="default" size="default" className="w-full">
-                  Sign Up
-                </ZenoraButton>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/dashboard">
+                    <ZenoraButton variant="outline" size="default" className="w-full">
+                      Dashboard
+                    </ZenoraButton>
+                  </Link>
+                  <ZenoraButton variant="default" size="default" className="w-full" onClick={signOut}>
+                    Sign Out
+                  </ZenoraButton>
+                </>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <ZenoraButton variant="outline" size="default" className="w-full">
+                      Log In
+                    </ZenoraButton>
+                  </Link>
+                  <Link to="/signup">
+                    <ZenoraButton variant="default" size="default" className="w-full">
+                      Sign Up
+                    </ZenoraButton>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
