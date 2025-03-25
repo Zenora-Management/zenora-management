@@ -59,6 +59,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               description: "You've been successfully signed out."
             });
             navigate('/');
+          } else if (event === 'USER_UPDATED') {
+            toast({
+              title: "Account updated",
+              description: "Your account information has been updated."
+            });
           }
         }
       );
@@ -151,14 +156,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("This email address is reserved");
       }
       
-      const { error } = await supabase.auth.signUp({ 
+      const { error, data } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
           data: {
             full_name: fullName,
             is_admin: false
-          }
+          },
+          emailRedirectTo: window.location.origin + '/dashboard'
         }
       });
       

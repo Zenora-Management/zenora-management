@@ -14,7 +14,8 @@ import {
   HelpCircle, 
   DollarSign,
   PieChart,
-  LogOut
+  LogOut,
+  Zap
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -133,6 +134,20 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   >
                     <PieChart className="mr-3 h-4 w-4" />
                     Reports
+                  </NavLink>
+                  
+                  <NavLink 
+                    to="/dashboard/ai-rent-analysis" 
+                    className={({ isActive }) => 
+                      `flex items-center px-4 py-2 text-sm rounded-md transition-colors ${
+                        isActive 
+                          ? 'bg-zenora-purple text-white font-medium' 
+                          : 'hover:bg-zenora-purple/10 text-foreground'
+                      }`
+                    }
+                  >
+                    <Zap className="mr-3 h-4 w-4" />
+                    AI Rent Analysis
                   </NavLink>
                   
                   <NavLink 

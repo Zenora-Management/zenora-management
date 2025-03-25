@@ -99,8 +99,8 @@ const DashboardOverview = () => {
               <p className="text-sm mb-2">
                 <strong>Rent Optimization:</strong> Based on current market trends, you could increase rent on your Sunnyvale property by 5% ($125/month) upon renewal.
               </p>
-              <ZenoraButton variant="outline" size="sm" className="w-full">
-                <Zap className="mr-2 h-4 w-4" /> View Analysis
+              <ZenoraButton variant="outline" size="sm" className="w-full" as={Link} to="/dashboard/ai-rent-analysis">
+                <Zap className="mr-2 h-4 w-4" /> View Rent Analysis
               </ZenoraButton>
             </div>
           </div>

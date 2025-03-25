@@ -22,15 +22,15 @@ file_size_limit = "50MiB"
 
 [auth]
 enabled = true
-site_url = "http://localhost:8080"
-additional_redirect_urls = ["https://localhost:8080", "http://localhost:3000", "http://localhost:5173"]
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["https://localhost:5173", "http://localhost:3000", "http://localhost:8080"]
 jwt_expiry = 3600
 enable_refresh_token_rotation = true
 refresh_token_reuse_interval = 10
 
 [auth.email]
 enable_signup = true
-enable_confirmations = false
+enable_confirmations = true
 
 [analytics]
 enabled = false

@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
+import AIRentAnalysis from "@/components/dashboard/AIRentAnalysis";
 import { Building, Settings, Zap, PieChart, User, HelpCircle } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 
@@ -18,6 +19,7 @@ const Dashboard = () => {
         <Route path="documents" element={<DocumentManagement />} />
         <Route path="financials" element={<FinancialManagement />} />
         <Route path="reports" element={<ReportManagement />} />
+        <Route path="ai-rent-analysis" element={<AIRentAnalysis />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="help" element={<HelpSupportPage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
