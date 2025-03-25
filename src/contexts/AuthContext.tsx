@@ -37,6 +37,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Function to check if a user is an admin
+  const checkIsAdmin = (user: User): boolean => {
+    return ADMIN_EMAILS.includes(user.email || '');
+  };
+
   useEffect(() => {
     async function setupAuth() {
       try {
@@ -63,8 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               if (!location.pathname.startsWith('/dashboard') && !location.pathname.startsWith('/admin')) {
                 // Redirect to appropriate dashboard based on user role
                 if (currentSession?.user && checkIsAdmin(currentSession.user)) {
+                  console.log('User is admin, redirecting to admin dashboard');
                   safeNavigate('/admin');
                 } else {
+                  console.log('User is not admin, redirecting to user dashboard');
                   safeNavigate('/dashboard');
                 }
               }
@@ -103,11 +110,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // Handle initial session - redirect if needed
         if (initialSession?.user) {
+          console.log('Initial session found, user email:', initialSession.user.email);
           // Only redirect if on login page or root
           if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/') {
             if (checkIsAdmin(initialSession.user)) {
+              console.log('User is admin, redirecting to admin dashboard');
               safeNavigate('/admin');
             } else {
+              console.log('User is not admin, redirecting to user dashboard');
               safeNavigate('/dashboard');
             }
           }
@@ -130,10 +140,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     setupAuth();
   }, [navigate, location.pathname]);
-
-  const checkIsAdmin = (user: User): boolean => {
-    return ADMIN_EMAILS.includes(user.email || '');
-  };
 
   const signIn = async (email: string, password: string, isAdmin: boolean = false) => {
     if (authChangeInProgress) {
