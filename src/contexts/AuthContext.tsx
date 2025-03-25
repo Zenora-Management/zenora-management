@@ -1,9 +1,9 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { InsertTables } from '@/types/supabase';
 
 type AuthContextType = {
   session: Session | null;
@@ -17,8 +17,8 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Admin email for special handling
-const ADMIN_EMAIL = "zenoramgmt@gmail.com";
+// Admin emails for special handling
+const ADMIN_EMAILS = ["zenoramgmt@gmail.com", "anshparikh@gmail.com", "anvisrini@gmail.com"];
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -93,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [navigate, location.pathname]);
 
   const checkIsAdmin = (user: User): boolean => {
-    return user.email === ADMIN_EMAIL;
+    return ADMIN_EMAILS.includes(user.email || '');
   };
 
   const signIn = async (email: string, password: string, isAdmin: boolean = false) => {
@@ -101,14 +101,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       
       // Special handling for admin account creation on first login
-      if (isAdmin && email === ADMIN_EMAIL) {
+      if (isAdmin && ADMIN_EMAILS.includes(email)) {
         // Check if admin exists first
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {
           // Create admin account if it doesn't exist
           const { error: signUpError } = await supabase.auth.signUp({ 
-            email: ADMIN_EMAIL,
+            email,
             password,
             options: {
               data: {
@@ -122,7 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
       
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error, data } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
         toast({
@@ -147,7 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       
       // Check if trying to sign up as admin - reject if not through admin login
-      if (email === ADMIN_EMAIL) {
+      if (ADMIN_EMAILS.includes(email)) {
         toast({
           title: "Invalid email",
           description: "This email address is reserved. Please use a different one.",
@@ -156,7 +156,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("This email address is reserved");
       }
       
-      const { error, data } = await supabase.auth.signUp({ 
+      // Step 1: Create the auth user
+      const { error: signUpError, data } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
@@ -168,13 +169,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       });
       
-      if (error) {
+      if (signUpError) {
         toast({
           title: "Signup failed",
-          description: error.message,
+          description: signUpError.message,
           variant: "destructive",
         });
-        throw error;
+        throw signUpError;
+      }
+
+      // Step 2: After auth user is created, add user to clients table
+      if (data.user) {
+        const clientData: InsertTables<'clients'> = {
+          id: data.user.id,
+          email: email,
+          full_name: fullName
+        };
+
+        const { error: clientError } = await supabase
+          .from('clients')
+          .insert([clientData]);
+
+        if (clientError) {
+          console.error('Error creating client record:', clientError);
+          toast({
+            title: "Account created but client profile setup failed",
+            description: "Your account was created but there was an issue setting up your profile. Please contact support.",
+            variant: "destructive",
+          });
+        }
       }
       
       toast({
