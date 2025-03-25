@@ -23,6 +23,7 @@ import Dashboard from '@/pages/Dashboard';
 import Admin from '@/pages/Admin';
 import Auth from '@/components/auth/Auth';
 import AdminAuth from '@/components/auth/AdminAuth';
+import NotFound from '@/pages/NotFound';
 
 function App() {
   return (
@@ -64,8 +65,11 @@ function App() {
           }
         />
         
+        {/* 404 route */}
+        <Route path="/404" element={<NotFound />} />
+        
         {/* Fallback route */}
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/404" />} />
       </Routes>
       <Toaster />
     </>
