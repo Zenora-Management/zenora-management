@@ -66,43 +66,59 @@ const UsersManagement = () => {
   const [manageClientOpen, setManageClientOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
 
-  // Load clients on component mount
-  useEffect(() => {
-    async function loadClients() {
-      try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from('clients')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (error) {
-          throw error;
-        }
-        
-        setClients(data as Client[] || []);
-      } catch (error) {
-        console.error('Error loading clients:', error);
-        toast({
-          title: "Failed to load clients",
-          description: "Could not retrieve client data. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
+  const loadClients = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('clients')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        throw error;
       }
+      
+      console.log('Loaded clients:', data);
+      setClients(data as Client[] || []);
+    } catch (error) {
+      console.error('Error loading clients:', error);
+      toast({
+        title: "Failed to load clients",
+        description: "Could not retrieve client data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-    
+  };
+
+  useEffect(() => {
     loadClients();
   }, []);
 
-  // Load client details when selected
+  useEffect(() => {
+    const channel = supabase
+      .channel('public:clients')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'clients'
+      }, () => {
+        console.log('Client data changed, reloading...');
+        loadClients();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const handleViewClient = async (client: Client) => {
     setSelectedClient(client);
     setActiveTab("info");
     
     try {
-      // Load client settings
       const { data: settingsData, error: settingsError } = await supabase
         .from('client_settings')
         .select('*')
@@ -122,7 +138,6 @@ const UsersManagement = () => {
         show_ai_insights: true
       } as ClientSettings);
       
-      // Load client properties
       const { data: propertiesData, error: propertiesError } = await supabase
         .from('properties')
         .select('*')
@@ -135,7 +150,6 @@ const UsersManagement = () => {
       
       setClientProperties(propertiesData as Property[] || []);
       
-      // Load client documents
       const { data: documentsData, error: documentsError } = await supabase
         .from('documents')
         .select('*')
@@ -159,7 +173,6 @@ const UsersManagement = () => {
     }
   };
 
-  // Update client visibility settings
   const updateClientSettings = async () => {
     if (!clientSettings || !selectedClient) return;
     
@@ -187,7 +200,6 @@ const UsersManagement = () => {
     }
   };
 
-  // Toggle document visibility
   const toggleDocumentVisibility = async (documentId: string, isVisible: boolean) => {
     try {
       const { error } = await supabase
@@ -199,7 +211,6 @@ const UsersManagement = () => {
         throw error;
       }
       
-      // Update local state
       setClientDocuments(
         clientDocuments.map(doc => 
           doc.id === documentId 
@@ -289,7 +300,6 @@ const UsersManagement = () => {
         )}
       </div>
       
-      {/* Client Management Dialog */}
       <Dialog open={manageClientOpen} onOpenChange={setManageClientOpen}>
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -309,7 +319,6 @@ const UsersManagement = () => {
               <TabsTrigger value="settings">Dashboard Settings</TabsTrigger>
             </TabsList>
             
-            {/* Client Info Tab */}
             <TabsContent value="info" className="py-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -375,7 +384,6 @@ const UsersManagement = () => {
               </div>
             </TabsContent>
             
-            {/* Documents Tab */}
             <TabsContent value="documents" className="py-4">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-medium">Client Documents</h3>
@@ -438,7 +446,6 @@ const UsersManagement = () => {
               )}
             </TabsContent>
             
-            {/* Properties Tab */}
             <TabsContent value="properties" className="py-4">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-medium">Client Properties</h3>
@@ -499,7 +506,6 @@ const UsersManagement = () => {
               )}
             </TabsContent>
             
-            {/* Dashboard Settings Tab */}
             <TabsContent value="settings" className="py-4">
               <Card>
                 <CardHeader>
@@ -604,20 +610,17 @@ const UsersManagement = () => {
   );
 };
 
-// Utility function to format file size
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
-// Placeholder components for each section
 const PropertiesManagement = () => (
   <div className="zenora-card p-6">
     <h2 className="text-2xl font-bold mb-4">Property Management</h2>
     <p className="mb-6 text-muted-foreground">Manage all properties in the system.</p>
     <div className="space-y-4">
-      {/* Property management content would go here */}
       <p>This feature is coming soon.</p>
     </div>
   </div>
@@ -628,7 +631,6 @@ const FinancialsManagement = () => (
     <h2 className="text-2xl font-bold mb-4">Financial Management</h2>
     <p className="mb-6 text-muted-foreground">Manage system finances, payments, and subscriptions.</p>
     <div className="space-y-4">
-      {/* Financial management content would go here */}
       <p>This feature is coming soon.</p>
     </div>
   </div>
@@ -639,7 +641,6 @@ const InquiriesManagement = () => (
     <h2 className="text-2xl font-bold mb-4">Inquiries Management</h2>
     <p className="mb-6 text-muted-foreground">Manage and respond to user inquiries and support requests.</p>
     <div className="space-y-4">
-      {/* Inquiries management content would go here */}
       <p>This feature is coming soon.</p>
     </div>
   </div>
@@ -650,7 +651,6 @@ const ReportsManagement = () => (
     <h2 className="text-2xl font-bold mb-4">Reports</h2>
     <p className="mb-6 text-muted-foreground">Generate and view system-wide reports and analytics.</p>
     <div className="space-y-4">
-      {/* Reports management content would go here */}
       <p>This feature is coming soon.</p>
     </div>
   </div>
@@ -661,7 +661,6 @@ const WebsiteManagement = () => (
     <h2 className="text-2xl font-bold mb-4">Website Management</h2>
     <p className="mb-6 text-muted-foreground">Manage website content, blog posts, and SEO settings.</p>
     <div className="space-y-4">
-      {/* Website management content would go here */}
       <p>This feature is coming soon.</p>
     </div>
   </div>
@@ -672,7 +671,6 @@ const NotificationsManagement = () => (
     <h2 className="text-2xl font-bold mb-4">Notifications</h2>
     <p className="mb-6 text-muted-foreground">Manage system notifications and announcements.</p>
     <div className="space-y-4">
-      {/* Notifications content would go here */}
       <p>This feature is coming soon.</p>
     </div>
   </div>
@@ -683,7 +681,6 @@ const SettingsManagement = () => (
     <h2 className="text-2xl font-bold mb-4">System Settings</h2>
     <p className="mb-6 text-muted-foreground">Configure global system settings and preferences.</p>
     <div className="space-y-4">
-      {/* Settings content would go here */}
       <p>This feature is coming soon.</p>
     </div>
   </div>
@@ -694,7 +691,6 @@ const SecurityManagement = () => (
     <h2 className="text-2xl font-bold mb-4">Security Settings</h2>
     <p className="mb-6 text-muted-foreground">Manage system security, access logs, and authentication settings.</p>
     <div className="space-y-4">
-      {/* Security content would go here */}
       <p>This feature is coming soon.</p>
     </div>
   </div>

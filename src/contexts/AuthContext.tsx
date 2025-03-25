@@ -238,28 +238,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Step 2: After auth user is created, add user to clients table
       if (data.user) {
-        // Create client record with the user's information
-        const clientData: InsertTables<'clients'> = {
-          id: data.user.id,
-          email: email,
-          full_name: fullName,
-          phone: null,
-          address: null
-        };
+        try {
+          // Create client record with the user's information
+          const clientData: InsertTables<'clients'> = {
+            id: data.user.id,
+            email: email,
+            full_name: fullName,
+            phone: null,
+            address: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
 
-        const { error: clientError } = await supabase
-          .from('clients')
-          .insert([clientData]);
+          const { error: clientError } = await supabase
+            .from('clients')
+            .insert([clientData]);
 
-        if (clientError) {
-          console.error('Error creating client record:', clientError);
-          toast({
-            title: "Account created but client profile setup failed",
-            description: "Your account was created but there was an issue setting up your profile. Please contact support.",
-            variant: "destructive",
-          });
-        } else {
-          console.log('Client record created successfully');
+          if (clientError) {
+            console.error('Error creating client record:', clientError);
+            toast({
+              title: "Account created but client profile setup failed",
+              description: "Your account was created but there was an issue setting up your profile. Please contact support.",
+              variant: "destructive",
+            });
+          } else {
+            console.log('Client record created successfully');
+          }
+        } catch (clientCreationError) {
+          console.error('Error in client creation process:', clientCreationError);
         }
       }
       
