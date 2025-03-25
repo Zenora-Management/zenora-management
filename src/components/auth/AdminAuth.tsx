@@ -8,8 +8,7 @@ interface AdminAuthProps {
 }
 
 const AdminAuth = ({ children }: AdminAuthProps) => {
-  const { user, loading } = useAuth();
-  const isAdmin = user?.email === "zenoramgmt@gmail.com";
+  const { user, loading, checkIsAdmin } = useAuth();
 
   if (loading) {
     return (
@@ -19,7 +18,9 @@ const AdminAuth = ({ children }: AdminAuthProps) => {
     );
   }
 
-  if (!user || !isAdmin) {
+  // Use the checkIsAdmin function from the auth context instead of directly checking the email
+  if (!user || !checkIsAdmin(user)) {
+    console.log("Redirecting to login: User not authorized as admin");
     return <Navigate to="/login" />;
   }
 
