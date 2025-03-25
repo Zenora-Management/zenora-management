@@ -1,12 +1,11 @@
 
 import React from 'react';
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from 'react-router-dom';
-import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { Toaster } from "@/components/ui/toaster";
 import Index from '@/pages/Index';
 import About from '@/pages/About';
 import Features from '@/pages/Features';
@@ -21,17 +20,13 @@ import Careers from '@/pages/Careers';
 import ContactPage from '@/pages/Contact';
 import EmailTestPage from '@/pages/EmailTest';
 import Dashboard from '@/pages/Dashboard';
+import Admin from '@/pages/Admin';
 import Auth from '@/components/auth/Auth';
-import { Toaster } from "@/components/ui/toaster";
+import AdminAuth from '@/components/auth/AdminAuth';
 
 function App() {
   return (
-    <HelmetProvider>
-      <Helmet>
-        <title>Zenora - AI Property Management</title>
-        <meta name="description" content="AI-powered property management that makes landlords' lives easier." />
-      </Helmet>
-      
+    <>
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Index />} />
@@ -49,9 +44,9 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/email-test" element={<EmailTestPage />} />
         
-        {/* Protected routes */}
+        {/* Protected routes - User Dashboard */}
         <Route
-          path="/dashboard"
+          path="/dashboard/*"
           element={
             <Auth>
               <Dashboard />
@@ -59,11 +54,21 @@ function App() {
           }
         />
         
+        {/* Protected routes - Admin Dashboard */}
+        <Route
+          path="/admin/*"
+          element={
+            <AdminAuth>
+              <Admin />
+            </AdminAuth>
+          }
+        />
+        
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Toaster />
-    </HelmetProvider>
+    </>
   );
 }
 
