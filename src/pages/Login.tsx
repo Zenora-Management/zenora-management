@@ -43,10 +43,14 @@ const Login = () => {
                   <TabsTrigger value="admin">Administrator</TabsTrigger>
                 </TabsList>
                 <TabsContent value="regular">
-                  <AuthForm mode="login" userType="regular" />
+                  <div className="max-w-md mx-auto bg-white dark:bg-zenora-dark-card p-6 rounded-lg shadow-sm">
+                    <AuthForm mode="login" userType="regular" />
+                  </div>
                 </TabsContent>
                 <TabsContent value="admin">
-                  <AuthForm mode="login" userType="admin" />
+                  <div className="max-w-md mx-auto bg-white dark:bg-zenora-dark-card p-6 rounded-lg shadow-sm">
+                    <AuthForm mode="login" userType="admin" />
+                  </div>
                 </TabsContent>
               </Tabs>
             )}

@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Eye, EyeOff, Phone, MapPin, User, Mail } from "lucide-react";
+import { Eye, EyeOff, Phone, MapPin, User, Mail, Lock, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
@@ -121,7 +121,6 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     }
 
     // For now we'll just proceed to the next step without actual verification
-    // In a real app, you'd verify the code with an API
     toast({
       title: "Verification successful",
       description: "Please continue with your address and password",
@@ -171,7 +170,6 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   // Note: In a real implementation, you would need to integrate with Google Maps API
   const verifyAddress = async (address: string) => {
     // Simulate address verification
-    // In a real app, you'd call the Google Maps API here
     console.log("Verifying address:", address);
     return true; // Assume address is valid for now
   };
@@ -197,7 +195,12 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
           userType === "admin"
         );
       } else {
-        // Signup flow
+        // Signup flow - only final step submits the form
+        if (signupStep !== 'addressPassword') {
+          setFormSubmitting(false);
+          return;
+        }
+        
         const signupValues = values as SignupFormValues;
         
         // Verify address before signup
@@ -208,13 +211,17 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
             description: "The property address you entered could not be verified",
             variant: "destructive",
           });
+          setFormSubmitting(false);
           return;
         }
         
-        await signUp(signupValues.email, signupValues.password, signupValues.fullName);
-        
-        // In a real app, you would also save the phone number and address
-        // For now this would need to be implemented in the signUp function in use-auth-operations.ts
+        await signUp(
+          signupValues.email, 
+          signupValues.password, 
+          signupValues.fullName, 
+          signupValues.phoneNumber, 
+          signupValues.propertyAddress
+        );
       }
     } catch (error) {
       console.error("Authentication error:", error);
@@ -298,10 +305,10 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     );
   }
 
-  // Render signup form based on current step
+  // *** SIGNUP FORM ***
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form className="space-y-4">
         {/* Step 1: Personal Information */}
         {signupStep === 'personalInfo' && (
           <>
@@ -463,10 +470,14 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                   <FormLabel>Secure Password</FormLabel>
                   <FormControl>
                     <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                        <Lock size={18} />
+                      </span>
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
                         {...field}
+                        className="pl-10"
                         disabled={isSubmitting}
                       />
                       <button
@@ -479,8 +490,14 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                       </button>
                     </div>
                   </FormControl>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Password must be at least 8 characters and include uppercase, lowercase letters and numbers.
+                  <div className="text-xs text-muted-foreground mt-2 space-y-1">
+                    <p>Password requirements:</p>
+                    <ul className="list-disc list-inside pl-2">
+                      <li>At least 8 characters</li>
+                      <li>At least one uppercase letter (A-Z)</li>
+                      <li>At least one lowercase letter (a-z)</li>
+                      <li>At least one number (0-9)</li>
+                    </ul>
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -495,10 +512,14 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
                     <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                        <KeyRound size={18} />
+                      </span>
                       <Input
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder="••••••••"
                         {...field}
+                        className="pl-10"
                         disabled={isSubmitting}
                       />
                       <button
@@ -517,8 +538,9 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
             />
             
             <ZenoraButton 
-              type="submit" 
+              type="button" 
               className="w-full" 
+              onClick={form.handleSubmit(onSubmit)}
               disabled={isSubmitting}
             >
               {isSubmitting ? "Processing..." : "Sign Up"}
