@@ -16,14 +16,24 @@ serve(async (req) => {
   try {
     const { name, email, subject, message, isDemoRequest } = await req.json();
 
+    console.log("Starting email send process");
+    console.log("Request data:", { name, email, subject, isDemoRequest });
+
     const client = new SmtpClient();
     
-    await client.connectTLS({
-      hostname: "smtp.gmail.com",
-      port: 465,
-      username: "zenoramgmt@gmail.com",
-      password: "ngke jnos ejeb otgc", // App password
-    });
+    try {
+      console.log("Connecting to SMTP server");
+      await client.connectTLS({
+        hostname: "smtp.gmail.com",
+        port: 465,
+        username: "zenoramgmt@gmail.com",
+        password: "ngke jnos ejeb otgc", // App password
+      });
+      console.log("Successfully connected to SMTP server");
+    } catch (smtpError) {
+      console.error("SMTP connection error:", smtpError);
+      throw new Error(`Failed to connect to SMTP server: ${smtpError.message}`);
+    }
 
     // Prepare email content
     let emailSubject = subject;
@@ -49,41 +59,51 @@ serve(async (req) => {
       `;
     }
 
-    // Send the email
-    await client.send({
-      from: "zenoramgmt@gmail.com",
-      to: "zenoramgmt@gmail.com",
-      subject: emailSubject,
-      html: emailContent,
-    });
-
-    // Send confirmation email to the user
-    if (email) {
-      const userEmailContent = `
-        <h2>Thank you for contacting Zenora Property Management!</h2>
-        <p>Dear ${name},</p>
-        <p>We've received your message and will get back to you as soon as possible.</p>
-        <p>Here's a summary of your inquiry:</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Message:</strong> ${message}</p>
-        ${isDemoRequest ? '<p>You can schedule a demo at <a href="https://calendly.com/zenoramgmt/30min">our Calendly page</a>.</p>' : ''}
-        <p>Best regards,</p>
-        <p>
-          Ansh Parikh<br/>
-          CEO & Founder<br/>
-          Zenora Property Management
-        </p>
-      `;
-
-      await client.send({
+    try {
+      // Send the email to admin
+      console.log("Sending email to admin");
+      const adminResult = await client.send({
         from: "zenoramgmt@gmail.com",
-        to: email,
-        subject: "We've received your message - Zenora Property Management",
-        html: userEmailContent,
+        to: "zenoramgmt@gmail.com",
+        subject: emailSubject,
+        html: emailContent,
       });
+      console.log("Admin email sent successfully:", adminResult);
+
+      // Send confirmation email to the user
+      if (email) {
+        console.log("Sending confirmation email to user");
+        const userEmailContent = `
+          <h2>Thank you for contacting Zenora Property Management!</h2>
+          <p>Dear ${name},</p>
+          <p>We've received your message and will get back to you as soon as possible.</p>
+          <p>Here's a summary of your inquiry:</p>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>Message:</strong> ${message}</p>
+          ${isDemoRequest ? '<p>You can schedule a demo at <a href="https://calendly.com/zenoramgmt/30min">our Calendly page</a>.</p>' : ''}
+          <p>Best regards,</p>
+          <p>
+            Ansh Parikh<br/>
+            CEO & Founder<br/>
+            Zenora Property Management
+          </p>
+        `;
+
+        const userResult = await client.send({
+          from: "zenoramgmt@gmail.com",
+          to: email,
+          subject: "We've received your message - Zenora Property Management",
+          html: userEmailContent,
+        });
+        console.log("User confirmation email sent successfully:", userResult);
+      }
+    } catch (sendError) {
+      console.error("Error sending email:", sendError);
+      throw new Error(`Failed to send email: ${sendError.message}`);
     }
 
     await client.close();
+    console.log("SMTP client closed");
 
     return new Response(
       JSON.stringify({ success: true }),
@@ -93,9 +113,9 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error in send-contact-email function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message, stack: error.stack }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,

@@ -7,6 +7,9 @@ import Features from "@/components/home/Features";
 import About from "@/components/home/About";
 import Contact from "@/components/home/Contact";
 import { Link } from "react-router-dom";
+import { ZenoraButton } from "@/components/ui/button-zenora";
+import { ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Index = () => {
   // Smooth scroll to section when clicking on navigation links
@@ -64,29 +67,56 @@ const Index = () => {
         
         <section id="features">
           <Features />
-          <div className="text-center py-4">
-            <Link to="/features" className="text-zenora-purple hover:underline">
-              View all features →
+          <motion.div 
+            className="text-center py-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <Link to="/features">
+              <ZenoraButton variant="outline" size="lg" className="group">
+                Explore All Features
+                <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </ZenoraButton>
             </Link>
-          </div>
+          </motion.div>
         </section>
         
         <section id="about">
           <About />
-          <div className="text-center py-4">
-            <Link to="/about" className="text-zenora-purple hover:underline">
-              Learn more about us →
+          <motion.div 
+            className="text-center py-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <Link to="/about">
+              <ZenoraButton variant="outline" size="lg" className="group">
+                Learn More About Us
+                <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </ZenoraButton>
             </Link>
-          </div>
+          </motion.div>
         </section>
         
         <section id="contact">
           <Contact />
-          <div className="text-center py-4">
-            <Link to="/contact" className="text-zenora-purple hover:underline">
-              Contact us →
+          <motion.div 
+            className="text-center py-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <Link to="/contact">
+              <ZenoraButton variant="outline" size="lg" className="group">
+                Get In Touch
+                <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </ZenoraButton>
             </Link>
-          </div>
+          </motion.div>
         </section>
       </main>
       

@@ -1,113 +1,162 @@
 
-import { ZenoraButton } from "@/components/ui/button-zenora";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { ZenoraButton } from "@/components/ui/button-zenora";
+import { Globe, Target, Star, Users, ChevronRight } from "lucide-react";
 
 const About = () => {
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6 }
+    }
+  };
+
   return (
-    <section className="zenora-section bg-white dark:bg-zenora-dark relative overflow-hidden">
+    <motion.section 
+      className="zenora-section relative overflow-hidden"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      variants={{
+        hidden: {},
+        visible: {
+          transition: {
+            staggerChildren: 0.2
+          }
+        }
+      }}
+    >
       {/* Background elements */}
-      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-zenora-light opacity-5 blur-3xl rounded-full"></div>
-      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-zenora-purple opacity-5 blur-3xl rounded-full"></div>
+      <div className="absolute top-1/4 left-0 w-1/2 h-1/2 bg-zenora-light opacity-5 blur-3xl rounded-full -z-10"></div>
+      <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-zenora-purple opacity-5 blur-3xl rounded-full -z-10"></div>
       
-      <div className="zenora-container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+      <div className="zenora-container relative">
+        <motion.div 
+          variants={fadeIn}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
           <div className="inline-flex items-center rounded-full border border-zenora-purple/30 bg-zenora-purple/5 px-3 py-1 text-sm text-zenora-purple backdrop-blur-sm mb-6">
-            <span className="font-medium">Our Story</span>
+            <span className="font-medium">About Us</span>
           </div>
           
           <h2 className="zenora-heading bg-clip-text text-transparent bg-zenora-gradient">
-            About Zenora Property Management
+            Transforming Property Management Through AI
           </h2>
           
           <p className="zenora-subheading">
-            We're revolutionizing property management with AI-powered solutions that make managing properties simpler, more efficient, and more profitable.
+            Founded by visionaries Ansh Parikh and Anvith Vobbilisetty, Zenora combines cutting-edge technology with property management expertise to revolutionize how properties are managed.
           </p>
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
-          <div className="animate-slide-in">
-            <div className="zenora-card p-6 lg:p-8">
-              <h3 className="text-2xl font-bold mb-6">Our Vision</h3>
-              <div className="prose dark:prose-invert max-w-none">
-                <p>
-                  At Zenora, we envision a future where property management is streamlined, transparent, and accessible to all. We believe that by leveraging the power of artificial intelligence and automation, we can transform the traditional property management model into something more efficient, cost-effective, and responsive to the needs of both property owners and tenants.
-                </p>
-                <p>
-                  Our mission is to empower property owners with innovative tools and services that simplify the management process, maximize rental income, and provide peace of mind. We're committed to delivering exceptional value through our comprehensive suite of AI-driven solutions, backed by our team's expertise and dedication to customer service.
-                </p>
-                <p>
-                  We're not just another property management company. We're pioneering a new approach that combines cutting-edge technology with human insight to create a better experience for everyone involved in the rental ecosystem.
-                </p>
-              </div>
-              
-              <div className="mt-8">
-                <Link to="/contact">
-                  <ZenoraButton variant="default">
-                    Contact Us
-                  </ZenoraButton>
-                </Link>
-              </div>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 mb-16">
+          <motion.div 
+            variants={fadeIn}
+            className="flex flex-col justify-center"
+          >
+            <h3 className="text-2xl font-bold mb-4">Our Story</h3>
+            <p className="text-muted-foreground mb-6">
+              Zenora Property Management was founded in 2022 with a mission to make property management simple, affordable, and effective through AI-powered automation. What started as a solution for a few property owners has grown into a comprehensive platform serving thousands of properties nationwide.
+            </p>
+            <p className="text-muted-foreground mb-6">
+              Our founders, Ansh Parikh (CEO) and Anvith Vobbilisetty (CTO), combined their expertise in real estate and technology to create a platform that addresses the real pain points of property owners and managers.
+            </p>
+            <div className="flex gap-4 mt-2">
+              <img 
+                src="/placeholder.svg" 
+                alt="Ansh Parikh" 
+                className="w-16 h-16 rounded-full bg-zenora-purple/10 object-cover"
+              />
+              <img 
+                src="/placeholder.svg" 
+                alt="Anvith Vobbilisetty" 
+                className="w-16 h-16 rounded-full bg-zenora-purple/10 object-cover"
+              />
             </div>
-          </div>
+          </motion.div>
           
-          <div className="animate-slide-up">
-            <div className="relative h-full w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-sm p-6 lg:p-8">
-              <div className="absolute inset-0 bg-gradient-to-br from-zenora-purple/20 to-transparent opacity-20"></div>
-              
-              <div className="relative z-10">
-                <h3 className="text-2xl font-bold mb-6">Our Founders</h3>
-                
-                <div className="space-y-8">
-                  <div className="flex flex-col sm:flex-row gap-6">
-                    <div className="w-24 h-24 rounded-full bg-zenora-gradient flex items-center justify-center text-white text-2xl font-bold">
-                      AP
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-semibold">Ansh Parikh</h4>
-                      <p className="text-zenora-purple mb-3">CEO & Founder</p>
-                      <p className="text-muted-foreground">
-                        Ansh brings extensive experience in real estate and property management, with a vision to transform the industry through innovative technology solutions.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-6">
-                    <div className="w-24 h-24 rounded-full bg-zenora-gradient flex items-center justify-center text-white text-2xl font-bold">
-                      AV
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-semibold">Anvith Vobbilisetty</h4>
-                      <p className="text-zenora-purple mb-3">CTO & Founder</p>
-                      <p className="text-muted-foreground">
-                        Anvith leads our technical innovation, bringing expertise in AI and software development to create cutting-edge solutions for property management challenges.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+          <motion.div 
+            variants={fadeIn}
+            className="relative rounded-2xl overflow-hidden"
+          >
+            <div className="aspect-video relative overflow-hidden rounded-xl border bg-background">
+              <div className="absolute inset-0 bg-zenora-gradient opacity-10"></div>
+              <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
+                <blockquote className="italic text-lg">
+                  "We envision a future where property management is effortless, where AI handles the complexity, and where property owners can focus on growth rather than day-to-day operations."
+                </blockquote>
+                <p className="mt-4 font-semibold">- Ansh Parikh, CEO</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <motion.div 
+          variants={fadeIn}
+          className="text-center mb-12"
+        >
+          <h3 className="text-2xl font-bold mb-4">Why Choose Zenora</h3>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Our AI-driven approach delivers tangible benefits that transform the property management experience.
+          </p>
+        </motion.div>
+
+        <motion.div 
+          variants={fadeIn}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+        >
           {[
-            { number: "5+", label: "Years Experience" },
-            { number: "1,000+", label: "Happy Clients" },
-            { number: "3,500+", label: "Properties Managed" },
-            { number: "99%", label: "Client Satisfaction" },
-          ].map((stat, i) => (
-            <div key={i} className="zenora-card p-6 text-center animate-scale-in">
-              <div className="text-3xl font-bold bg-clip-text text-transparent bg-zenora-gradient mb-2">
-                {stat.number}
+            {
+              icon: <Star className="h-8 w-8 text-amber-500" />,
+              title: "Excellence",
+              description: "We're committed to delivering exceptional service and continuous improvement."
+            },
+            {
+              icon: <Globe className="h-8 w-8 text-blue-500" />,
+              title: "Innovation",
+              description: "We leverage cutting-edge AI to solve complex property management challenges."
+            },
+            {
+              icon: <Users className="h-8 w-8 text-green-500" />,
+              title: "Customer Focus",
+              description: "We put our clients first and design solutions around their specific needs."
+            },
+            {
+              icon: <Target className="h-8 w-8 text-red-500" />,
+              title: "Integrity",
+              description: "We operate with transparency and honesty in all our business practices."
+            }
+          ].map((value, i) => (
+            <motion.div 
+              key={i} 
+              className="zenora-card p-6 hover:shadow-lg transition-all duration-300"
+              variants={fadeIn}
+              whileHover={{ y: -5 }}
+            >
+              <div className="rounded-full w-14 h-14 bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                {value.icon}
               </div>
-              <div className="text-muted-foreground">
-                {stat.label}
-              </div>
-            </div>
+              <h4 className="text-xl font-bold mb-2">{value.title}</h4>
+              <p className="text-muted-foreground">{value.description}</p>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
+
+        <motion.div 
+          variants={fadeIn}
+          className="flex flex-col items-center"
+        >
+          <Link to="/contact">
+            <ZenoraButton size="lg" className="group">
+              Connect With Our Team <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </ZenoraButton>
+          </Link>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

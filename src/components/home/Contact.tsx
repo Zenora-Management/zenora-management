@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Mail, Phone, MapPin, Send, Calendar } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { motion } from "framer-motion";
 
 interface ContactProps {
   selectedPlan?: string | null;
@@ -20,6 +21,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const location = useLocation();
   
   // Set the subject based on the selected plan
   useEffect(() => {
@@ -50,16 +52,21 @@ const Contact = ({ selectedPlan }: ContactProps) => {
         subject: `Inquiry about ${planName}`
       }));
       
-      // Show a toast notification
-      toast({
-        title: selectedPlan === "demo" ? "Demo Requested" : "Plan Selected",
-        description: selectedPlan === "demo" 
-          ? "You've requested a demo. Please complete the form to schedule." 
-          : `You've selected the ${planName}. Please complete the form to proceed.`,
-        variant: "default",
-      });
+      // Only show toast if not coming from demo redirect
+      const searchParams = new URLSearchParams(location.search);
+      const fromCalendly = searchParams.get("fromCalendly");
+      
+      if (!fromCalendly) {
+        toast({
+          title: selectedPlan === "demo" ? "Demo Requested" : "Plan Selected",
+          description: selectedPlan === "demo" 
+            ? "You've requested a demo. Please complete the form to schedule." 
+            : `You've selected the ${planName}. Please complete the form to proceed.`,
+          variant: "default",
+        });
+      }
     }
-  }, [selectedPlan]);
+  }, [selectedPlan, location.search]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -71,6 +78,8 @@ const Contact = ({ selectedPlan }: ContactProps) => {
     setIsSubmitting(true);
     
     try {
+      console.log("Submitting contact form", formData);
+      
       // Save to Supabase
       const { error } = await supabase
         .from('contact_messages')
@@ -108,8 +117,12 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       
       if (!emailResponse.ok) {
         const errorData = await emailResponse.json();
+        console.error("Email API error response:", errorData);
         throw new Error(errorData.error || "Failed to send email");
       }
+      
+      const responseData = await emailResponse.json();
+      console.log("Email sent successfully:", responseData);
       
       // Show success message
       toast({
@@ -141,14 +154,40 @@ const Contact = ({ selectedPlan }: ContactProps) => {
     }
   };
 
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6 }
+    }
+  };
+
   return (
-    <section className="zenora-section bg-white dark:bg-zenora-dark relative overflow-hidden">
+    <motion.section 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      variants={{
+        hidden: {},
+        visible: {
+          transition: {
+            staggerChildren: 0.2
+          }
+        }
+      }}
+      className="zenora-section bg-white dark:bg-zenora-dark relative overflow-hidden"
+    >
       {/* Background elements */}
       <div className="absolute top-0 left-1/4 w-1/2 h-1/2 bg-zenora-gradient opacity-5 blur-3xl rounded-full"></div>
       <div className="absolute bottom-0 right-1/4 w-1/2 h-1/2 bg-zenora-light opacity-5 blur-3xl rounded-full"></div>
       
       <div className="zenora-container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.div 
+          variants={fadeIn}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
           <div className="inline-flex items-center rounded-full border border-zenora-purple/30 bg-zenora-purple/5 px-3 py-1 text-sm text-zenora-purple backdrop-blur-sm mb-6">
             <span className="font-medium">Get In Touch</span>
           </div>
@@ -162,12 +201,15 @@ const Contact = ({ selectedPlan }: ContactProps) => {
               ? "We're excited to help you get started with your selected plan. Please fill out the form below to complete your reservation."
               : "Have questions about our services or ready to get started? Our team is here to help you transform your property management experience."}
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Information */}
-          <div className="animate-slide-in">
-            <div className="bg-zenora-gradient rounded-2xl p-8 text-white h-full relative overflow-hidden shadow-lg">
+          <motion.div 
+            variants={fadeIn}
+            className="group"
+          >
+            <div className="bg-zenora-gradient rounded-2xl p-8 text-white h-full relative overflow-hidden shadow-lg transform transition-transform duration-300 group-hover:scale-[1.02]">
               <div className="absolute inset-0 bg-gradient-to-br from-zenora-dark to-zenora-purple mix-blend-overlay opacity-70"></div>
               <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-white opacity-10 rounded-full"></div>
               <div className="absolute -top-32 -right-32 w-64 h-64 bg-white opacity-10 rounded-full"></div>
@@ -179,7 +221,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                 </p>
                 
                 <div className="space-y-6">
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-4 hover:translate-x-1 transition-transform">
                     <div className="p-2 bg-white/10 rounded-lg">
                       <Phone className="h-5 w-5" />
                     </div>
@@ -191,7 +233,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                     </div>
                   </div>
                   
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-4 hover:translate-x-1 transition-transform">
                     <div className="p-2 bg-white/10 rounded-lg">
                       <Mail className="h-5 w-5" />
                     </div>
@@ -203,7 +245,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                     </div>
                   </div>
                   
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-4 hover:translate-x-1 transition-transform">
                     <div className="p-2 bg-white/10 rounded-lg">
                       <MapPin className="h-5 w-5" />
                     </div>
@@ -218,7 +260,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                 </div>
                 
                 {selectedPlan && selectedPlan !== "demo" && (
-                  <div className="mt-8 p-4 bg-white/10 rounded-lg border border-white/20">
+                  <div className="mt-8 p-4 bg-white/10 rounded-lg border border-white/20 backdrop-blur-sm">
                     <h4 className="font-medium mb-2">Selected Plan Information</h4>
                     <div>
                       {selectedPlan === "client" && (
@@ -249,7 +291,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   </div>
                 )}
                 
-                <div className="mt-8 p-4 bg-white/10 rounded-lg border border-white/20">
+                <div className="mt-8 p-4 bg-white/10 rounded-lg border border-white/20 backdrop-blur-sm transform transition-transform duration-300 hover:scale-105">
                   <h4 className="font-medium mb-2">Schedule a Demo</h4>
                   <p className="text-white/80 mb-4">
                     See our AI-powered property management platform in action with a personalized demo.
@@ -258,9 +300,10 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                     <ZenoraButton 
                       variant="glass" 
                       size="lg" 
-                      className="w-full"
+                      className="w-full group"
+                      animation="glow"
                     >
-                      <Calendar className="mr-2 h-4 w-4" /> Book a Demo
+                      <Calendar className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" /> Book a Demo
                     </ZenoraButton>
                   </a>
                 </div>
@@ -268,7 +311,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                 <div className="mt-12">
                   <h4 className="font-medium mb-4">Connect With Us</h4>
                   <div className="flex gap-4">
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors" aria-label="Facebook">
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all hover:scale-110 transform" aria-label="Facebook">
                       <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd"></path>
                       </svg>
@@ -277,31 +320,55 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
           
           {/* Contact Form */}
-          <div className="animate-slide-up">
-            <div className="zenora-card h-full p-8">
+          <motion.div 
+            variants={fadeIn}
+            className="group"
+          >
+            <div className="zenora-card h-full p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300">
               <h3 className="text-2xl font-bold mb-6">
                 {selectedPlan ? "Complete Your Reservation" : "Send Us a Message"}
               </h3>
               
               {isSubmitted ? (
                 <div className="h-full flex flex-col items-center justify-center py-8">
-                  <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4 text-green-600">
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ 
+                      type: "spring", 
+                      stiffness: 260, 
+                      damping: 20 
+                    }}
+                    className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4 text-green-600"
+                  >
                     <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                  </div>
-                  <h4 className="text-xl font-semibold mb-2">Message Sent!</h4>
-                  <p className="text-muted-foreground text-center max-w-md">
+                  </motion.div>
+                  <motion.h4 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-xl font-semibold mb-2"
+                  >
+                    Message Sent!
+                  </motion.h4>
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-muted-foreground text-center max-w-md"
+                  >
                     Thank you for reaching out. Our team will get back to you within 24 hours.
-                  </p>
+                  </motion.p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
+                    <div className="group">
                       <label htmlFor="name" className="block text-sm font-medium mb-2">
                         Full Name
                       </label>
@@ -312,11 +379,11 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="zenora-input"
+                        className="zenora-input w-full transition-all border-gray-300 focus:border-zenora-purple focus:ring focus:ring-zenora-purple/20 group-hover:border-zenora-purple/50"
                         placeholder="John Doe"
                       />
                     </div>
-                    <div>
+                    <div className="group">
                       <label htmlFor="email" className="block text-sm font-medium mb-2">
                         Email
                       </label>
@@ -327,13 +394,13 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="zenora-input"
+                        className="zenora-input w-full transition-all border-gray-300 focus:border-zenora-purple focus:ring focus:ring-zenora-purple/20 group-hover:border-zenora-purple/50"
                         placeholder="john@example.com"
                       />
                     </div>
                   </div>
                   
-                  <div>
+                  <div className="group">
                     <label htmlFor="subject" className="block text-sm font-medium mb-2">
                       Subject
                     </label>
@@ -343,7 +410,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="zenora-input"
+                      className="zenora-input w-full transition-all border-gray-300 focus:border-zenora-purple focus:ring focus:ring-zenora-purple/20 group-hover:border-zenora-purple/50"
                     >
                       <option value="">Select a topic</option>
                       <option value="Pricing Information">Pricing Information</option>
@@ -358,7 +425,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                     </select>
                   </div>
                   
-                  <div>
+                  <div className="group">
                     <label htmlFor="message" className="block text-sm font-medium mb-2">
                       Message
                     </label>
@@ -369,7 +436,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                       value={formData.message}
                       onChange={handleChange}
                       required
-                      className="zenora-input min-h-[120px]"
+                      className="zenora-input min-h-[120px] transition-all border-gray-300 focus:border-zenora-purple focus:ring focus:ring-zenora-purple/20 group-hover:border-zenora-purple/50"
                       placeholder={selectedPlan ? "Please tell us more about your property management needs..." : "How can we help you?"}
                     ></textarea>
                   </div>
@@ -377,8 +444,9 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   <ZenoraButton 
                     type="submit" 
                     size="lg" 
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto group"
                     disabled={isSubmitting}
+                    animation="glow"
                   >
                     {isSubmitting ? (
                       <>
@@ -390,17 +458,18 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                       </>
                     ) : (
                       <>
-                        <Send className="mr-2 h-4 w-4" /> {selectedPlan ? "Complete Reservation" : "Send Message"}
+                        <Send className="mr-2 h-4 w-4 group-hover:translate-x-1 transition-transform" /> 
+                        {selectedPlan ? "Complete Reservation" : "Send Message"}
                       </>
                     )}
                   </ZenoraButton>
                 </form>
               )}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

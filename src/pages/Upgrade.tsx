@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 const Upgrade = () => {
   const { user } = useAuth();
@@ -66,7 +67,8 @@ const Upgrade = () => {
         'Email support'
       ],
       popular: false,
-      icon: <Star className="h-6 w-6 text-amber-500" />
+      icon: <Star className="h-6 w-6 text-amber-500" />,
+      color: 'from-amber-500 to-amber-600'
     },
     {
       id: 'professional',
@@ -90,7 +92,8 @@ const Upgrade = () => {
         'Priority support'
       ],
       popular: true,
-      icon: <Sparkles className="h-6 w-6 text-zenora-purple" />
+      icon: <Sparkles className="h-6 w-6 text-zenora-purple" />,
+      color: 'from-zenora-purple to-zenora-light'
     },
     {
       id: 'enterprise',
@@ -115,7 +118,8 @@ const Upgrade = () => {
         'Dedicated account manager'
       ],
       popular: false,
-      icon: <Zap className="h-6 w-6 text-blue-500" />
+      icon: <Zap className="h-6 w-6 text-blue-500" />,
+      color: 'from-blue-500 to-blue-600'
     }
   ];
   
@@ -178,64 +182,145 @@ const Upgrade = () => {
   };
   
   const currentPlan = subscription ? getPlanDetails() : { name: 'Free', features: [] };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20
+      }
+    }
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow py-12">
+      <main className="flex-grow py-12 relative overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+          <div className="absolute top-1/4 left-1/4 w-1/3 h-1/3 bg-zenora-purple/10 rounded-full filter blur-3xl"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-1/3 h-1/3 bg-amber-500/10 rounded-full filter blur-3xl"></div>
+        </div>
+        
         <div className="zenora-container">
-          <div className="max-w-5xl mx-auto">
-            <h1 className="text-3xl font-bold mb-8">Upgrade Your Subscription</h1>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-5xl mx-auto"
+          >
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-zenora-gradient mb-4">
+                Upgrade Your Experience
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Choose the plan that's right for you and take your property management to the next level.
+              </p>
+            </div>
             
             {/* Current Plan */}
             {!isLoading && (
-              <Card className="mb-12 border border-zenora-purple/30">
-                <CardHeader className="bg-gradient-to-r from-zenora-purple/10 to-transparent">
-                  <CardTitle className="flex items-center gap-2">
-                    <div className="bg-zenora-purple/20 p-1.5 rounded-full">
-                      <Sparkles className="h-5 w-5 text-zenora-purple" />
-                    </div>
-                    Current Plan: {currentPlan.name}
-                  </CardTitle>
-                  {subscription && (
-                    <CardDescription>
-                      Status: {subscription.status}
-                      {subscription.current_period_end && (
-                        `, Renews on ${new Date(subscription.current_period_end).toLocaleDateString()}`
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.4 }}
+              >
+                <Card className="mb-12 border border-zenora-purple/30 overflow-hidden bg-gradient-to-r from-zenora-purple/5 to-transparent">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="bg-zenora-purple/20 p-2 rounded-full">
+                          <Sparkles className="h-5 w-5 text-zenora-purple" />
+                        </div>
+                        <CardTitle>Current Plan: {currentPlan.name}</CardTitle>
+                      </div>
+                      {subscription && subscription.status === 'active' && (
+                        <div className="bg-green-500/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-sm">
+                          Active
+                        </div>
                       )}
-                    </CardDescription>
+                    </div>
+                    {subscription && (
+                      <CardDescription>
+                        {subscription.current_period_end && (
+                          <span className="font-medium">
+                            Renews on {new Date(subscription.current_period_end).toLocaleDateString()}
+                          </span>
+                        )}
+                      </CardDescription>
+                    )}
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    {currentPlan.features.length > 0 ? (
+                      <ul className="space-y-3 grid grid-cols-1 md:grid-cols-2">
+                        {currentPlan.features.map((feature, index) => (
+                          <motion.li 
+                            key={index} 
+                            className="flex items-start"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.1 * index }}
+                          >
+                            <Check className="h-5 w-5 text-zenora-purple shrink-0 mr-2" />
+                            <span>{feature}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-6">
+                        <p className="text-muted-foreground mb-4">No active subscription. Upgrade to access premium features.</p>
+                        <motion.div 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <ZenoraButton
+                            onClick={() => document.getElementById('pricing-plans')?.scrollIntoView({ behavior: 'smooth' })}
+                            className="group"
+                          >
+                            View Plans <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                          </ZenoraButton>
+                        </motion.div>
+                      </div>
+                    )}
+                  </CardContent>
+                  {isSubscriptionActive && (
+                    <CardFooter className="border-t border-gray-100 dark:border-gray-800 pt-6">
+                      <ZenoraButton
+                        variant="outline" 
+                        onClick={handleCancelSubscription}
+                        className="group"
+                      >
+                        Cancel Subscription
+                      </ZenoraButton>
+                    </CardFooter>
                   )}
-                </CardHeader>
-                <CardContent className="pt-6">
-                  {currentPlan.features.length > 0 ? (
-                    <ul className="space-y-3 grid grid-cols-1 md:grid-cols-2">
-                      {currentPlan.features.map((feature, index) => (
-                        <li key={index} className="flex items-start">
-                          <Check className="h-5 w-5 text-zenora-purple shrink-0 mr-2" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No active subscription. Upgrade to access premium features.</p>
-                  )}
-                </CardContent>
-                {isSubscriptionActive && (
-                  <CardFooter className="border-t border-gray-100 dark:border-gray-800 pt-6">
-                    <ZenoraButton
-                      variant="outline" 
-                      onClick={handleCancelSubscription}
-                    >
-                      Cancel Subscription
-                    </ZenoraButton>
-                  </CardFooter>
-                )}
-              </Card>
+                </Card>
+              </motion.div>
             )}
             
             {/* Subscription Options */}
-            <div className="mb-16">
+            <motion.div 
+              id="pricing-plans"
+              className="mb-16"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
               <div className="flex justify-center mb-12">
                 <Tabs 
                   defaultValue="year" 
@@ -247,7 +332,7 @@ const Upgrade = () => {
                     <TabsTrigger value="month">Monthly Billing</TabsTrigger>
                     <TabsTrigger value="year" className="relative">
                       Yearly Billing
-                      <span className="absolute -top-3 right-0 rounded-full bg-zenora-purple px-2 py-0.5 text-xs text-white shadow-md">
+                      <span className="absolute -top-3 right-0 rounded-full bg-zenora-gradient px-2 py-0.5 text-xs text-white shadow-md animate-pulse">
                         Save 17%
                       </span>
                     </TabsTrigger>
@@ -256,26 +341,31 @@ const Upgrade = () => {
               </div>
               
               <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-                {plans.map((plan) => (
-                  <div 
+                {plans.map((plan, index) => (
+                  <motion.div 
                     key={plan.id} 
+                    variants={itemVariants}
                     className={cn(
-                      "relative rounded-2xl overflow-hidden transition-all duration-300 group hover:shadow-xl", 
+                      "relative rounded-2xl overflow-hidden transition-all duration-500 group", 
                       plan.popular 
-                        ? "shadow-lg border-2 border-zenora-purple transform hover:-translate-y-1" 
+                        ? "shadow-lg border-2 border-zenora-purple" 
                         : "shadow-md border border-gray-200 dark:border-gray-800"
                     )}
+                    whileHover={{ 
+                      translateY: -8,
+                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+                    }}
                   >
                     {plan.popular && (
-                      <div className="absolute top-0 right-0 bg-zenora-purple text-white py-2 px-4 text-sm font-medium rounded-bl-xl z-10">
-                        Most Popular
+                      <div className="absolute -top-6 -right-12 w-32 h-12 rotate-45 bg-zenora-gradient text-white text-center text-xs font-semibold py-1 shadow-lg z-10">
+                        Popular
                       </div>
                     )}
                     <div className={cn(
                       "p-1",
-                      plan.popular ? "bg-zenora-gradient" : ""
+                      plan.popular ? `bg-gradient-to-br ${plan.color}` : ""
                     )}>
-                      <div className="bg-white dark:bg-zenora-dark rounded-xl p-8">
+                      <div className="bg-white dark:bg-zenora-dark rounded-xl p-8 h-full flex flex-col">
                         <div className="flex items-center gap-3 mb-4">
                           <div className={cn(
                             "rounded-full w-10 h-10 flex items-center justify-center",
@@ -288,7 +378,15 @@ const Upgrade = () => {
                         
                         <div className="mb-6">
                           <div className="flex items-end">
-                            <span className="text-4xl font-extrabold">{plan.price[billingInterval]}</span>
+                            <motion.span 
+                              key={`${plan.id}-${billingInterval}`}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="text-4xl font-extrabold"
+                            >
+                              {plan.price[billingInterval]}
+                            </motion.span>
                             <span className="text-muted-foreground ml-2 mb-1">/{billingInterval}</span>
                           </div>
                           {billingInterval === 'year' && (
@@ -300,20 +398,27 @@ const Upgrade = () => {
                         
                         <p className="text-muted-foreground mb-6">{plan.description}</p>
                         
-                        <ul className="space-y-4 mb-8">
-                          {plan.features.map((feature, index) => (
-                            <li key={index} className="flex items-start">
-                              <Check className={cn(
-                                "h-5 w-5 shrink-0 mr-2 mt-0.5",
-                                plan.popular ? "text-zenora-purple" : "text-green-500"
-                              )} />
+                        <ul className="space-y-4 mb-8 flex-grow">
+                          {plan.features.map((feature, idx) => (
+                            <motion.li 
+                              key={idx} 
+                              className="flex items-start"
+                              initial={{ opacity: 0, x: -5 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.03 * idx }}
+                            >
+                              <div className={cn(
+                                `rounded-full p-1 mr-2 mt-0.5 bg-gradient-to-r ${plan.color}`,
+                              )}>
+                                <Check className="h-3 w-3 text-white" />
+                              </div>
                               <span>{feature}</span>
-                            </li>
+                            </motion.li>
                           ))}
                         </ul>
                         
                         <ZenoraButton 
-                          className="w-full" 
+                          className="w-full mt-auto group" 
                           variant={plan.popular ? "default" : "outline"}
                           onClick={() => handleSelectPlan(plan.id)}
                           disabled={
@@ -326,58 +431,83 @@ const Upgrade = () => {
                             ? 'Current Plan'
                             : createCheckoutSession.isPending
                               ? 'Processing...'
-                              : 'Select Plan'}
+                              : <>Select Plan <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" /></>}
                         </ZenoraButton>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
             
             {/* FAQs */}
-            <div className="mt-16">
-              <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+            <motion.div 
+              className="mt-16"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
               
               <div className="space-y-4">
-                <Card>
+                <Card className="transition-all duration-300 hover:border-zenora-purple/30 hover:shadow-md">
                   <CardHeader>
-                    <CardTitle className="text-lg">How do I change my subscription plan?</CardTitle>
+                    <CardTitle className="text-lg flex items-center">
+                      <span className="bg-zenora-purple/10 p-1 rounded-full mr-2">
+                        <ChevronRight className="h-4 w-4 text-zenora-purple" />
+                      </span>
+                      How do I change my subscription plan?
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p>You can upgrade or downgrade your plan at any time. The new plan will take effect immediately, and we'll prorate any charges or credits.</p>
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="transition-all duration-300 hover:border-zenora-purple/30 hover:shadow-md">
                   <CardHeader>
-                    <CardTitle className="text-lg">What happens when I cancel my subscription?</CardTitle>
+                    <CardTitle className="text-lg flex items-center">
+                      <span className="bg-zenora-purple/10 p-1 rounded-full mr-2">
+                        <ChevronRight className="h-4 w-4 text-zenora-purple" />
+                      </span>
+                      What happens when I cancel my subscription?
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p>You'll continue to have access to your current plan's features until the end of your billing period. After that, you'll be downgraded to the free plan.</p>
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="transition-all duration-300 hover:border-zenora-purple/30 hover:shadow-md">
                   <CardHeader>
-                    <CardTitle className="text-lg">Are there any refunds if I cancel early?</CardTitle>
+                    <CardTitle className="text-lg flex items-center">
+                      <span className="bg-zenora-purple/10 p-1 rounded-full mr-2">
+                        <ChevronRight className="h-4 w-4 text-zenora-purple" />
+                      </span>
+                      Are there any refunds if I cancel early?
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p>We don't offer refunds for partial subscription periods. If you cancel, you'll have access until the end of your current billing cycle.</p>
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="transition-all duration-300 hover:border-zenora-purple/30 hover:shadow-md">
                   <CardHeader>
-                    <CardTitle className="text-lg">How secure is my payment information?</CardTitle>
+                    <CardTitle className="text-lg flex items-center">
+                      <span className="bg-zenora-purple/10 p-1 rounded-full mr-2">
+                        <ChevronRight className="h-4 w-4 text-zenora-purple" />
+                      </span>
+                      How secure is my payment information?
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p>All payments are processed securely through Stripe. We never store your credit card information on our servers.</p>
                   </CardContent>
                 </Card>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </main>
       
