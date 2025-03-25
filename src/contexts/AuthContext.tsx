@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { useAuthState } from '@/hooks/use-auth-state';
@@ -9,7 +10,7 @@ type AuthContextType = {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string, isAdmin?: boolean) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string) => Promise<void>;
+  signUp: (email: string, password: string, fullName: string, phoneNumber?: string, propertyAddress?: string) => Promise<void>;
   signOut: () => Promise<void>;
   checkIsAdmin: (user: User) => boolean;
   isUserAdmin: () => boolean;

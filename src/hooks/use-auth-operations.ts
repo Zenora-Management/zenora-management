@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -149,7 +150,7 @@ export const useAuthOperations = ({
     }
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (email: string, password: string, fullName: string, phoneNumber?: string, propertyAddress?: string) => {
     if (authChangeInProgress) {
       console.log("Auth change already in progress, aborting sign up");
       return;
@@ -176,6 +177,8 @@ export const useAuthOperations = ({
         options: {
           data: {
             full_name: fullName,
+            phone_number: phoneNumber || null,
+            property_address: propertyAddress || null,
             is_admin: false
           },
           emailRedirectTo: window.location.origin + '/dashboard'
@@ -200,8 +203,8 @@ export const useAuthOperations = ({
             id: data.user.id,
             email: email,
             full_name: fullName,
-            phone: null,
-            address: null,
+            phone: phoneNumber || null,
+            address: propertyAddress || null,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };

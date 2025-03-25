@@ -52,11 +52,31 @@ const Login = () => {
             )}
             
             {isSignUp && (
-              <AuthForm mode="signup" userType="regular" />
+              <div className="max-w-md mx-auto bg-white dark:bg-zenora-dark-card p-6 rounded-lg shadow-sm">
+                <AuthForm mode="signup" userType="regular" />
+              </div>
             )}
           </div>
           
           <div className="text-center mt-8 text-sm text-muted-foreground">
+            {isSignUp ? (
+              <>
+                Already have an account?{" "}
+                <Link to="/login" className="text-zenora-purple hover:underline">
+                  Log in
+                </Link>
+              </>
+            ) : (
+              <>
+                Don't have an account?{" "}
+                <Link to="/signup" className="text-zenora-purple hover:underline">
+                  Sign up
+                </Link>
+              </>
+            )}
+          </div>
+          
+          <div className="text-center mt-4 text-sm text-muted-foreground">
             By {isSignUp ? "signing up" : "signing in"}, you agree to our{" "}
             <Link to="/terms" className="text-zenora-purple hover:underline">
               Terms of Service
