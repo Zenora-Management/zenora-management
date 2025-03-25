@@ -91,16 +91,13 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     }
   });
   
-  // Define verification form
+  // Define verification form - separately to avoid type conflicts
   const verificationForm = useForm<VerificationFormValues>({
     resolver: zodResolver(verificationSchema),
     defaultValues: {
       verificationCode: "",
     }
   });
-  
-  // Use the appropriate form based on the mode and step
-  const form = !isSignup ? loginForm : (verificationStep ? verificationForm : signupForm);
   
   // Reset form submission state when mode changes
   useEffect(() => {
@@ -270,10 +267,10 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   // Render login form
   if (!isSignup) {
     return (
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onLoginSubmit)} className="space-y-4">
+      <Form {...loginForm}>
+        <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
           <FormField
-            control={form.control}
+            control={loginForm.control}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -297,7 +294,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
           />
           
           <FormField
-            control={form.control}
+            control={loginForm.control}
             name="password"
             render={({ field }) => (
               <FormItem>
@@ -341,7 +338,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     );
   }
 
-  // Render verification step
+  // Render verification step - with its own separate form to avoid type conflicts
   if (verificationStep) {
     return (
       <Form {...verificationForm}>
