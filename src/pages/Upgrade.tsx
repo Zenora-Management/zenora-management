@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -10,15 +9,15 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { toast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 const Upgrade = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('year');
+  // Only yearly billing is available
+  const billingInterval = 'year';
   const { 
     subscription, 
     isLoading, 
@@ -31,15 +30,12 @@ const Upgrade = () => {
   // Get price ID map - replace these with your actual Stripe price IDs once created
   const PRICE_IDS = {
     starter: {
-      month: 'price_starter_monthly',
       year: 'price_starter_yearly'
     },
     professional: {
-      month: 'price_professional_monthly',
       year: 'price_professional_yearly'
     },
     enterprise: {
-      month: 'price_enterprise_monthly',
       year: 'price_enterprise_yearly'
     }
   };
@@ -51,11 +47,9 @@ const Upgrade = () => {
       name: 'Starter',
       description: 'Perfect for small landlords with a few properties',
       price: {
-        month: '$29',
         year: '$290'
       },
       pricePerMonth: {
-        month: '$29',
         year: '$24'
       },
       savings: '17%',
@@ -75,11 +69,9 @@ const Upgrade = () => {
       name: 'Professional',
       description: 'Ideal for growing property portfolios',
       price: {
-        month: '$79',
         year: '$790'
       },
       pricePerMonth: {
-        month: '$79',
         year: '$66'
       },
       savings: '17%',
@@ -100,11 +92,9 @@ const Upgrade = () => {
       name: 'Enterprise',
       description: 'Comprehensive solution for property management companies',
       price: {
-        month: '$199',
         year: '$1,990'
       },
       pricePerMonth: {
-        month: '$199',
         year: '$166'
       },
       savings: '17%',
@@ -322,22 +312,11 @@ const Upgrade = () => {
               animate="visible"
             >
               <div className="flex justify-center mb-12">
-                <Tabs 
-                  defaultValue="year" 
-                  value={billingInterval}
-                  onValueChange={(value) => setBillingInterval(value as 'month' | 'year')}
-                  className="w-full max-w-md"
-                >
-                  <TabsList className="grid w-full grid-cols-2 p-1">
-                    <TabsTrigger value="month">Monthly Billing</TabsTrigger>
-                    <TabsTrigger value="year" className="relative">
-                      Yearly Billing
-                      <span className="absolute -top-3 right-0 rounded-full bg-zenora-gradient px-2 py-0.5 text-xs text-white shadow-md animate-pulse">
-                        Save 17%
-                      </span>
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
+                <div className="w-full max-w-md text-center">
+                  <div className="bg-zenora-purple/10 text-zenora-purple font-medium py-2 px-4 rounded-full inline-block">
+                    Yearly Billing <span className="ml-1 font-bold">Save 17%</span>
+                  </div>
+                </div>
               </div>
               
               <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
@@ -389,11 +368,9 @@ const Upgrade = () => {
                             </motion.span>
                             <span className="text-muted-foreground ml-2 mb-1">/{billingInterval}</span>
                           </div>
-                          {billingInterval === 'year' && (
-                            <p className="text-sm text-zenora-purple mt-1">
-                              Just {plan.pricePerMonth.year}/mo, billed annually
-                            </p>
-                          )}
+                          <p className="text-sm text-zenora-purple mt-1">
+                            Just {plan.pricePerMonth.year}/mo, billed annually
+                          </p>
                         </div>
                         
                         <p className="text-muted-foreground mb-6">{plan.description}</p>
@@ -498,11 +475,11 @@ const Upgrade = () => {
                       <span className="bg-zenora-purple/10 p-1 rounded-full mr-2">
                         <ChevronRight className="h-4 w-4 text-zenora-purple" />
                       </span>
-                      How secure is my payment information?
+                      Do you offer a free trial?
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p>All payments are processed securely through Stripe. We never store your credit card information on our servers.</p>
+                    <p>We don't currently offer free trials, but we do have a 30-day money-back guarantee if you're not satisfied with our service.</p>
                   </CardContent>
                 </Card>
               </div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Routes,
@@ -22,12 +21,19 @@ import EmailTestPage from '@/pages/EmailTest';
 import Dashboard from '@/pages/Dashboard';
 import Admin from '@/pages/Admin';
 import Upgrade from '@/pages/Upgrade';
+import PropertyManagementDetail from '@/pages/PropertyManagementDetail';
+import AIRentAnalysisDetail from '@/pages/AIRentAnalysisDetail';
+import TenantScreeningDetail from '@/pages/TenantScreeningDetail';
+import MaintenanceDetail from '@/pages/MaintenanceDetail';
 import Auth from '@/components/auth/Auth';
 import AdminAuth from '@/components/auth/AdminAuth';
+import UserAuth from '@/components/auth/UserAuth';
 import MembershipAuth from '@/components/auth/MembershipAuth';
 import NotFound from '@/pages/NotFound';
 
 function App() {
+  console.log("App component rendering");
+  
   return (
     <>
       <Routes>
@@ -46,73 +52,91 @@ function App() {
         <Route path="/careers" element={<Careers />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/email-test" element={<EmailTestPage />} />
-        <Route path="/upgrade" element={<Auth><Upgrade /></Auth>} />
+        <Route path="/upgrade" element={<UserAuth><Upgrade /></UserAuth>} />
+        
+        {/* Service detail pages */}
+        <Route path="/property-management/details" element={<PropertyManagementDetail />} />
+        <Route path="/ai-rent-analysis/details" element={<AIRentAnalysisDetail />} />
+        <Route path="/tenant-screening/details" element={<TenantScreeningDetail />} />
+        <Route path="/maintenance/details" element={<MaintenanceDetail />} />
         
         {/* Protected routes - User Dashboard */}
         <Route
           path="/dashboard"
           element={
-            <Auth>
+            <UserAuth>
               <Dashboard />
-            </Auth>
+            </UserAuth>
           }
         />
         
         {/* Nested dashboard routes */}
-        <Route path="/dashboard/*" element={<Auth><Dashboard /></Auth>} />
+        <Route path="/dashboard/*" element={<UserAuth><Dashboard /></UserAuth>} />
         
         {/* Protected routes that require membership - using MembershipAuth */}
         <Route
           path="/dashboard/ai-rent-analysis"
           element={
-            <MembershipAuth>
-              <Dashboard />
-            </MembershipAuth>
+            <UserAuth>
+              <MembershipAuth>
+                <Dashboard />
+              </MembershipAuth>
+            </UserAuth>
           }
         />
         
         <Route
           path="/dashboard/properties"
           element={
-            <MembershipAuth>
-              <Dashboard />
-            </MembershipAuth>
+            <UserAuth>
+              <MembershipAuth>
+                <Dashboard />
+              </MembershipAuth>
+            </UserAuth>
           }
         />
         
         <Route
           path="/dashboard/tenants"
           element={
-            <MembershipAuth>
-              <Dashboard />
-            </MembershipAuth>
+            <UserAuth>
+              <MembershipAuth>
+                <Dashboard />
+              </MembershipAuth>
+            </UserAuth>
           }
         />
         
         <Route
           path="/dashboard/documents"
           element={
-            <MembershipAuth>
-              <Dashboard />
-            </MembershipAuth>
+            <UserAuth>
+              <MembershipAuth>
+                <Dashboard />
+              </MembershipAuth>
+            </UserAuth>
           }
         />
         
         <Route
           path="/dashboard/financials"
           element={
-            <MembershipAuth>
-              <Dashboard />
-            </MembershipAuth>
+            <UserAuth>
+              <MembershipAuth>
+                <Dashboard />
+              </MembershipAuth>
+            </UserAuth>
           }
         />
         
         <Route
           path="/dashboard/reports"
           element={
-            <MembershipAuth>
-              <Dashboard />
-            </MembershipAuth>
+            <UserAuth>
+              <MembershipAuth>
+                <Dashboard />
+              </MembershipAuth>
+            </UserAuth>
           }
         />
         

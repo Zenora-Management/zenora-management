@@ -4,7 +4,6 @@ import Footer from "@/components/layout/Footer";
 import Hero from "@/components/home/Hero";
 import Features from "@/components/home/Features";
 import About from "@/components/home/About";
-import Contact from "@/components/home/Contact";
 import { Link } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { ChevronRight } from "lucide-react";
@@ -80,24 +79,6 @@ const Index = () => {
             <Link to="/about">
               <ZenoraButton variant="outline" size="lg" className="group">
                 Learn More About Us
-                <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </ZenoraButton>
-            </Link>
-          </motion.div>
-        </section>
-        
-        <section id="contact">
-          <Contact />
-          <motion.div 
-            className="text-center py-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link to="/contact">
-              <ZenoraButton variant="outline" size="lg" className="group">
-                Get In Touch
                 <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </ZenoraButton>
             </Link>

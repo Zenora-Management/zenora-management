@@ -1,4 +1,3 @@
-
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -7,7 +6,7 @@ interface AdminAuthProps {
 }
 
 const AdminAuth = ({ children }: AdminAuthProps) => {
-  const { user, loading, checkIsAdmin } = useAuth();
+  const { user, loading, isUserAdmin } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -18,7 +17,7 @@ const AdminAuth = ({ children }: AdminAuthProps) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (!checkIsAdmin(user)) {
+  if (!isUserAdmin()) {
     console.log('User is not an admin, redirecting to user dashboard:', user.email);
     return <Navigate to="/dashboard" replace />;
   }

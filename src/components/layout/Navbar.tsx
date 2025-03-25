@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import {
@@ -19,6 +18,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
   useEffect(() => {
@@ -40,6 +40,12 @@ const Navbar = () => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
+  
+  // Function to navigate to home without redirects
+  const goToHome = (e) => {
+    e.preventDefault();
+    navigate('/', { replace: true });
+  };
 
   return (
     <header
@@ -54,6 +60,7 @@ const Navbar = () => {
           to="/" 
           className="flex items-center gap-2"
           aria-label="Zenora Management Home"
+          onClick={goToHome}
         >
           <div className="relative h-10 w-10 rounded-full bg-zenora-gradient flex items-center justify-center shadow-lg animate-pulse-glow">
             <span className="font-bold text-white text-xl">Z</span>
@@ -65,9 +72,13 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/' ? 'text-zenora-purple font-medium' : ''}`}>
+          <a 
+            href="/" 
+            className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/' ? 'text-zenora-purple font-medium' : ''}`}
+            onClick={goToHome}
+          >
             Home
-          </Link>
+          </a>
           <Link to="/features" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/features' ? 'text-zenora-purple font-medium' : ''}`}>
             Features
           </Link>
@@ -204,12 +215,13 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white dark:bg-zenora-dark shadow-lg py-4 animate-fade-in">
           <div className="zenora-container flex flex-col gap-4">
-            <Link 
-              to="/"
+            <a 
+              href="/" 
               className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/' ? 'text-zenora-purple font-medium' : ''}`}
+              onClick={goToHome}
             >
               Home
-            </Link>
+            </a>
             <Link 
               to="/features"
               className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/features' ? 'text-zenora-purple font-medium' : ''}`}

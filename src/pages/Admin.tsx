@@ -65,6 +65,14 @@ const UsersManagement = () => {
   const [clientDocuments, setClientDocuments] = useState<Document[]>([]);
   const [manageClientOpen, setManageClientOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
+  const [newProperty, setNewProperty] = useState<Partial<Property>>({});
+  const [addPropertyOpen, setAddPropertyOpen] = useState(false);
+  const [uploadDocumentOpen, setUploadDocumentOpen] = useState(false);
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [documentName, setDocumentName] = useState("");
+  const [documentDescription, setDocumentDescription] = useState("");
+  const [documentType, setDocumentType] = useState("property");
+  const [uploading, setUploading] = useState(false);
 
   const loadClients = async () => {
     try {
@@ -238,6 +246,218 @@ const UsersManagement = () => {
     }
   };
 
+  const handleDocumentUpload = async () => {
+    if (!selectedClient || !documentFile || !documentName) {
+      toast({
+        title: "Missing information",
+        description: "Please provide a document name and select a file.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      setUploading(true);
+      
+      const fileExt = documentFile.name.split('.').pop();
+      const fileName = `${selectedClient.id}/${Date.now()}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase
+        .storage
+        .from('client_documents')
+        .upload(fileName, documentFile);
+      
+      if (uploadError) {
+        throw uploadError;
+      }
+      
+      const { data: urlData } = await supabase
+        .storage
+        .from('client_documents')
+        .getPublicUrl(fileName);
+      
+      const newDocument: Partial<Tables['documents']> = {
+        client_id: selectedClient.id,
+        name: documentName,
+        description: documentDescription,
+        type: documentType,
+        file_path: fileName,
+        file_url: urlData.publicUrl,
+        file_size: documentFile.size,
+        file_type: documentFile.type,
+        is_visible: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      const { data: docData, error: docError } = await supabase
+        .from('documents')
+        .insert([newDocument])
+        .select()
+        .single();
+      
+      if (docError) {
+        throw docError;
+      }
+      
+      setClientDocuments([docData as Document, ...clientDocuments]);
+      
+      setUploadDocumentOpen(false);
+      setDocumentFile(null);
+      setDocumentName("");
+      setDocumentDescription("");
+      setDocumentType("property");
+      
+      toast({
+        title: "Document uploaded",
+        description: "The document has been successfully uploaded and is now visible to the client.",
+      });
+    } catch (error) {
+      console.error('Error uploading document:', error);
+      toast({
+        title: "Failed to upload document",
+        description: "Could not upload the document. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleAddProperty = async () => {
+    if (!selectedClient || !newProperty.address) {
+      toast({
+        title: "Missing information",
+        description: "Please provide at least the property address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      const propertyData: Partial<Tables['properties']> = {
+        client_id: selectedClient.id,
+        address: newProperty.address,
+        city: newProperty.city || "",
+        state: newProperty.state || "",
+        zip: newProperty.zip || "",
+        type: newProperty.type || "residential",
+        bedrooms: newProperty.bedrooms || 0,
+        bathrooms: newProperty.bathrooms || 0,
+        square_footage: newProperty.square_footage || 0,
+        year_built: newProperty.year_built || 0,
+        status: newProperty.status || "active",
+        rental_rate: newProperty.rental_rate || 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      const { data, error } = await supabase
+        .from('properties')
+        .insert([propertyData])
+        .select()
+        .single();
+      
+      if (error) {
+        throw error;
+      }
+      
+      setClientProperties([data as Property, ...clientProperties]);
+      
+      setAddPropertyOpen(false);
+      setNewProperty({});
+      
+      toast({
+        title: "Property added",
+        description: "The property has been successfully added to the client's portfolio.",
+      });
+    } catch (error) {
+      console.error('Error adding property:', error);
+      toast({
+        title: "Failed to add property",
+        description: "Could not add the property. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteDocument = async (documentId: string) => {
+    if (!confirm("Are you sure you want to delete this document? This action cannot be undone.")) {
+      return;
+    }
+    
+    try {
+      const documentToDelete = clientDocuments.find(doc => doc.id === documentId);
+      
+      if (!documentToDelete) return;
+      
+      if (documentToDelete.file_path) {
+        const { error: storageError } = await supabase
+          .storage
+          .from('client_documents')
+          .remove([documentToDelete.file_path]);
+        
+        if (storageError) {
+          console.error('Error deleting file from storage:', storageError);
+        }
+      }
+      
+      const { error: dbError } = await supabase
+        .from('documents')
+        .delete()
+        .eq('id', documentId);
+      
+      if (dbError) {
+        throw dbError;
+      }
+      
+      setClientDocuments(clientDocuments.filter(doc => doc.id !== documentId));
+      
+      toast({
+        title: "Document deleted",
+        description: "The document has been successfully deleted.",
+      });
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      toast({
+        title: "Failed to delete document",
+        description: "Could not delete the document. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteProperty = async (propertyId: string) => {
+    if (!confirm("Are you sure you want to delete this property? This action cannot be undone.")) {
+      return;
+    }
+    
+    try {
+      const { error } = await supabase
+        .from('properties')
+        .delete()
+        .eq('id', propertyId);
+      
+      if (error) {
+        throw error;
+      }
+      
+      setClientProperties(clientProperties.filter(prop => prop.id !== propertyId));
+      
+      toast({
+        title: "Property deleted",
+        description: "The property has been successfully deleted.",
+      });
+    } catch (error) {
+      console.error('Error deleting property:', error);
+      toast({
+        title: "Failed to delete property",
+        description: "Could not delete the property. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -248,365 +468,597 @@ const UsersManagement = () => {
           </p>
         </div>
         <ZenoraButton>
-          <UserPlus className="mr-2 h-4 w-4" /> Add New Client
+          <UserPlus className="h-4 w-4 mr-2" />
+          Invite User
         </ZenoraButton>
       </div>
       
-      <div className="zenora-card">
-        {loading ? (
-          <div className="flex justify-center items-center p-12">
-            <div className="loader"></div>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Properties</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {clients.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      No clients found.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  clients.map((client) => (
-                    <TableRow key={client.id}>
-                      <TableCell className="font-medium">{client.full_name}</TableCell>
-                      <TableCell>{client.email}</TableCell>
-                      <TableCell>{client.phone || "—"}</TableCell>
-                      <TableCell>
-                        {clientProperties.filter(p => p.client_id === client.id).length}
-                      </TableCell>
-                      <TableCell>{new Date(client.created_at).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <ZenoraButton 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleViewClient(client)}
-                        >
-                          Manage
-                        </ZenoraButton>
-                      </TableCell>
+      <Tabs defaultValue="clients" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="clients">Clients</TabsTrigger>
+          <TabsTrigger value="team">Team Members</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="clients" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Client Accounts</CardTitle>
+              <CardDescription>
+                View and manage client information, documents, and properties.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="flex justify-center py-10">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-zenora-purple"></div>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Joined</TableHead>
+                      <TableHead>Properties</TableHead>
+                      <TableHead>Documents</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </div>
+                  </TableHeader>
+                  <TableBody>
+                    {clients.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                          No clients found
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      clients.map((client) => (
+                        <TableRow key={client.id}>
+                          <TableCell className="font-medium">{client.full_name}</TableCell>
+                          <TableCell>{client.email}</TableCell>
+                          <TableCell>{new Date(client.created_at).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            {clientProperties.filter(p => p.client_id === client.id).length}
+                          </TableCell>
+                          <TableCell>
+                            {clientDocuments.filter(d => d.client_id === client.id).length}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <ZenoraButton
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleViewClient(client)}
+                            >
+                              Manage
+                            </ZenoraButton>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="team" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Team Members</CardTitle>
+              <CardDescription>
+                Manage administrator and staff accounts.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-center py-10 text-muted-foreground">
+                Team management coming soon
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
       
       <Dialog open={manageClientOpen} onOpenChange={setManageClientOpen}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
           <DialogHeader>
-            <DialogTitle>
-              {selectedClient?.full_name}
-              <span className="text-muted-foreground ml-2 text-sm font-normal">
-                {selectedClient?.email}
-              </span>
+            <DialogTitle className="text-2xl">
+              {selectedClient?.full_name || 'Client'}
             </DialogTitle>
           </DialogHeader>
           
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
-            <TabsList className="mb-4">
-              <TabsTrigger value="info">Client Info</TabsTrigger>
-              <TabsTrigger value="documents">Documents</TabsTrigger>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
+            <TabsList className="grid grid-cols-4">
+              <TabsTrigger value="info">Info</TabsTrigger>
               <TabsTrigger value="properties">Properties</TabsTrigger>
+              <TabsTrigger value="documents">Documents</TabsTrigger>
               <TabsTrigger value="settings">Dashboard Settings</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="info" className="py-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <TabsContent value="info" className="space-y-4 mt-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <h3 className="text-lg font-medium mb-4">Contact Information</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <Label htmlFor="fullName">Full Name</Label>
-                      <Input 
-                        id="fullName" 
-                        value={selectedClient?.full_name || ""}
-                        readOnly
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input 
-                        id="email" 
-                        value={selectedClient?.email || ""}
-                        readOnly
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input 
-                        id="phone" 
-                        value={selectedClient?.phone || ""}
-                        readOnly
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="address">Address</Label>
-                      <Textarea 
-                        id="address" 
-                        value={selectedClient?.address || ""}
-                        readOnly
-                      />
-                    </div>
-                  </div>
+                  <Label>Full Name</Label>
+                  <Input value={selectedClient?.full_name || ''} readOnly className="bg-muted" />
                 </div>
-                
                 <div>
-                  <h3 className="text-lg font-medium mb-4">Account Summary</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between border-b pb-2">
-                      <span className="text-muted-foreground">Account Created</span>
-                      <span>
-                        {selectedClient?.created_at 
-                          ? new Date(selectedClient.created_at).toLocaleDateString() 
-                          : "—"
-                        }
-                      </span>
-                    </div>
-                    <div className="flex justify-between border-b pb-2">
-                      <span className="text-muted-foreground">Total Properties</span>
-                      <span>{clientProperties.length}</span>
-                    </div>
-                    <div className="flex justify-between border-b pb-2">
-                      <span className="text-muted-foreground">Total Documents</span>
-                      <span>{clientDocuments.length}</span>
-                    </div>
-                  </div>
+                  <Label>Email</Label>
+                  <Input value={selectedClient?.email || ''} readOnly className="bg-muted" />
+                </div>
+                <div>
+                  <Label>Phone</Label>
+                  <Input value={selectedClient?.phone || ''} readOnly className="bg-muted" />
+                </div>
+                <div>
+                  <Label>Address</Label>
+                  <Input value={selectedClient?.address || ''} readOnly className="bg-muted" />
+                </div>
+                <div>
+                  <Label>Created</Label>
+                  <Input 
+                    value={selectedClient ? new Date(selectedClient.created_at).toLocaleString() : ''} 
+                    readOnly 
+                    className="bg-muted" 
+                  />
+                </div>
+                <div>
+                  <Label>Last Updated</Label>
+                  <Input 
+                    value={selectedClient ? new Date(selectedClient.updated_at).toLocaleString() : ''} 
+                    readOnly 
+                    className="bg-muted" 
+                  />
                 </div>
               </div>
             </TabsContent>
             
-            <TabsContent value="documents" className="py-4">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium">Client Documents</h3>
-                <ZenoraButton size="sm">
-                  <Upload className="mr-2 h-4 w-4" /> Upload Document
-                </ZenoraButton>
-              </div>
-              
-              {clientDocuments.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground border rounded-lg">
-                  <File className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                  <p>No documents found for this client.</p>
-                  <ZenoraButton className="mt-4" size="sm">
-                    <Plus className="mr-2 h-4 w-4" /> Add Document
-                  </ZenoraButton>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {clientDocuments.map((doc) => (
-                    <div 
-                      key={doc.id} 
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium">{doc.name}</p>
-                        {doc.description && (
-                          <p className="text-sm text-muted-foreground">{doc.description}</p>
-                        )}
-                        <p className="text-xs text-muted-foreground">
-                          {doc.file_type.toUpperCase()} • {formatFileSize(doc.file_size)} • 
-                          {new Date(doc.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex space-x-2">
-                        <ZenoraButton 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => toggleDocumentVisibility(doc.id, doc.is_visible)}
-                        >
-                          {doc.is_visible ? (
-                            <>
-                              <EyeOff className="mr-2 h-4 w-4" /> Hide
-                            </>
-                          ) : (
-                            <>
-                              <Eye className="mr-2 h-4 w-4" /> Show
-                            </>
-                          )}
-                        </ZenoraButton>
-                        <ZenoraButton variant="outline" size="sm">
-                          <PencilLine className="mr-2 h-4 w-4" /> Edit
-                        </ZenoraButton>
-                        <ZenoraButton variant="destructive" size="sm">
-                          <Trash2 className="h-4 w-4" />
-                        </ZenoraButton>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="properties" className="py-4">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium">Client Properties</h3>
-                <ZenoraButton size="sm">
-                  <Plus className="mr-2 h-4 w-4" /> Add Property
+            <TabsContent value="properties" className="space-y-4 mt-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Properties</h3>
+                <ZenoraButton onClick={() => setAddPropertyOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Property
                 </ZenoraButton>
               </div>
               
               {clientProperties.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground border rounded-lg">
-                  <Building className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                  <p>No properties found for this client.</p>
-                  <ZenoraButton className="mt-4" size="sm">
-                    <Plus className="mr-2 h-4 w-4" /> Add Property
+                <div className="text-center py-10 text-muted-foreground border rounded-lg">
+                  <Building className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                  <p>No properties found for this client</p>
+                  <ZenoraButton 
+                    variant="outline" 
+                    className="mt-4"
+                    onClick={() => setAddPropertyOpen(true)}
+                  >
+                    Add First Property
                   </ZenoraButton>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {clientProperties.map((property) => (
-                    <div 
-                      key={property.id} 
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium">{property.name}</p>
-                        <p className="text-sm text-muted-foreground">{property.address}</p>
-                        <div className="flex items-center mt-1">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs ${
-                            property.status === 'Occupied' 
-                              ? 'bg-green-100 text-green-800' 
-                              : property.status === 'Vacant'
-                              ? 'bg-amber-100 text-amber-800'
-                              : 'bg-blue-100 text-blue-800'
-                          }`}>
-                            {property.status}
-                          </span>
-                          <span className="text-sm text-muted-foreground ml-2">
-                            {property.units} {property.units === 1 ? 'unit' : 'units'}
-                          </span>
-                          {property.monthly_rent && (
-                            <span className="text-sm text-muted-foreground ml-2">
-                              ${property.monthly_rent}/month
-                            </span>
-                          )}
+                    <Card key={property.id} className="overflow-hidden">
+                      <CardHeader className="p-4 pb-2">
+                        <CardTitle className="text-base">{property.address}</CardTitle>
+                        <CardDescription>
+                          {property.city}, {property.state} {property.zip}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0 pb-2">
+                        <div className="grid grid-cols-3 gap-2 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Type:</span>
+                            <p className="capitalize">{property.type}</p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Beds:</span>
+                            <p>{property.bedrooms}</p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Baths:</span>
+                            <p>{property.bathrooms}</p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Sq.Ft:</span>
+                            <p>{property.square_footage}</p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Year:</span>
+                            <p>{property.year_built}</p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Rent:</span>
+                            <p>${property.rental_rate?.toLocaleString()}</p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex space-x-2">
-                        <ZenoraButton variant="outline" size="sm">
-                          <PencilLine className="mr-2 h-4 w-4" /> Edit
+                      </CardContent>
+                      <CardFooter className="p-2 flex justify-end border-t bg-muted/20">
+                        <ZenoraButton
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteProperty(property.id)}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Delete
                         </ZenoraButton>
-                        <ZenoraButton variant="destructive" size="sm">
-                          <Trash2 className="h-4 w-4" />
-                        </ZenoraButton>
-                      </div>
-                    </div>
+                      </CardFooter>
+                    </Card>
                   ))}
                 </div>
               )}
             </TabsContent>
             
-            <TabsContent value="settings" className="py-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Dashboard Visibility Settings</CardTitle>
-                  <CardDescription>
-                    Control what sections are visible to this client in their dashboard.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="show_properties"
-                        checked={clientSettings?.show_properties || false}
-                        onCheckedChange={(checked) => 
-                          setClientSettings(prev => prev ? {
-                            ...prev,
-                            show_properties: !!checked
-                          } : null)
-                        }
-                      />
-                      <Label htmlFor="show_properties">Show Properties Section</Label>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="show_documents" 
-                        checked={clientSettings?.show_documents || false}
-                        onCheckedChange={(checked) => 
-                          setClientSettings(prev => prev ? {
-                            ...prev,
-                            show_documents: !!checked
-                          } : null)
-                        }
-                      />
-                      <Label htmlFor="show_documents">Show Documents Section</Label>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="show_financials" 
-                        checked={clientSettings?.show_financials || false}
-                        onCheckedChange={(checked) => 
-                          setClientSettings(prev => prev ? {
-                            ...prev,
-                            show_financials: !!checked
-                          } : null)
-                        }
-                      />
-                      <Label htmlFor="show_financials">Show Financials Section</Label>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="show_maintenance" 
-                        checked={clientSettings?.show_maintenance || false}
-                        onCheckedChange={(checked) => 
-                          setClientSettings(prev => prev ? {
-                            ...prev,
-                            show_maintenance: !!checked
-                          } : null)
-                        }
-                      />
-                      <Label htmlFor="show_maintenance">Show Maintenance Section</Label>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="show_ai_insights" 
-                        checked={clientSettings?.show_ai_insights || false}
-                        onCheckedChange={(checked) => 
-                          setClientSettings(prev => prev ? {
-                            ...prev,
-                            show_ai_insights: !!checked
-                          } : null)
-                        }
-                      />
-                      <Label htmlFor="show_ai_insights">Show AI Insights Section</Label>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <ZenoraButton onClick={updateClientSettings}>
-                    <Settings className="mr-2 h-4 w-4" /> Save Settings
+            <TabsContent value="documents" className="space-y-4 mt-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Documents</h3>
+                <ZenoraButton onClick={() => setUploadDocumentOpen(true)}>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Document
+                </ZenoraButton>
+              </div>
+              
+              {clientDocuments.length === 0 ? (
+                <div className="text-center py-10 text-muted-foreground border rounded-lg">
+                  <File className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                  <p>No documents found for this client</p>
+                  <ZenoraButton 
+                    variant="outline" 
+                    className="mt-4"
+                    onClick={() => setUploadDocumentOpen(true)}
+                  >
+                    Upload First Document
                   </ZenoraButton>
-                </CardFooter>
-              </Card>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Size</TableHead>
+                      <TableHead>Uploaded</TableHead>
+                      <TableHead>Visibility</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {clientDocuments.map((document) => (
+                      <TableRow key={document.id}>
+                        <TableCell>
+                          <a 
+                            href={document.file_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="font-medium hover:underline flex items-center"
+                          >
+                            <File className="h-4 w-4 mr-2" />
+                            {document.name}
+                          </a>
+                          {document.description && (
+                            <p className="text-xs text-muted-foreground">{document.description}</p>
+                          )}
+                        </TableCell>
+                        <TableCell className="capitalize">{document.type}</TableCell>
+                        <TableCell>{formatFileSize(document.file_size || 0)}</TableCell>
+                        <TableCell>{new Date(document.created_at).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center">
+                            {document.is_visible ? (
+                              <>
+                                <Eye className="h-4 w-4 mr-1 text-green-500" />
+                                <span className="text-sm">Visible</span>
+                              </>
+                            ) : (
+                              <>
+                                <EyeOff className="h-4 w-4 mr-1 text-muted-foreground" />
+                                <span className="text-sm">Hidden</span>
+                              </>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <ZenoraButton
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleDocumentVisibility(document.id, document.is_visible)}
+                            >
+                              {document.is_visible ? (
+                                <EyeOff className="h-4 w-4" />
+                              ) : (
+                                <Eye className="h-4 w-4" />
+                              )}
+                            </ZenoraButton>
+                            <ZenoraButton
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteDocument(document.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </ZenoraButton>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="settings" className="space-y-4 mt-4">
+              <h3 className="text-lg font-semibold">Dashboard Visibility Settings</h3>
+              <p className="text-muted-foreground">
+                Control what the client can see on their dashboard
+              </p>
+              
+              <div className="space-y-4 mt-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="show_properties" 
+                    checked={clientSettings?.show_properties}
+                    onCheckedChange={(checked) => 
+                      setClientSettings(prev => prev ? { ...prev, show_properties: !!checked } : null)
+                    }
+                  />
+                  <Label htmlFor="show_properties">Properties</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="show_documents" 
+                    checked={clientSettings?.show_documents}
+                    onCheckedChange={(checked) => 
+                      setClientSettings(prev => prev ? { ...prev, show_documents: !!checked } : null)
+                    }
+                  />
+                  <Label htmlFor="show_documents">Documents</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="show_financials" 
+                    checked={clientSettings?.show_financials}
+                    onCheckedChange={(checked) => 
+                      setClientSettings(prev => prev ? { ...prev, show_financials: !!checked } : null)
+                    }
+                  />
+                  <Label htmlFor="show_financials">Financials</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="show_maintenance" 
+                    checked={clientSettings?.show_maintenance}
+                    onCheckedChange={(checked) => 
+                      setClientSettings(prev => prev ? { ...prev, show_maintenance: !!checked } : null)
+                    }
+                  />
+                  <Label htmlFor="show_maintenance">Maintenance</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="show_ai_insights" 
+                    checked={clientSettings?.show_ai_insights}
+                    onCheckedChange={(checked) => 
+                      setClientSettings(prev => prev ? { ...prev, show_ai_insights: !!checked } : null)
+                    }
+                  />
+                  <Label htmlFor="show_ai_insights">AI Insights</Label>
+                </div>
+              </div>
+              
+              <ZenoraButton className="mt-4" onClick={updateClientSettings}>
+                <Settings className="h-4 w-4 mr-2" />
+                Save Settings
+              </ZenoraButton>
             </TabsContent>
           </Tabs>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={addPropertyOpen} onOpenChange={setAddPropertyOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Property</DialogTitle>
+          </DialogHeader>
           
-          <DialogFooter>
-            <ZenoraButton 
-              variant="outline" 
-              onClick={() => setManageClientOpen(false)}
-            >
-              Close
+          <div className="space-y-4 mt-4">
+            <div>
+              <Label htmlFor="address">Address</Label>
+              <Input 
+                id="address" 
+                value={newProperty.address || ''} 
+                onChange={(e) => setNewProperty({...newProperty, address: e.target.value})}
+                placeholder="123 Main St"
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="city">City</Label>
+                <Input 
+                  id="city" 
+                  value={newProperty.city || ''} 
+                  onChange={(e) => setNewProperty({...newProperty, city: e.target.value})}
+                  placeholder="Anytown"
+                />
+              </div>
+              <div>
+                <Label htmlFor="state">State</Label>
+                <Input 
+                  id="state" 
+                  value={newProperty.state || ''} 
+                  onChange={(e) => setNewProperty({...newProperty, state: e.target.value})}
+                  placeholder="CA"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="zip">ZIP Code</Label>
+                <Input 
+                  id="zip" 
+                  value={newProperty.zip || ''} 
+                  onChange={(e) => setNewProperty({...newProperty, zip: e.target.value})}
+                  placeholder="90210"
+                />
+              </div>
+              <div>
+                <Label htmlFor="type">Property Type</Label>
+                <select 
+                  id="type"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={newProperty.type || 'residential'}
+                  onChange={(e) => setNewProperty({...newProperty, type: e.target.value})}
+                >
+                  <option value="residential">Residential</option>
+                  <option value="commercial">Commercial</option>
+                  <option value="industrial">Industrial</option>
+                  <option value="land">Land</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="bedrooms">Bedrooms</Label>
+                <Input 
+                  id="bedrooms"
+                  type="number" 
+                  value={newProperty.bedrooms || ''} 
+                  onChange={(e) => setNewProperty({...newProperty, bedrooms: parseInt(e.target.value) || 0})}
+                  placeholder="3"
+                />
+              </div>
+              <div>
+                <Label htmlFor="bathrooms">Bathrooms</Label>
+                <Input 
+                  id="bathrooms"
+                  type="number" 
+                  value={newProperty.bathrooms || ''} 
+                  onChange={(e) => setNewProperty({...newProperty, bathrooms: parseInt(e.target.value) || 0})}
+                  placeholder="2"
+                />
+              </div>
+              <div>
+                <Label htmlFor="square_footage">Square Footage</Label>
+                <Input 
+                  id="square_footage"
+                  type="number" 
+                  value={newProperty.square_footage || ''} 
+                  onChange={(e) => setNewProperty({...newProperty, square_footage: parseInt(e.target.value) || 0})}
+                  placeholder="1500"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="year_built">Year Built</Label>
+                <Input 
+                  id="year_built"
+                  type="number" 
+                  value={newProperty.year_built || ''} 
+                  onChange={(e) => setNewProperty({...newProperty, year_built: parseInt(e.target.value) || 0})}
+                  placeholder="2000"
+                />
+              </div>
+              <div>
+                <Label htmlFor="rental_rate">Monthly Rent ($)</Label>
+                <Input 
+                  id="rental_rate"
+                  type="number" 
+                  value={newProperty.rental_rate || ''} 
+                  onChange={(e) => setNewProperty({...newProperty, rental_rate: parseInt(e.target.value) || 0})}
+                  placeholder="2000"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter className="mt-6">
+            <ZenoraButton variant="outline" onClick={() => setAddPropertyOpen(false)}>
+              Cancel
+            </ZenoraButton>
+            <ZenoraButton onClick={handleAddProperty}>
+              Add Property
+            </ZenoraButton>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={uploadDocumentOpen} onOpenChange={setUploadDocumentOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Upload Document</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 mt-4">
+            <div>
+              <Label htmlFor="documentName">Document Name</Label>
+              <Input 
+                id="documentName" 
+                value={documentName} 
+                onChange={(e) => setDocumentName(e.target.value)}
+                placeholder="Lease Agreement"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="documentDescription">Description (Optional)</Label>
+              <Textarea 
+                id="documentDescription" 
+                value={documentDescription} 
+                onChange={(e) => setDocumentDescription(e.target.value)}
+                placeholder="Details about this document..."
+                rows={3}
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="documentType">Document Type</Label>
+              <select 
+                id="documentType"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={documentType}
+                onChange={(e) => setDocumentType(e.target.value)}
+              >
+                <option value="property">Property Document</option>
+                <option value="financial">Financial Document</option>
+                <option value="legal">Legal Document</option>
+                <option value="maintenance">Maintenance Document</option>
+                <option value="communication">Communication</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            
+            <div>
+              <Label htmlFor="documentFile">File</Label>
+              <Input 
+                id="documentFile" 
+                type="file" 
+                onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="mt-6">
+            <ZenoraButton variant="outline" onClick={() => setUploadDocumentOpen(false)} disabled={uploading}>
+              Cancel
+            </ZenoraButton>
+            <ZenoraButton onClick={handleDocumentUpload} disabled={uploading || !documentFile || !documentName}>
+              {uploading ? (
+                <>
+                  <div className="animate-spin h-4 w-4 mr-2 border-t-2 border-b-2 border-white rounded-full"></div>
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Document
+                </>
+              )}
             </ZenoraButton>
           </DialogFooter>
         </DialogContent>

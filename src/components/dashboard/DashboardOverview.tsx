@@ -1,100 +1,235 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Building, PieChart, User, HelpCircle, Zap, Settings, FileText, Clock } from "lucide-react";
+import { Building, PieChart, User, HelpCircle, Zap, Settings, FileText, Clock, AlertTriangle, Loader } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { ClientSettings, Property, Document } from "@/types/supabase";
 import { toast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const DashboardOverview = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [settings, setSettings] = useState<ClientSettings | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const isMountedRef = useRef(true);
   
   useEffect(() => {
+    // Set up mounted ref for cleanup
+    isMountedRef.current = true;
+    
+    // Track retry attempts
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
+    
     async function loadClientData() {
       if (!user) return;
       
       try {
-        setLoading(true);
+        if (!isMountedRef.current) return;
         
-        // Fetch client settings
-        const { data: settingsData, error: settingsError } = await supabase
-          .from('client_settings')
-          .select('*')
-          .eq('client_id', user.id)
-          .single();
-          
-        if (settingsError && settingsError.code !== 'PGRST116') {
-          throw settingsError;
+        // Add delay between retries to avoid hammering the server
+        if (retryCount > 0) {
+          console.log(`Retry attempt ${retryCount}/${MAX_RETRIES} for loading dashboard data`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
         }
         
-        // If no settings found, use defaults
-        const clientSettings = settingsData || {
-          client_id: user.id,
-          show_properties: true,
-          show_documents: true,
-          show_financials: true,
-          show_maintenance: true,
-          show_ai_insights: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        } as ClientSettings;
+        setLoading(true);
+        setError(null);
         
-        setSettings(clientSettings);
+        // Fetch client settings
+        let clientSettings: ClientSettings | null = null;
+        try {
+          const { data: settingsData, error: settingsError } = await supabase
+            .from('client_settings')
+            .select('*')
+            .eq('client_id', user.id)
+            .single();
+            
+          if (settingsError && settingsError.code !== 'PGRST116') {
+            console.error('Error fetching client settings:', settingsError);
+            // Continue with defaults instead of throwing
+          }
+          
+          // If no settings found, use defaults
+          clientSettings = settingsData || {
+            client_id: user.id,
+            show_properties: true,
+            show_documents: true,
+            show_financials: true,
+            show_maintenance: true,
+            show_ai_insights: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          } as ClientSettings;
+          
+          if (isMountedRef.current) {
+            setSettings(clientSettings);
+            console.log('Client settings loaded successfully');
+          }
+        } catch (settingsError) {
+          console.error('Exception in settings fetch:', settingsError);
+          // Use defaults if there's an error
+          clientSettings = {
+            client_id: user.id,
+            show_properties: true,
+            show_documents: true,
+            show_financials: true,
+            show_maintenance: true,
+            show_ai_insights: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          } as ClientSettings;
+          
+          if (isMountedRef.current) {
+            setSettings(clientSettings);
+          }
+        }
+        
+        // Only continue if we have settings
+        if (!clientSettings) {
+          throw new Error("Could not initialize client settings");
+        }
         
         // Fetch properties if enabled
         if (clientSettings.show_properties) {
-          const { data: propertiesData, error: propertiesError } = await supabase
-            .from('properties')
-            .select('*')
-            .eq('client_id', user.id)
-            .order('created_at', { ascending: false });
+          try {
+            const { data: propertiesData, error: propertiesError } = await supabase
+              .from('properties')
+              .select('*')
+              .eq('client_id', user.id)
+              .order('created_at', { ascending: false });
+              
+            if (propertiesError) {
+              console.error('Error fetching properties:', propertiesError);
+              // Continue instead of throwing
+            }
             
-          if (propertiesError) {
-            throw propertiesError;
+            if (isMountedRef.current) {
+              setProperties(propertiesData as Property[] || []);
+              console.log('Properties loaded successfully:', propertiesData?.length || 0);
+            }
+          } catch (propError) {
+            console.error('Error in properties fetch:', propError);
+            // Don't let property errors break the entire dashboard
           }
-          
-          setProperties(propertiesData as Property[] || []);
         }
         
         // Fetch documents if enabled
         if (clientSettings.show_documents) {
-          const { data: documentsData, error: documentsError } = await supabase
-            .from('documents')
-            .select('*')
-            .eq('client_id', user.id)
-            .eq('is_visible', true)
-            .order('created_at', { ascending: false });
+          try {
+            const { data: documentsData, error: documentsError } = await supabase
+              .from('documents')
+              .select('*')
+              .eq('client_id', user.id)
+              .eq('is_visible', true)
+              .order('created_at', { ascending: false });
+              
+            if (documentsError) {
+              console.error('Error fetching documents:', documentsError);
+              // Continue instead of throwing
+            }
             
-          if (documentsError) {
-            throw documentsError;
+            if (isMountedRef.current) {
+              setDocuments(documentsData as Document[] || []);
+              console.log('Documents loaded successfully:', documentsData?.length || 0);
+            }
+          } catch (docError) {
+            console.error('Error in documents fetch:', docError);
+            // Don't let document errors break the entire dashboard
           }
-          
-          setDocuments(documentsData as Document[] || []);
         }
+        
+        // All data loaded, clear loading state
+        if (isMountedRef.current) {
+          setLoading(false);
+          console.log('Dashboard data loaded completely');
+        }
+        
       } catch (error) {
         console.error('Error loading client data:', error);
-        toast({
-          title: "Failed to load data",
-          description: "Could not retrieve your dashboard information. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
+        
+        // Only show toast and set error if all retries failed and component is still mounted
+        if (retryCount >= MAX_RETRIES && isMountedRef.current) {
+          setError('Failed to load dashboard data. Please try refreshing the page.');
+          toast({
+            title: "Failed to load data",
+            description: "Could not retrieve your dashboard information. Please try again.",
+            variant: "destructive",
+          });
+          setLoading(false);
+        } else if (isMountedRef.current) {
+          // Retry logic
+          retryCount++;
+          if (retryCount <= MAX_RETRIES) {
+            console.log(`Will retry loading dashboard data (${retryCount}/${MAX_RETRIES})`);
+            loadClientData(); // Recursive call to retry
+          } else {
+            setLoading(false);
+          }
+        }
       }
     }
     
+    // Initial load
     loadClientData();
+    
+    // Set up data refresh interval - reload every 3 minutes
+    const refreshInterval = setInterval(() => {
+      if (isMountedRef.current && user) {
+        console.log('Refreshing dashboard data...');
+        retryCount = 0; // Reset retry count for periodic refreshes
+        loadClientData();
+      }
+    }, 3 * 60 * 1000);
+    
+    // Cleanup function
+    return () => {
+      isMountedRef.current = false;
+      clearInterval(refreshInterval);
+      console.log('Dashboard cleanup: unmounted and cleared interval');
+    };
   }, [user]);
   
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
-        <div className="loader"></div>
+        <Loader className="h-12 w-12 animate-spin text-zenora-purple" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <Alert variant="destructive" className="mb-6">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+        <ZenoraButton onClick={() => window.location.reload()}>
+          Reload Dashboard
+        </ZenoraButton>
+      </div>
+    );
+  }
+
+  if (!settings) {
+    return (
+      <div className="p-6">
+        <Alert className="mb-6">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Welcome to your Dashboard</AlertTitle>
+          <AlertDescription>
+            It looks like this is your first time here. Please set up your preferences to customize your dashboard.
+          </AlertDescription>
+        </Alert>
+        <ZenoraButton as={Link} to="/dashboard/settings">
+          <Settings className="mr-2 h-4 w-4" /> Set Up Dashboard
+        </ZenoraButton>
       </div>
     );
   }
@@ -131,8 +266,10 @@ const DashboardOverview = () => {
                 }
               </p>
               <p className="text-sm text-muted-foreground">
-                {properties.filter(p => p.status === 'Occupied').length === properties.length
+                {properties.filter(p => p.status === 'Occupied').length === properties.length && properties.length > 0
                   ? 'All units are currently occupied'
+                  : properties.length === 0
+                  ? 'No properties added yet'
                   : `${properties.filter(p => p.status === 'Occupied').length} of ${properties.length} units occupied`
                 }
               </p>

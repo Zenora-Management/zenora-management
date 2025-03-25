@@ -1,4 +1,3 @@
-
 import * as z from "zod";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -102,7 +101,14 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
       if (!isSignup) {
         // Login flow
         const loginValues = values as LoginFormValues;
-        await signIn(loginValues.email, loginValues.password, userType === "admin");
+        console.log(`Submitting login with userType=${userType}, email=${loginValues.email}`);
+        
+        // Important: Pass isAdmin parameter based on userType
+        await signIn(
+          loginValues.email, 
+          loginValues.password, 
+          userType === "admin"
+        );
       } else {
         // Signup flow
         const signupValues = values as SignupFormValues;
