@@ -185,7 +185,10 @@ const Hero = () => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.6 + (i * 0.1), duration: 0.3 }}
                       className="bg-white/10 backdrop-blur-sm rounded-lg p-4 flex items-center gap-4 hover:bg-white/20 transition-all duration-300"
-                      whileHover={{ x: 5, backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
+                      whileHover={{ 
+                        x: 5, 
+                        backgroundColor: 'rgba(255, 255, 255, 0.25)' 
+                      }}
                     >
                       <div className="bg-zenora-gradient h-10 w-10 rounded-md flex items-center justify-center text-white font-bold">
                         {i}
