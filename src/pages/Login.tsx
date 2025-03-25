@@ -105,7 +105,7 @@ const Login = () => {
                     onClick={() => handleBypassLogin("regular")}
                     className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white"
                   >
-                    Bypass as User
+                    Bypass as Property Owner
                   </ZenoraButton>
                   <ZenoraButton
                     variant="outline"

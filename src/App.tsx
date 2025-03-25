@@ -25,7 +25,6 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
 import Security from "./pages/Security";
-import Careers from "./pages/Careers";
 import Blog from "./pages/Blog";
 import AIRentAnalysis from "./pages/AIRentAnalysis";
 import TenantScreening from "./pages/TenantScreening";
@@ -33,6 +32,7 @@ import Maintenance from "./pages/Maintenance";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PropertyDetail from "./pages/PropertyDetail";
 import PropertyCreate from "./pages/PropertyCreate";
+import BypassButton from "./components/ui/BypassButton";
 
 const queryClient = new QueryClient();
 
@@ -72,12 +72,14 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/cookies" element={<Cookies />} />
             <Route path="/security" element={<Security />} />
-            <Route path="/careers" element={<Careers />} />
             <Route path="/blog" element={<Blog />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          
+          {/* Global Bypass Button - Only visible in development */}
+          {process.env.NODE_ENV === 'development' && <BypassButton />}
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

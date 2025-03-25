@@ -21,11 +21,6 @@ export const authBypass = {
    * @returns {boolean} Whether the bypass was successful
    */
   enable: (userType: UserType = "regular"): boolean => {
-    if (!isDevelopment) {
-      console.warn('Auth bypass attempted in production environment');
-      return false;
-    }
-    
     sessionStorage.setItem(BYPASS_KEY, 'true');
     sessionStorage.setItem(USER_TYPE_KEY, userType);
     
@@ -45,13 +40,11 @@ export const authBypass = {
     sessionStorage.removeItem(BYPASS_KEY);
     sessionStorage.removeItem(USER_TYPE_KEY);
     
-    if (isDevelopment) {
-      toast({
-        title: "Testing mode deactivated",
-        description: "Bypass login has been disabled.",
-        variant: "default",
-      });
-    }
+    toast({
+      title: "Testing mode deactivated",
+      description: "Bypass login has been disabled.",
+      variant: "default",
+    });
   },
   
   /**
@@ -59,7 +52,7 @@ export const authBypass = {
    * @returns {boolean} Whether bypass is enabled
    */
   isEnabled: (): boolean => {
-    return isDevelopment && sessionStorage.getItem(BYPASS_KEY) === 'true';
+    return sessionStorage.getItem(BYPASS_KEY) === 'true';
   },
   
   /**

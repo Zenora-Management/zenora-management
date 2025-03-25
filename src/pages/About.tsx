@@ -3,136 +3,190 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Link } from "react-router-dom";
+import { ArrowRight, Users, Target, Zap, Shield } from "lucide-react";
 
 const About = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-24 pb-16">
-        <div className="zenora-container">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-zenora-gradient">
-              About Zenora
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Revolutionizing property management with AI-powered solutions that make ownership simpler, more efficient, and more profitable.
-            </p>
-          </div>
+      <main className="flex-grow pt-24">
+        {/* Hero Section */}
+        <section className="zenora-section bg-white dark:bg-zenora-dark relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-zenora-light opacity-5 blur-3xl rounded-full"></div>
+          <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-zenora-purple opacity-5 blur-3xl rounded-full"></div>
           
-          <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
-            <div>
-              <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
-              <p className="text-muted-foreground mb-6">
-                Zenora Management's mission is to revolutionize property management by offering the cheapest, simplest, and most efficient AI-driven solutions—ensuring 24/7 client satisfaction through automation and smart technology.
-              </p>
-              <h2 className="text-3xl font-bold mb-4">Our Vision</h2>
-              <p className="text-muted-foreground">
-                We aim to become the leading AI-powered property management firm that delivers cost-effective, hassle-free, and intelligent solutions, empowering property owners and tenants with seamless, round-the-clock service.
-              </p>
-            </div>
-            <div className="bg-zenora-gradient rounded-xl p-1">
-              <div className="bg-white dark:bg-zenora-dark rounded-lg p-6 h-full">
-                <h3 className="text-2xl font-bold mb-4">Why Choose Zenora?</h3>
-                <ul className="space-y-4">
-                  <li>
-                    <strong className="text-zenora-purple">AI-Powered Insights:</strong> 
-                    <p className="text-muted-foreground">Our proprietary algorithms analyze market data to optimize your rental income and property performance.</p>
-                  </li>
-                  <li>
-                    <strong className="text-zenora-purple">24/7 Management:</strong> 
-                    <p className="text-muted-foreground">Never worry about emergency calls or maintenance issues again with our automated response system.</p>
-                  </li>
-                  <li>
-                    <strong className="text-zenora-purple">Cost-Effective Solutions:</strong> 
-                    <p className="text-muted-foreground">Save money with our innovative approach to property management, eliminating unnecessary overhead.</p>
-                  </li>
-                  <li>
-                    <strong className="text-zenora-purple">Seamless Experience:</strong> 
-                    <p className="text-muted-foreground">Enjoy a hassle-free property management experience with our intuitive platform and dedicated support.</p>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mb-20">
-            <h2 className="text-3xl font-bold text-center mb-10">Our Journey</h2>
-            <div className="space-y-12">
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="md:w-1/4 flex flex-col items-center">
-                  <div className="text-2xl font-bold text-zenora-purple">2018</div>
-                  <div className="h-full w-0.5 bg-zenora-purple/20 my-2"></div>
-                </div>
-                <div className="md:w-3/4">
-                  <h3 className="text-xl font-bold mb-2">Foundation</h3>
-                  <p className="text-muted-foreground">
-                    Zenora Management was founded with a simple vision: to make property management more efficient through technology. Starting with just three properties, we began developing our proprietary AI algorithms.
-                  </p>
-                </div>
+          <div className="zenora-container relative z-10">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center rounded-full border border-zenora-purple/30 bg-zenora-purple/5 px-3 py-1 text-sm text-zenora-purple backdrop-blur-sm mb-6">
+                <span className="font-medium">About Zenora</span>
               </div>
               
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="md:w-1/4 flex flex-col items-center">
-                  <div className="text-2xl font-bold text-zenora-purple">2020</div>
-                  <div className="h-full w-0.5 bg-zenora-purple/20 my-2"></div>
-                </div>
-                <div className="md:w-3/4">
-                  <h3 className="text-xl font-bold mb-2">Technology Breakthrough</h3>
-                  <p className="text-muted-foreground">
-                    Our development team achieved a major breakthrough with the launch of our first AI-powered rent analysis tool, setting the stage for rapid growth in our managed property portfolio.
-                  </p>
-                </div>
-              </div>
+              <h1 className="zenora-heading bg-clip-text text-transparent bg-zenora-gradient mb-6">
+                Transforming Property Management with AI
+              </h1>
               
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="md:w-1/4 flex flex-col items-center">
-                  <div className="text-2xl font-bold text-zenora-purple">2022</div>
-                  <div className="h-full w-0.5 bg-zenora-purple/20 my-2"></div>
-                </div>
-                <div className="md:w-3/4">
-                  <h3 className="text-xl font-bold mb-2">Expansion</h3>
-                  <p className="text-muted-foreground">
-                    Zenora expanded operations to 12 major cities, managing over 500 properties. Our AI technology continued to evolve, providing increasingly accurate market insights and automated management solutions.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="md:w-1/4 flex flex-col items-center">
-                  <div className="text-2xl font-bold text-zenora-purple">Today</div>
-                </div>
-                <div className="md:w-3/4">
-                  <h3 className="text-xl font-bold mb-2">Industry Leader</h3>
-                  <p className="text-muted-foreground">
-                    Zenora Management has become an industry leader in AI-powered property management, serving thousands of property owners nationwide with cutting-edge technology and unmatched efficiency.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-zenora-gradient p-1 rounded-xl mb-20">
-            <div className="bg-white dark:bg-zenora-dark rounded-lg p-8 text-center">
-              <h2 className="text-3xl font-bold mb-6">Join the Property Management Revolution</h2>
-              <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
-                Experience the future of property management with Zenora. Our AI-powered platform simplifies every aspect of property ownership, from rent analysis to tenant management.
+              <p className="zenora-subheading mb-8">
+                We're on a mission to revolutionize property management by combining human expertise with artificial intelligence, creating seamless experiences for property owners and tenants.
               </p>
-              <div className="flex flex-wrap gap-4 justify-center">
-                <Link to="/signup">
-                  <ZenoraButton variant="default" size="lg">
-                    Get Started Today
-                  </ZenoraButton>
-                </Link>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/contact">
+                  <ZenoraButton size="lg">
+                    Contact Us <ArrowRight className="ml-2 h-4 w-4" />
+                  </ZenoraButton>
+                </Link>
+                <Link to="/property-management/details">
                   <ZenoraButton variant="outline" size="lg">
-                    Schedule a Demo
+                    Learn About Our Services
                   </ZenoraButton>
                 </Link>
               </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* Our Vision Section */}
+        <section className="zenora-section bg-gray-50 dark:bg-zenora-dark/50">
+          <div className="zenora-container">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div className="animate-slide-in">
+                <h2 className="text-3xl font-bold mb-6">Our Vision</h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mb-8">
+                  Becoming the leading AI-powered property management firm that delivers cost-effective, hassle-free, and intelligent solutions. We aim to transform the traditional property management industry by leveraging cutting-edge technology while maintaining a personal touch.
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="bg-white dark:bg-zenora-dark p-6 rounded-xl shadow-sm">
+                    <div className="text-4xl font-bold text-zenora-purple mb-2">24/7</div>
+                    <p className="text-muted-foreground">Client support through AI automation</p>
+                  </div>
+                  <div className="bg-white dark:bg-zenora-dark p-6 rounded-xl shadow-sm">
+                    <div className="text-4xl font-bold text-zenora-purple mb-2">98%</div>
+                    <p className="text-muted-foreground">Client satisfaction rate</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white dark:bg-zenora-dark p-8 rounded-xl shadow-md animate-slide-up">
+                <h3 className="text-2xl font-bold mb-6">Our Technology</h3>
+                <p className="text-muted-foreground mb-8">
+                  We leverage advanced AI algorithms to analyze vast amounts of property data, enabling our clients to make smarter decisions and maximize returns.
+                </p>
+                
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 bg-zenora-purple/10 rounded-lg text-zenora-purple">
+                      <Zap className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-medium">AI-powered Analysis</p>
+                      <p className="text-sm text-muted-foreground">
+                        Market-driven rent recommendations backed by data
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 bg-zenora-purple/10 rounded-lg text-zenora-purple">
+                      <Users className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Smart Tenant Matching</p>
+                      <p className="text-sm text-muted-foreground">
+                        Finding quality tenants with comprehensive screening
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 bg-zenora-purple/10 rounded-lg text-zenora-purple">
+                      <Shield className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Maintenance Automation</p>
+                      <p className="text-sm text-muted-foreground">
+                        Proactive maintenance management and vendor coordination
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Our Team Section */}
+        <section className="zenora-section bg-white dark:bg-zenora-dark">
+          <div className="zenora-container">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center rounded-full border border-zenora-purple/30 bg-zenora-purple/5 px-3 py-1 text-sm text-zenora-purple backdrop-blur-sm mb-6">
+                <span className="font-medium">Our Leadership</span>
+              </div>
+              
+              <h2 className="zenora-heading">Meet Our Team</h2>
+              
+              <p className="zenora-subheading">
+                A dedicated group of professionals with decades of combined experience in property management and technology.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="zenora-card p-6 text-center">
+                <div className="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-4 overflow-hidden">
+                  <img 
+                    src="https://placehold.co/200x200/9B77D7/FFFFFF?text=CEO" 
+                    alt="CEO" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-xl font-semibold mb-1">John Doe</h3>
+                <p className="text-zenora-purple mb-3">CEO & Founder</p>
+                <p className="text-sm text-muted-foreground">
+                  20+ years of experience in property management and real estate investment.
+                </p>
+              </div>
+              
+              <div className="zenora-card p-6 text-center">
+                <div className="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-4 overflow-hidden">
+                  <img 
+                    src="https://placehold.co/200x200/9B77D7/FFFFFF?text=CTO" 
+                    alt="CTO" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-xl font-semibold mb-1">Jane Smith</h3>
+                <p className="text-zenora-purple mb-3">CTO</p>
+                <p className="text-sm text-muted-foreground">
+                  Leading our technology division with expertise in AI and machine learning.
+                </p>
+              </div>
+              
+              <div className="zenora-card p-6 text-center">
+                <div className="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-4 overflow-hidden">
+                  <img 
+                    src="https://placehold.co/200x200/9B77D7/FFFFFF?text=COO" 
+                    alt="COO" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-xl font-semibold mb-1">Michael Johnson</h3>
+                <p className="text-zenora-purple mb-3">COO</p>
+                <p className="text-sm text-muted-foreground">
+                  Streamlining operations and ensuring excellent service delivery.
+                </p>
+              </div>
+            </div>
+            
+            <div className="mt-16 text-center">
+              <Link to="/contact">
+                <ZenoraButton size="lg">
+                  Contact Our Team <ArrowRight className="ml-2 h-4 w-4" />
+                </ZenoraButton>
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
       
       <Footer />

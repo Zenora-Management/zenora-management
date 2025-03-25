@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <footer className="bg-zenora-dark text-white pt-16 pb-8">
       <div className="zenora-container">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div className="col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
               <div className="h-10 w-10 rounded-full bg-zenora-gradient flex items-center justify-center">
@@ -45,11 +45,6 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/careers" className="text-gray-300 hover:text-white transition-colors">
-                  Careers
-                </Link>
-              </li>
-              <li>
                 <Link to="/blog" className="text-gray-300 hover:text-white transition-colors">
                   Blog
                 </Link>
@@ -66,49 +61,23 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Services</h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/ai-rent-analysis" className="text-gray-300 hover:text-white transition-colors">
+                <Link to="/ai-rent-analysis/details" className="text-gray-300 hover:text-white transition-colors">
                   AI Rent Analysis
                 </Link>
               </li>
               <li>
-                <Link to="/property-management" className="text-gray-300 hover:text-white transition-colors">
+                <Link to="/property-management/details" className="text-gray-300 hover:text-white transition-colors">
                   Property Management
                 </Link>
               </li>
               <li>
-                <Link to="/tenant-screening" className="text-gray-300 hover:text-white transition-colors">
+                <Link to="/tenant-screening/details" className="text-gray-300 hover:text-white transition-colors">
                   Tenant Screening
                 </Link>
               </li>
               <li>
-                <Link to="/maintenance" className="text-gray-300 hover:text-white transition-colors">
+                <Link to="/maintenance/details" className="text-gray-300 hover:text-white transition-colors">
                   Maintenance Coordination
-                </Link>
-              </li>
-            </ul>
-          </div>
-          
-          <div className="col-span-1">
-            <h3 className="text-lg font-semibold mb-4">Legal</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link to="/privacy" className="text-gray-300 hover:text-white transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="text-gray-300 hover:text-white transition-colors">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link to="/cookies" className="text-gray-300 hover:text-white transition-colors">
-                  Cookie Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/security" className="text-gray-300 hover:text-white transition-colors">
-                  Security
                 </Link>
               </li>
             </ul>
