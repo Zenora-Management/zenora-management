@@ -43,6 +43,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   const { signIn, signUp, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [autoFilledAdmin, setAutoFilledAdmin] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   
   // Use the appropriate schema and initial values based on the mode
@@ -82,7 +83,11 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   }, [userType, loginForm, autoFilledAdmin, isSignup]);
   
   const onSubmit = async (values: LoginFormValues | SignupFormValues) => {
+    if (submitting) return; // Prevent multiple submissions
+    
     try {
+      setSubmitting(true);
+      
       if (!isSignup) {
         // Login flow
         const loginValues = values as LoginFormValues;
@@ -99,6 +104,8 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         description: error instanceof Error ? error.message : "An unknown error occurred",
         variant: "destructive",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -115,7 +122,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                 <Input
                   placeholder="your.email@example.com"
                   {...field}
-                  disabled={userType === "admin" && !!autoFilledAdmin}
+                  disabled={userType === "admin" && !!autoFilledAdmin || submitting || loading}
                 />
               </FormControl>
               <FormMessage />
@@ -135,12 +142,13 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     {...field}
-                    disabled={userType === "admin" && !!autoFilledAdmin}
+                    disabled={userType === "admin" && !!autoFilledAdmin || submitting || loading}
                   />
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={submitting || loading}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -159,7 +167,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} />
+                  <Input placeholder="John Doe" {...field} disabled={submitting || loading} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -167,8 +175,12 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
           />
         )}
         
-        <ZenoraButton type="submit" className="w-full" disabled={loading}>
-          {loading ? "Processing..." : isSignup ? "Sign Up" : "Log In"}
+        <ZenoraButton 
+          type="submit" 
+          className="w-full" 
+          disabled={submitting || loading}
+        >
+          {submitting || loading ? "Processing..." : isSignup ? "Sign Up" : "Log In"}
         </ZenoraButton>
       </form>
     </Form>

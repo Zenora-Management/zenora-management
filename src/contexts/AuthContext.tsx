@@ -30,64 +30,86 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function setupAuth() {
-      setLoading(true);
-      
-      // Set up auth state listener FIRST
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (event, session) => {
-          console.log('Auth state changed:', event);
-          setSession(session);
-          setUser(session?.user ?? null);
-          
-          if (event === 'SIGNED_IN') {
-            toast({
-              title: "Welcome back!",
-              description: "You've successfully signed in to your account."
-            });
+      try {
+        setLoading(true);
+        
+        // Set up auth state listener FIRST
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          (event, currentSession) => {
+            console.log('Auth state changed:', event);
+            setSession(currentSession);
+            setUser(currentSession?.user ?? null);
             
-            // Only handle navigation if not already on dashboard/admin pages
-            if (!location.pathname.startsWith('/dashboard') && !location.pathname.startsWith('/admin')) {
-              // Redirect to appropriate dashboard based on user role
-              if (session?.user && checkIsAdmin(session.user)) {
-                navigate('/admin');
-              } else {
-                navigate('/dashboard');
+            if (event === 'SIGNED_IN') {
+              toast({
+                title: "Welcome back!",
+                description: "You've successfully signed in to your account."
+              });
+              
+              // Only handle navigation if not already on dashboard/admin pages
+              if (!location.pathname.startsWith('/dashboard') && !location.pathname.startsWith('/admin')) {
+                // Redirect to appropriate dashboard based on user role
+                if (currentSession?.user && checkIsAdmin(currentSession.user)) {
+                  navigate('/admin');
+                } else {
+                  navigate('/dashboard');
+                }
               }
+            } else if (event === 'SIGNED_OUT') {
+              toast({
+                title: "Signed out",
+                description: "You've been successfully signed out."
+              });
+              navigate('/');
+            } else if (event === 'USER_UPDATED') {
+              toast({
+                title: "Account updated",
+                description: "Your account information has been updated."
+              });
             }
-          } else if (event === 'SIGNED_OUT') {
-            toast({
-              title: "Signed out",
-              description: "You've been successfully signed out."
-            });
-            navigate('/');
-          } else if (event === 'USER_UPDATED') {
-            toast({
-              title: "Account updated",
-              description: "Your account information has been updated."
-            });
           }
-        }
-      );
+        );
 
-      // THEN check for existing session
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-      
-      // Handle initial session - redirect if needed
-      if (session?.user) {
-        // Only redirect if on login page or root
-        if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/') {
-          if (checkIsAdmin(session.user)) {
-            navigate('/admin');
-          } else {
-            navigate('/dashboard');
+        // THEN check for existing session
+        const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Error fetching session:", sessionError);
+          toast({
+            title: "Authentication error",
+            description: "There was a problem with your session",
+            variant: "destructive",
+          });
+        }
+        
+        setSession(initialSession);
+        setUser(initialSession?.user ?? null);
+        
+        // Handle initial session - redirect if needed
+        if (initialSession?.user) {
+          // Only redirect if on login page or root
+          if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/') {
+            if (checkIsAdmin(initialSession.user)) {
+              navigate('/admin');
+            } else {
+              navigate('/dashboard');
+            }
           }
         }
+
+        return () => {
+          subscription.unsubscribe();
+        };
+      } catch (error) {
+        console.error("Error setting up auth:", error);
+        toast({
+          title: "Authentication setup failed",
+          description: "There was a problem setting up authentication",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
       }
-
-      return () => subscription.unsubscribe();
     }
     
     setupAuth();
@@ -104,9 +126,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Special handling for admin account creation on first login
       if (isAdmin && ADMIN_EMAILS.includes(email)) {
         // Check if admin exists first
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: existingUser, error: userError } = await supabase.auth.getUser();
         
-        if (!user) {
+        if (userError) {
+          console.log("User check error (expected for new admin):", userError);
+        }
+        
+        if (!existingUser?.user) {
           // Create admin account if it doesn't exist
           const { error: signUpError } = await supabase.auth.signUp({ 
             email,
@@ -119,13 +145,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
           });
           
-          if (signUpError) throw signUpError;
+          if (signUpError) {
+            console.error("Admin signup error:", signUpError);
+            throw signUpError;
+          }
         }
       }
       
       const { error, data } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
+        console.error("Login error:", error);
         toast({
           title: "Login failed",
           description: error.message,
@@ -171,6 +201,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       
       if (signUpError) {
+        console.error("Signup error:", signUpError);
         toast({
           title: "Signup failed",
           description: signUpError.message,
@@ -223,7 +254,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     try {
       setLoading(true);
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Sign out error:", error);
+        throw error;
+      }
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
