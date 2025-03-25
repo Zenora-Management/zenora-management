@@ -39,7 +39,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Function to check if a user is an admin
   const checkIsAdmin = (user: User): boolean => {
-    return ADMIN_EMAILS.includes(user.email || '');
+    const isAdmin = ADMIN_EMAILS.includes(user.email || '');
+    console.log(`Checking if ${user.email} is admin:`, isAdmin);
+    return isAdmin;
   };
 
   useEffect(() => {
@@ -113,11 +115,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log('Initial session found, user email:', initialSession.user.email);
           // Only redirect if on login page or root
           if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/') {
-            if (checkIsAdmin(initialSession.user)) {
+            const isAdmin = checkIsAdmin(initialSession.user);
+            if (isAdmin) {
               console.log('User is admin, redirecting to admin dashboard');
               safeNavigate('/admin');
             } else {
               console.log('User is not admin, redirecting to user dashboard');
+              safeNavigate('/dashboard');
+            }
+          } else if (location.pathname.startsWith('/admin')) {
+            // Extra check for admin routes - redirect non-admins away from admin routes
+            const isAdmin = checkIsAdmin(initialSession.user);
+            if (!isAdmin) {
+              console.log('Non-admin user trying to access admin route, redirecting to dashboard');
               safeNavigate('/dashboard');
             }
           }
