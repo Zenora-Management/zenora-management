@@ -1,10 +1,9 @@
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { toast } from '@/hooks/use-toast';
-import { InsertTables } from '@/types/supabase';
+import { useAuthState } from '@/hooks/use-auth-state';
+import { useAuthOperations } from '@/hooks/use-auth-operations';
+import { checkIsAdmin } from '@/utils/auth-utils';
 
 type AuthContextType = {
   session: Session | null;
@@ -18,327 +17,39 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Admin emails for special handling
-const ADMIN_EMAILS = ["zenoramgmt@gmail.com", "anshparikh@gmail.com", "anvisrini@gmail.com"];
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [authChangeInProgress, setAuthChangeInProgress] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+  // Use our custom hooks to handle auth state and operations
+  const { 
+    session, 
+    user, 
+    loading: stateLoading, 
+    authChangeInProgress, 
+    setAuthChangeInProgress 
+  } = useAuthState();
   
-  // Helper function to avoid navigation conflicts
-  const safeNavigate = (path: string) => {
-    // Only navigate if we're not already on that path
-    if (location.pathname !== path) {
-      navigate(path);
-    }
-  };
+  const { 
+    loading: operationsLoading, 
+    signIn, 
+    signUp, 
+    signOut 
+  } = useAuthOperations({ 
+    authChangeInProgress, 
+    setAuthChangeInProgress 
+  });
 
-  // Function to check if a user is an admin
-  const checkIsAdmin = (user: User): boolean => {
-    const isAdmin = ADMIN_EMAILS.includes(user.email || '');
-    console.log(`Checking if ${user.email} is admin:`, isAdmin);
-    return isAdmin;
-  };
-
-  useEffect(() => {
-    async function setupAuth() {
-      try {
-        setLoading(true);
-        
-        // Set up auth state listener FIRST
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event, currentSession) => {
-            console.log('Auth state changed:', event);
-            
-            // Set auth change flag to prevent duplicate navigation
-            setAuthChangeInProgress(true);
-            
-            setSession(currentSession);
-            setUser(currentSession?.user ?? null);
-            
-            if (event === 'SIGNED_IN') {
-              toast({
-                title: "Welcome back!",
-                description: "You've successfully signed in to your account."
-              });
-              
-              // Only handle navigation if not already on dashboard/admin pages
-              if (!location.pathname.startsWith('/dashboard') && !location.pathname.startsWith('/admin')) {
-                // Redirect to appropriate dashboard based on user role
-                if (currentSession?.user && checkIsAdmin(currentSession.user)) {
-                  console.log('User is admin, redirecting to admin dashboard');
-                  safeNavigate('/admin');
-                } else {
-                  console.log('User is not admin, redirecting to user dashboard');
-                  safeNavigate('/dashboard');
-                }
-              }
-            } else if (event === 'SIGNED_OUT') {
-              toast({
-                title: "Signed out",
-                description: "You've been successfully signed out."
-              });
-              safeNavigate('/');
-            } else if (event === 'USER_UPDATED') {
-              toast({
-                title: "Account updated",
-                description: "Your account information has been updated."
-              });
-            }
-            
-            // Clear auth change flag with a slight delay to prevent race conditions
-            setTimeout(() => setAuthChangeInProgress(false), 100);
-          }
-        );
-
-        // THEN check for existing session
-        const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          console.error("Error fetching session:", sessionError);
-          toast({
-            title: "Authentication error",
-            description: "There was a problem with your session",
-            variant: "destructive",
-          });
-        }
-        
-        setSession(initialSession);
-        setUser(initialSession?.user ?? null);
-        
-        // Handle initial session - redirect if needed
-        if (initialSession?.user) {
-          console.log('Initial session found, user email:', initialSession.user.email);
-          // Only redirect if on login page or root
-          if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/') {
-            const isAdmin = checkIsAdmin(initialSession.user);
-            if (isAdmin) {
-              console.log('User is admin, redirecting to admin dashboard');
-              safeNavigate('/admin');
-            } else {
-              console.log('User is not admin, redirecting to user dashboard');
-              safeNavigate('/dashboard');
-            }
-          } else if (location.pathname.startsWith('/admin')) {
-            // Extra check for admin routes - redirect non-admins away from admin routes
-            const isAdmin = checkIsAdmin(initialSession.user);
-            if (!isAdmin) {
-              console.log('Non-admin user trying to access admin route, redirecting to dashboard');
-              safeNavigate('/dashboard');
-            }
-          }
-        }
-
-        return () => {
-          subscription.unsubscribe();
-        };
-      } catch (error) {
-        console.error("Error setting up auth:", error);
-        toast({
-          title: "Authentication setup failed",
-          description: "There was a problem setting up authentication",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    setupAuth();
-  }, [navigate, location.pathname]);
-
-  const signIn = async (email: string, password: string, isAdmin: boolean = false) => {
-    if (authChangeInProgress) {
-      console.log("Auth change already in progress, aborting sign in");
-      return;
-    }
-    
-    try {
-      setLoading(true);
-      
-      // Special handling for admin account creation on first login
-      if (isAdmin && ADMIN_EMAILS.includes(email)) {
-        // Check if admin exists first
-        const { data: existingUser, error: userError } = await supabase.auth.getUser();
-        
-        if (userError) {
-          console.log("User check error (expected for new admin):", userError);
-        }
-        
-        if (!existingUser?.user) {
-          // Create admin account if it doesn't exist
-          const { error: signUpError } = await supabase.auth.signUp({ 
-            email,
-            password,
-            options: {
-              data: {
-                full_name: "Zenora Admin",
-                is_admin: true
-              }
-            }
-          });
-          
-          if (signUpError) {
-            console.error("Admin signup error:", signUpError);
-            throw signUpError;
-          }
-        }
-      }
-      
-      const { error, data } = await supabase.auth.signInWithPassword({ email, password });
-      
-      if (error) {
-        console.error("Login error:", error);
-        toast({
-          title: "Login failed",
-          description: error.message,
-          variant: "destructive",
-        });
-        throw error;
-      }
-      
-      // Navigation is handled in the auth state change listener
-    } catch (error: any) {
-      console.error('Error signing in:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const signUp = async (email: string, password: string, fullName: string) => {
-    if (authChangeInProgress) {
-      console.log("Auth change already in progress, aborting sign up");
-      return;
-    }
-    
-    try {
-      setLoading(true);
-      
-      // Check if trying to sign up as admin - reject if not through admin login
-      if (ADMIN_EMAILS.includes(email)) {
-        toast({
-          title: "Invalid email",
-          description: "This email address is reserved. Please use a different one.",
-          variant: "destructive",
-        });
-        throw new Error("This email address is reserved");
-      }
-      
-      // Step 1: Create the auth user
-      const { error: signUpError, data } = await supabase.auth.signUp({ 
-        email, 
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            is_admin: false
-          },
-          emailRedirectTo: window.location.origin + '/dashboard'
-        }
-      });
-      
-      if (signUpError) {
-        console.error("Signup error:", signUpError);
-        toast({
-          title: "Signup failed",
-          description: signUpError.message,
-          variant: "destructive",
-        });
-        throw signUpError;
-      }
-
-      // Step 2: After auth user is created, add user to clients table
-      if (data.user) {
-        try {
-          // Create client record with the user's information
-          const clientData: InsertTables<'clients'> = {
-            id: data.user.id,
-            email: email,
-            full_name: fullName,
-            phone: null,
-            address: null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          };
-
-          const { error: clientError } = await supabase
-            .from('clients')
-            .insert([clientData]);
-
-          if (clientError) {
-            console.error('Error creating client record:', clientError);
-            toast({
-              title: "Account created but client profile setup failed",
-              description: "Your account was created but there was an issue setting up your profile. Please contact support.",
-              variant: "destructive",
-            });
-          } else {
-            console.log('Client record created successfully');
-          }
-        } catch (clientCreationError) {
-          console.error('Error in client creation process:', clientCreationError);
-        }
-      }
-      
-      toast({
-        title: "Account created!",
-        description: "Please check your email to confirm your account."
-      });
-      
-      // Use our safe navigation function
-      safeNavigate('/login');
-    } catch (error: any) {
-      console.error('Error signing up:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const signOut = async () => {
-    try {
-      setLoading(true);
-      
-      // First, clear local state before API call to prevent race conditions
-      setUser(null);
-      setSession(null);
-      
-      // Then perform the sign out operation
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error("Sign out error:", error);
-        throw error;
-      }
-      
-      // Force navigation to home page regardless of auth state listener
-      navigate('/');
-      
-      // Show success message after the operation completes
-      toast({
-        title: "Signed out",
-        description: "You've been successfully signed out."
-      });
-    } catch (error) {
-      console.error('Error signing out:', error);
-      toast({
-        title: "Sign out failed",
-        description: "There was an error signing out. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-      setAuthChangeInProgress(false); // Ensure flag is reset
-    }
-  };
+  // Combine loading states
+  const loading = stateLoading || operationsLoading;
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, signIn, signUp, signOut, checkIsAdmin }}>
+    <AuthContext.Provider value={{ 
+      session, 
+      user, 
+      loading, 
+      signIn, 
+      signUp, 
+      signOut, 
+      checkIsAdmin 
+    }}>
       {children}
     </AuthContext.Provider>
   );
