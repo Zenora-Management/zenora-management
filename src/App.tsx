@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -21,16 +22,9 @@ import ContactPage from '@/pages/Contact';
 import EmailTestPage from '@/pages/EmailTest';
 import Dashboard from '@/pages/Dashboard';
 import Auth from '@/components/auth/Auth';
-import { useAuth } from '@/components/auth/AuthProvider';
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
-  const { isLoggedIn, checkAuth } = useAuth();
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
   return (
     <HelmetProvider>
       <Helmet>
