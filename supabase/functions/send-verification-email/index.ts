@@ -37,24 +37,86 @@ serve(async (req) => {
       // Generate a random 6-digit code
       const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
       
-      // In a real implementation, you would integrate with an SMS API like Twilio
-      // For now, we'll just log the code and return it in development
-      console.log(`[MOCK SMS] Sending verification code ${verificationCode} to ${phoneNumber}`);
+      // Get Twilio credentials from environment variables
+      const accountSid = Deno.env.get("TWILIO_ACCOUNT_SID");
+      const authToken = Deno.env.get("TWILIO_AUTH_TOKEN");
+      const twilioPhoneNumber = Deno.env.get("TWILIO_PHONE_NUMBER");
       
-      // Store the verification code in a table or temporarily in Redis/cache
-      // For this demo, we'll return it in the response (ONLY FOR DEVELOPMENT)
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: "Verification code sent", 
-          // Remove this in production - only for development testing!
-          code: verificationCode 
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+      if (!accountSid || !authToken || !twilioPhoneNumber) {
+        console.error("Missing Twilio credentials");
+        return new Response(
+          JSON.stringify({ error: "SMS service configuration error" }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+      
+      try {
+        // Format the phone number (ensure it has the + prefix)
+        const formattedPhoneNumber = phoneNumber.startsWith('+') 
+          ? phoneNumber 
+          : `+${phoneNumber}`;
+        
+        // Send SMS using Twilio
+        const twilioEndpoint = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+        const twilioResponse = await fetch(twilioEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Basic ${btoa(`${accountSid}:${authToken}`)}`
+          },
+          body: new URLSearchParams({
+            From: twilioPhoneNumber,
+            To: formattedPhoneNumber,
+            Body: `Your Zenora verification code is: ${verificationCode}`
+          }).toString()
+        });
+        
+        const twilioResult = await twilioResponse.json();
+        console.log("Twilio response:", twilioResult);
+        
+        if (!twilioResponse.ok) {
+          console.error("Twilio API error:", twilioResult);
+          return new Response(
+            JSON.stringify({ 
+              error: "Failed to send SMS", 
+              details: twilioResult?.message || "Unknown Twilio error" 
+            }),
+            {
+              status: 500,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            }
+          );
         }
-      );
+        
+        // For development, return the code in the response
+        // In production, you would want to store this securely and validate it later
+        const isDevelopment = !Deno.env.get("PRODUCTION");
+        
+        return new Response(
+          JSON.stringify({ 
+            success: true, 
+            message: "Verification code sent", 
+            // Only include code in development
+            ...(isDevelopment ? { code: verificationCode } : {})
+          }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      } catch (smsError) {
+        console.error("SMS sending error:", smsError);
+        return new Response(
+          JSON.stringify({ error: "Failed to send SMS verification", details: smsError.message }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
     } else {
       // Email verification flow
       if (!email) {

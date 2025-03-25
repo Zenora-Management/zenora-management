@@ -46,7 +46,7 @@ const signupSchema = z.object({
 
 // Define the verification schema for the second step
 const verificationSchema = z.object({
-  verificationCode: z.string().min(6, { message: "Please enter the 6-digit verification code" }),
+  verificationCode: z.string().length(6, { message: "Verification code must be 6 digits" }),
 });
 
 // Define types based on the schemas
@@ -63,6 +63,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
   const [verificationSent, setVerificationSent] = useState(false);
   const [verificationStep, setVerificationStep] = useState(false);
   const [tempUserData, setTempUserData] = useState<SignupFormValues | null>(null);
+  const [expectedCode, setExpectedCode] = useState<string | null>(null);
   const navigate = useNavigate();
   
   // Use the appropriate schema and initial values based on the mode
@@ -123,8 +124,38 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     try {
       setFormSubmitting(true);
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log("Sending verification code to:", phoneNumber);
+      
+      // Call our Supabase edge function to send the verification code
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://hmmmztyrqhxjovingweq.supabase.co";
+      const response = await fetch(
+        `${supabaseUrl}/functions/v1/send-verification-email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phoneNumber,
+            type: "phone_verification"
+          }),
+        }
+      );
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        console.error("Error sending verification code:", result);
+        throw new Error(result.error || "Failed to send verification code");
+      }
+      
+      console.log("Verification code sent response:", result);
+      
+      // Store the verification code during development
+      if (result.code) {
+        setExpectedCode(result.code);
+        console.log("Development verification code:", result.code);
+      }
       
       setVerificationSent(true);
       
@@ -132,6 +163,8 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         title: "Verification code sent",
         description: "Please check your phone for the 6-digit code",
       });
+      
+      return true;
     } catch (error) {
       console.error("Error sending verification code:", error);
       toast({
@@ -139,6 +172,7 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
         description: error instanceof Error ? error.message : "An unknown error occurred",
         variant: "destructive",
       });
+      return false;
     } finally {
       setFormSubmitting(false);
     }
@@ -198,8 +232,10 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
       setTempUserData(values);
       
       // Send verification code and move to next step
-      await handleSendVerificationCode(values.phoneNumber);
-      setVerificationStep(true);
+      const codeSent = await handleSendVerificationCode(values.phoneNumber);
+      if (codeSent) {
+        setVerificationStep(true);
+      }
       
     } catch (error) {
       console.error("Signup error:", error);
@@ -220,8 +256,16 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
     try {
       setFormSubmitting(true);
       
-      // In a real implementation, you would verify the code here
-      console.log("Verifying code:", values.verificationCode);
+      // In development, verify against the expected code if available
+      if (expectedCode && values.verificationCode !== expectedCode) {
+        toast({
+          title: "Invalid verification code",
+          description: "The code you entered is incorrect. Please try again.",
+          variant: "destructive",
+        });
+        setFormSubmitting(false);
+        return;
+      }
       
       // Proceed with actual signup using stored data
       await signUp(
@@ -357,7 +401,17 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
               <FormItem>
                 <FormLabel>Verification Code</FormLabel>
                 <FormControl>
-                  <InputOTP maxLength={6} {...field}>
+                  <InputOTP 
+                    maxLength={6} 
+                    {...field} 
+                    pattern="[0-9]*"
+                    inputMode="numeric"
+                    onChange={(value) => {
+                      // Only allow digits
+                      const numericValue = value.replace(/\D/g, '');
+                      field.onChange(numericValue);
+                    }}
+                  >
                     <InputOTPGroup>
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />
@@ -483,7 +537,17 @@ const AuthForm = ({ mode, userType }: AuthFormProps) => {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                     <Phone size={18} />
                   </span>
-                  <Input placeholder="(123) 456-7890" {...field} className="pl-10" disabled={isSubmitting} />
+                  <Input 
+                    placeholder="(123) 456-7890" 
+                    {...field} 
+                    className="pl-10" 
+                    disabled={isSubmitting}
+                    onChange={(e) => {
+                      // Allow only numbers, +, (), -, and spaces in phone number
+                      const value = e.target.value.replace(/[^\d\s()+\-]/g, '');
+                      field.onChange(value);
+                    }}
+                  />
                 </div>
               </FormControl>
               <FormMessage />
