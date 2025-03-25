@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -279,19 +278,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    if (authChangeInProgress) {
-      console.log("Auth change already in progress, aborting sign out");
-      return;
-    }
-    
     try {
       setLoading(true);
+      
+      // First, clear local state before API call to prevent race conditions
+      setUser(null);
+      setSession(null);
+      
+      // Then perform the sign out operation
       const { error } = await supabase.auth.signOut();
+      
       if (error) {
         console.error("Sign out error:", error);
         throw error;
       }
-      // Navigation is handled in the auth state change listener
+      
+      // Force navigation to home page regardless of auth state listener
+      navigate('/');
+      
+      // Show success message after the operation completes
+      toast({
+        title: "Signed out",
+        description: "You've been successfully signed out."
+      });
     } catch (error) {
       console.error('Error signing out:', error);
       toast({
@@ -301,6 +310,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     } finally {
       setLoading(false);
+      setAuthChangeInProgress(false); // Ensure flag is reset
     }
   };
 
