@@ -1,89 +1,76 @@
+import React, { useState, useEffect } from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import Index from '@/pages/Index';
+import About from '@/pages/About';
+import Features from '@/pages/Features';
+import Login from '@/pages/Login';
+import Help from '@/pages/Help';
+import Blog from '@/pages/Blog';
+import Terms from '@/pages/Terms';
+import Privacy from '@/pages/Privacy';
+import Security from '@/pages/Security';
+import Cookies from '@/pages/Cookies';
+import Careers from '@/pages/Careers';
+import ContactPage from '@/pages/Contact';
+import EmailTestPage from '@/pages/EmailTest';
+import Dashboard from '@/pages/Dashboard';
+import Auth from '@/components/auth/Auth';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { Toaster } from "@/components/ui/toaster"
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Admin from "./pages/Admin";
-import NotFound from "./pages/NotFound";
-import Features from "./pages/Features";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import PropertyManagement from "./pages/PropertyManagement";
-import PropertyManagementDetail from "./pages/PropertyManagementDetail";
-import AIRentAnalysisDetail from "./pages/AIRentAnalysisDetail";
-import TenantScreeningDetail from "./pages/TenantScreeningDetail";
-import MaintenanceDetail from "./pages/MaintenanceDetail";
-import Settings from "./pages/Settings";
-import Help from "./pages/Help";
-import Upgrade from "./pages/Upgrade";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import Cookies from "./pages/Cookies";
-import Security from "./pages/Security";
-import Blog from "./pages/Blog";
-import AIRentAnalysis from "./pages/AIRentAnalysis";
-import TenantScreening from "./pages/TenantScreening";
-import Maintenance from "./pages/Maintenance";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
-import PropertyDetail from "./pages/PropertyDetail";
-import PropertyCreate from "./pages/PropertyCreate";
+function App() {
+  const { isLoggedIn, checkAuth } = useAuth();
 
-const queryClient = new QueryClient();
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+  return (
+    <HelmetProvider>
+      <Helmet>
+        <title>Zenora - AI Property Management</title>
+        <meta name="description" content="AI-powered property management that makes landlords' lives easier." />
+      </Helmet>
+      
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<Index />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/features" element={<Features />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Login />} />
+        <Route path="/help" element={<Help />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/security" element={<Security />} />
+        <Route path="/cookies" element={<Cookies />} />
+        <Route path="/careers" element={<Careers />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/email-test" element={<EmailTestPage />} />
+        
+        {/* Protected routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <Auth>
+              <Dashboard />
+            </Auth>
+          }
+        />
+        
+        {/* Fallback route */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
       <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Login />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/cookies" element={<Cookies />} />
-            <Route path="/security" element={<Security />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/help" element={<Help />} />
-            
-            {/* Service Landing Pages */}
-            <Route path="/property-management" element={<PropertyManagement />} />
-            <Route path="/property-management/details" element={<PropertyManagementDetail />} />
-            <Route path="/ai-rent-analysis/details" element={<AIRentAnalysisDetail />} />
-            <Route path="/tenant-screening/details" element={<TenantScreeningDetail />} />
-            <Route path="/maintenance/details" element={<MaintenanceDetail />} />
-            
-            {/* Protected User Routes */}
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/dashboard/properties/:id" element={<ProtectedRoute><PropertyDetail /></ProtectedRoute>} />
-            <Route path="/dashboard/properties/add" element={<ProtectedRoute><PropertyCreate /></ProtectedRoute>} />
-            <Route path="/ai-rent-analysis" element={<ProtectedRoute><AIRentAnalysis /></ProtectedRoute>} />
-            <Route path="/tenant-screening" element={<ProtectedRoute><TenantScreening /></ProtectedRoute>} />
-            <Route path="/maintenance" element={<ProtectedRoute><Maintenance /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/upgrade" element={<ProtectedRoute><Upgrade /></ProtectedRoute>} />
-            
-            {/* Admin Routes */}
-            <Route path="/admin" element={<ProtectedRoute isAdmin><Admin /></ProtectedRoute>} />
-            
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </HelmetProvider>
+  );
+}
 
 export default App;
