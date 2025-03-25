@@ -45,6 +45,7 @@ serve(async (req) => {
         <p><strong>Subject:</strong> ${subject}</p>
         <p><strong>Message:</strong> ${message}</p>
         <p><strong>This is a demo request and should be prioritized.</strong></p>
+        <p><strong>Note:</strong> The user has been directed to the Calendly scheduling page.</p>
       `;
     }
 
@@ -55,6 +56,32 @@ serve(async (req) => {
       subject: emailSubject,
       html: emailContent,
     });
+
+    // Send confirmation email to the user
+    if (email) {
+      const userEmailContent = `
+        <h2>Thank you for contacting Zenora Property Management!</h2>
+        <p>Dear ${name},</p>
+        <p>We've received your message and will get back to you as soon as possible.</p>
+        <p>Here's a summary of your inquiry:</p>
+        <p><strong>Subject:</strong> ${subject}</p>
+        <p><strong>Message:</strong> ${message}</p>
+        ${isDemoRequest ? '<p>You can schedule a demo at <a href="https://calendly.com/zenoramgmt/30min">our Calendly page</a>.</p>' : ''}
+        <p>Best regards,</p>
+        <p>
+          Ansh Parikh<br/>
+          CEO & Founder<br/>
+          Zenora Property Management
+        </p>
+      `;
+
+      await client.send({
+        from: "zenoramgmt@gmail.com",
+        to: email,
+        subject: "We've received your message - Zenora Property Management",
+        html: userEmailContent,
+      });
+    }
 
     await client.close();
 

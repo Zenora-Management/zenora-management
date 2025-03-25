@@ -254,7 +254,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   <p className="text-white/80 mb-4">
                     See our AI-powered property management platform in action with a personalized demo.
                   </p>
-                  <Link to="/contact?subject=demo">
+                  <a href="https://calendly.com/zenoramgmt/30min" target="_blank" rel="noopener noreferrer">
                     <ZenoraButton 
                       variant="glass" 
                       size="lg" 
@@ -262,7 +262,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                     >
                       <Calendar className="mr-2 h-4 w-4" /> Book a Demo
                     </ZenoraButton>
-                  </Link>
+                  </a>
                 </div>
                 
                 <div className="mt-12">

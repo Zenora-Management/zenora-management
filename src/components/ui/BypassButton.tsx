@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/drawer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 const BypassButton = () => {
   const [bypassEnabled, setBypassEnabled] = useState(false);
@@ -31,11 +32,24 @@ const BypassButton = () => {
     authBypass.enable(type);
     setBypassEnabled(true);
     setUserType(type);
+    
+    toast({
+      title: "Bypass Login Enabled",
+      description: `You can now access ${type === "admin" ? "admin" : "user"} pages without logging in`,
+    });
+    
+    // Navigate to the appropriate page after enabling bypass
+    if (type === "admin") {
+      navigate("/admin");
+    } else {
+      navigate("/dashboard");
+    }
   };
 
   const handleDisable = () => {
     authBypass.disable();
     setBypassEnabled(false);
+    navigate("/");
   };
 
   const navigateTo = (path: string) => {

@@ -1,115 +1,110 @@
 
-import { Link } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
+import { Link } from "react-router-dom";
 
 const About = () => {
   return (
-    <section className="zenora-section bg-gradient-to-b from-gray-50 to-white dark:from-black dark:to-zenora-dark relative overflow-hidden">
+    <section className="zenora-section bg-white dark:bg-zenora-dark relative overflow-hidden">
       {/* Background elements */}
-      <div className="absolute top-1/4 left-0 w-1/3 h-1/3 bg-zenora-light opacity-5 blur-3xl rounded-full"></div>
-      <div className="absolute bottom-1/4 right-0 w-1/3 h-1/3 bg-zenora-purple opacity-5 blur-3xl rounded-full"></div>
+      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-zenora-light opacity-5 blur-3xl rounded-full"></div>
+      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-zenora-purple opacity-5 blur-3xl rounded-full"></div>
       
       <div className="zenora-container relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="order-2 lg:order-1 animate-slide-in">
-            <div className="inline-flex items-center rounded-full border border-zenora-purple/30 bg-zenora-purple/5 px-3 py-1 text-sm text-zenora-purple backdrop-blur-sm mb-6">
-              <span className="font-medium">Our Mission</span>
-            </div>
-            
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-zenora-gradient">
-              Simplifying Property Management Through Innovation
-            </h2>
-            
-            <p className="text-lg text-muted-foreground mb-6">
-              At Zenora Management, we're revolutionizing property management by offering the cheapest, simplest, and most efficient AI-driven solutions—ensuring 24/7 client satisfaction through automation and smart technology.
-            </p>
-            
-            <div className="space-y-4 mb-8">
-              {[
-                "Cost-effective property management solutions",
-                "24/7 automated support and monitoring",
-                "AI-powered rent analysis and market insights",
-                "Seamless user experience for property owners"
-              ].map((item, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className="h-6 w-6 rounded-full bg-zenora-purple/20 flex items-center justify-center mt-0.5">
-                    <svg className="h-3.5 w-3.5 text-zenora-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <p className="text-foreground">{item}</p>
-                </div>
-              ))}
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/about">
-                <ZenoraButton size="lg" variant="default">
-                  Learn More About Us
-                </ZenoraButton>
-              </Link>
-              <Link to="/contact">
-                <ZenoraButton size="lg" variant="outline">
-                  Contact Our Team
-                </ZenoraButton>
-              </Link>
-            </div>
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center rounded-full border border-zenora-purple/30 bg-zenora-purple/5 px-3 py-1 text-sm text-zenora-purple backdrop-blur-sm mb-6">
+            <span className="font-medium">Our Story</span>
           </div>
           
-          <div className="order-1 lg:order-2 animate-scale-in">
-            <div className="relative rounded-2xl overflow-hidden h-[500px] shadow-2xl border border-white/10">
-              <div className="absolute inset-0 bg-zenora-gradient opacity-10"></div>
+          <h2 className="zenora-heading bg-clip-text text-transparent bg-zenora-gradient">
+            About Zenora Property Management
+          </h2>
+          
+          <p className="zenora-subheading">
+            We're revolutionizing property management with AI-powered solutions that make managing properties simpler, more efficient, and more profitable.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
+          <div className="animate-slide-in">
+            <div className="zenora-card p-6 lg:p-8">
+              <h3 className="text-2xl font-bold mb-6">Our Vision</h3>
+              <div className="prose dark:prose-invert max-w-none">
+                <p>
+                  At Zenora, we envision a future where property management is streamlined, transparent, and accessible to all. We believe that by leveraging the power of artificial intelligence and automation, we can transform the traditional property management model into something more efficient, cost-effective, and responsive to the needs of both property owners and tenants.
+                </p>
+                <p>
+                  Our mission is to empower property owners with innovative tools and services that simplify the management process, maximize rental income, and provide peace of mind. We're committed to delivering exceptional value through our comprehensive suite of AI-driven solutions, backed by our team's expertise and dedication to customer service.
+                </p>
+                <p>
+                  We're not just another property management company. We're pioneering a new approach that combines cutting-edge technology with human insight to create a better experience for everyone involved in the rental ecosystem.
+                </p>
+              </div>
               
-              <div className="absolute inset-0 p-8 flex flex-col">
-                <div className="mb-8">
-                  <h3 className="text-2xl font-bold mb-2">Our Vision</h3>
-                  <p className="text-muted-foreground">
-                    Becoming the leading AI-powered property management firm that delivers cost-effective, hassle-free, and intelligent solutions.
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg p-6 border border-white/5">
-                    <div className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-zenora-gradient">24/7</div>
-                    <p className="text-sm text-muted-foreground">Client support through AI automation</p>
-                  </div>
-                  <div className="bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg p-6 border border-white/5">
-                    <div className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-zenora-gradient">98%</div>
-                    <p className="text-sm text-muted-foreground">Client satisfaction rate</p>
-                  </div>
-                </div>
-                
-                <div className="bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg p-6 border border-white/5 mb-6">
-                  <h4 className="font-semibold mb-2">Our Technology</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    We leverage advanced AI algorithms to analyze vast amounts of property data, enabling our clients to make smarter decisions and maximize returns.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {["AI", "Machine Learning", "Data Analytics"].map((tech, i) => (
-                      <div key={i} className="px-2 py-1 bg-zenora-purple/20 rounded-full text-xs text-zenora-purple">
-                        {tech}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <blockquote className="bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg p-6 border border-white/5 flex-grow">
-                  <p className="text-sm italic text-muted-foreground mb-4">
-                    "Zenora Management has completely transformed how I manage my rental properties. The AI rent analysis has helped me price my units optimally, increasing my revenue by 15%."
-                  </p>
-                  <footer className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-zenora-gradient flex items-center justify-center text-white font-bold text-xs">
-                      JD
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Jane Doe</p>
-                      <p className="text-xs text-muted-foreground">Property Owner, 12 Units</p>
-                    </div>
-                  </footer>
-                </blockquote>
+              <div className="mt-8">
+                <Link to="/contact">
+                  <ZenoraButton variant="default">
+                    Contact Us
+                  </ZenoraButton>
+                </Link>
               </div>
             </div>
           </div>
+          
+          <div className="animate-slide-up">
+            <div className="relative h-full w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-sm p-6 lg:p-8">
+              <div className="absolute inset-0 bg-gradient-to-br from-zenora-purple/20 to-transparent opacity-20"></div>
+              
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold mb-6">Our Founders</h3>
+                
+                <div className="space-y-8">
+                  <div className="flex flex-col sm:flex-row gap-6">
+                    <div className="w-24 h-24 rounded-full bg-zenora-gradient flex items-center justify-center text-white text-2xl font-bold">
+                      AP
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-semibold">Ansh Parikh</h4>
+                      <p className="text-zenora-purple mb-3">CEO & Founder</p>
+                      <p className="text-muted-foreground">
+                        Ansh brings extensive experience in real estate and property management, with a vision to transform the industry through innovative technology solutions.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-6">
+                    <div className="w-24 h-24 rounded-full bg-zenora-gradient flex items-center justify-center text-white text-2xl font-bold">
+                      AV
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-semibold">Anvith Vobbilisetty</h4>
+                      <p className="text-zenora-purple mb-3">CTO & Founder</p>
+                      <p className="text-muted-foreground">
+                        Anvith leads our technical innovation, bringing expertise in AI and software development to create cutting-edge solutions for property management challenges.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { number: "5+", label: "Years Experience" },
+            { number: "1,000+", label: "Happy Clients" },
+            { number: "3,500+", label: "Properties Managed" },
+            { number: "99%", label: "Client Satisfaction" },
+          ].map((stat, i) => (
+            <div key={i} className="zenora-card p-6 text-center animate-scale-in">
+              <div className="text-3xl font-bold bg-clip-text text-transparent bg-zenora-gradient mb-2">
+                {stat.number}
+              </div>
+              <div className="text-muted-foreground">
+                {stat.label}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
