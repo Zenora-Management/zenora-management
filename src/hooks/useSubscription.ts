@@ -116,47 +116,47 @@ export function useSubscription() {
   // Check if user has access permission
   const hasAccessPermission = isSubscriptionActive && subscription?.has_access_permission;
 
-  // Get subscription plan details - Exactly matching the plan features from PropertyManagement page
+  // Get subscription plan details - Updated to match the plans from PropertyManagementDetail page
   const getPlanDetails = () => {
     if (!subscription) {
       return { name: 'Free', features: [] };
     }
 
     switch (subscription.plan_type) {
-      case 'starter':
+      case 'client':
         return {
-          name: 'Starter',
+          name: 'Client Plan',
           features: [
-            'Up to 5 properties',
-            'Basic AI rent analysis',
-            'Tenant screening (3/month)',
-            'Maintenance tracking',
-            'Email support'
+            'Full property management',
+            'Tenant screening & placement',
+            'Maintenance coordination',
+            'AI rent analysis (basic)',
+            'Regular inspections',
+            'Standard support'
           ]
         };
-      case 'professional':
+      case 'discount':
         return {
-          name: 'Professional',
+          name: 'Discount Plans',
           features: [
-            'Up to 20 properties',
-            'Advanced AI rent analysis',
-            'Unlimited tenant screening',
-            'Maintenance tracking & scheduling',
-            'Financial reporting',
-            'Priority support'
+            'All Client Plan features',
+            '$500 annual savings',
+            'Priority maintenance service',
+            'AI rent analysis (enhanced)',
+            'Priority support',
+            'Quarterly performance reviews'
           ]
         };
       case 'enterprise':
         return {
-          name: 'Enterprise',
+          name: 'Enterprise Plan',
           features: [
-            'Unlimited properties',
-            'Premium AI rent analysis',
-            'Unlimited tenant screening',
-            'Advanced maintenance management',
-            'Custom financial reporting',
-            'API access',
-            'Dedicated account manager'
+            'All Discount Plan features',
+            'Volume discounting',
+            'Dedicated account manager',
+            'AI rent analysis (premium)',
+            'Custom reporting',
+            'API access'
           ]
         };
       default:

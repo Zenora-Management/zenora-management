@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@13.6.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
@@ -67,12 +66,12 @@ serve(async (req) => {
 
           // Get plan details
           const priceId = subscription.items.data[0].price.id;
-          let planType = "starter";
+          let planType = "client";  // Default to client plan
           let planInterval = "month";
 
           // Map price ID to plan type (customize based on your Stripe products)
-          if (priceId.includes("professional")) {
-            planType = "professional";
+          if (priceId.includes("discount")) {
+            planType = "discount";
           } else if (priceId.includes("enterprise")) {
             planType = "enterprise";
           }

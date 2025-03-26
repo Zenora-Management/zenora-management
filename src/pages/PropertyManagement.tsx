@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -95,51 +94,51 @@ const PropertyManagement = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
-                  name: "Starter",
-                  price: "$290",
-                  pricePerMonth: "$24",
-                  description: "Perfect for small landlords with a few properties",
+                  name: "Client Plan",
+                  price: "$1,999",
+                  pricePerMonth: "$166",
+                  description: "Perfect for single property owners looking for comprehensive management",
                   features: [
-                    "Up to 5 properties",
-                    "Basic AI rent analysis",
-                    "Tenant screening (3/month)",
-                    "Maintenance tracking",
-                    "Email support"
+                    "Full property management",
+                    "Tenant screening & placement",
+                    "Maintenance coordination",
+                    "AI rent analysis (basic)",
+                    "Regular inspections",
+                    "Standard support"
                   ],
                   button: "Get Started",
                   popular: false,
-                  icon: <Star className="h-6 w-6 text-amber-500" />
+                  icon: <Star className="h-6 w-6 text-purple-500" />
                 },
                 {
-                  name: "Professional",
-                  price: "$790",
-                  pricePerMonth: "$66",
-                  description: "Ideal for growing property portfolios",
+                  name: "Discount Plans",
+                  price: "$1,499",
+                  pricePerMonth: "$125",
+                  description: "Special pricing for referred clients or those switching from another company",
                   features: [
-                    "Up to 20 properties",
-                    "Advanced AI rent analysis",
-                    "Unlimited tenant screening",
-                    "Maintenance tracking & scheduling",
-                    "Financial reporting",
-                    "Priority support"
+                    "All Client Plan features",
+                    "$500 annual savings",
+                    "Priority maintenance service",
+                    "AI rent analysis (enhanced)",
+                    "Priority support",
+                    "Quarterly performance reviews"
                   ],
                   button: "Get Started",
                   popular: true,
                   icon: <Sparkles className="h-6 w-6 text-zenora-purple" />
                 },
                 {
-                  name: "Enterprise",
-                  price: "$1,990",
-                  pricePerMonth: "$166",
-                  description: "Comprehensive solution for property management companies",
+                  name: "Enterprise Plan",
+                  price: "Custom",
+                  pricePerMonth: "Custom",
+                  description: "Tailored solutions for portfolio investors with 10+ properties",
                   features: [
-                    "Unlimited properties",
-                    "Premium AI rent analysis",
-                    "Unlimited tenant screening",
-                    "Advanced maintenance management",
-                    "Custom financial reporting",
-                    "API access",
-                    "Dedicated account manager"
+                    "All Discount Plan features",
+                    "Volume discounting",
+                    "Dedicated account manager",
+                    "AI rent analysis (premium)",
+                    "Custom reporting",
+                    "API access"
                   ],
                   button: "Contact Sales",
                   popular: false,

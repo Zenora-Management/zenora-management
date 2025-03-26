@@ -29,59 +29,60 @@ const Upgrade = () => {
   
   // Get price ID map - replace these with your actual Stripe price IDs once created
   const PRICE_IDS = {
-    starter: {
-      year: 'price_starter_yearly'
+    client: {
+      year: 'price_client_yearly'
     },
-    professional: {
-      year: 'price_professional_yearly'
+    discount: {
+      year: 'price_discount_yearly'
     },
     enterprise: {
       year: 'price_enterprise_yearly'
     }
   };
   
-  // Plans data - Exactly matching the PropertyManagement page
+  // Plans data - Updated to match PropertyManagementDetail.tsx page
   const plans = [
     {
-      id: 'starter',
-      name: 'Starter',
-      description: 'Perfect for small landlords with a few properties',
+      id: 'client',
+      name: 'Client Plan',
+      description: 'Perfect for single property owners looking for comprehensive management',
       price: {
-        year: '$290'
+        year: '$1,999'
       },
       pricePerMonth: {
-        year: '$24'
+        year: '$166'
       },
-      savings: '17%',
+      savings: '0%',
       features: [
-        'Up to 5 properties',
-        'Basic AI rent analysis',
-        'Tenant screening (3/month)',
-        'Maintenance tracking',
-        'Email support'
+        'Full property management',
+        'Tenant screening & placement',
+        'Maintenance coordination',
+        'AI rent analysis (basic)',
+        'Regular inspections',
+        'Standard support'
       ],
       popular: false,
-      icon: <Star className="h-6 w-6 text-amber-500" />,
-      color: 'from-amber-500 to-amber-600'
+      icon: <Star className="h-6 w-6 text-purple-500" />,
+      color: 'from-purple-500 to-blue-500'
     },
     {
-      id: 'professional',
-      name: 'Professional',
-      description: 'Ideal for growing property portfolios',
+      id: 'discount',
+      name: 'Discount Plans',
+      description: 'Special pricing for referred clients or those switching from another company',
       price: {
-        year: '$790'
+        year: '$1,499'
       },
       pricePerMonth: {
-        year: '$66'
+        year: '$125'
       },
-      savings: '17%',
+      savings: '25%',
       features: [
-        'Up to 20 properties',
-        'Advanced AI rent analysis',
-        'Unlimited tenant screening',
-        'Maintenance tracking & scheduling',
-        'Financial reporting',
-        'Priority support'
+        'All Client Plan features',
+        '$500 annual savings',
+        'Priority maintenance service',
+        'AI rent analysis (enhanced)',
+        'Priority support',
+        'Quarterly performance reviews'
       ],
       popular: true,
       icon: <Sparkles className="h-6 w-6 text-zenora-purple" />,
@@ -89,27 +90,26 @@ const Upgrade = () => {
     },
     {
       id: 'enterprise',
-      name: 'Enterprise',
-      description: 'Comprehensive solution for property management companies',
+      name: 'Enterprise Plan',
+      description: 'Tailored solutions for portfolio investors with 10+ properties',
       price: {
-        year: '$1,990'
+        year: 'Custom'
       },
       pricePerMonth: {
-        year: '$166'
+        year: 'Custom'
       },
-      savings: '17%',
+      savings: 'Custom',
       features: [
-        'Unlimited properties',
-        'Premium AI rent analysis',
-        'Unlimited tenant screening',
-        'Advanced maintenance management',
-        'Custom financial reporting',
-        'API access',
-        'Dedicated account manager'
+        'All Discount Plan features',
+        'Volume discounting',
+        'Dedicated account manager',
+        'AI rent analysis (premium)',
+        'Custom reporting',
+        'API access'
       ],
       popular: false,
       icon: <Zap className="h-6 w-6 text-blue-500" />,
-      color: 'from-blue-500 to-blue-600'
+      color: 'from-blue-500 to-teal-500'
     }
   ];
   
@@ -146,6 +146,12 @@ const Upgrade = () => {
         variant: 'destructive',
       });
       navigate('/login');
+      return;
+    }
+    
+    // For Enterprise plan, redirect to contact page
+    if (planId === 'enterprise') {
+      navigate('/contact?plan=enterprise');
       return;
     }
     
@@ -408,7 +414,9 @@ const Upgrade = () => {
                             ? 'Current Plan'
                             : createCheckoutSession.isPending
                               ? 'Processing...'
-                              : <>Select Plan <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" /></>}
+                              : plan.id === 'enterprise'
+                                ? 'Contact Us'
+                                : <>Select Plan <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" /></>}
                         </ZenoraButton>
                       </div>
                     </div>
