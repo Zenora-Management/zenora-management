@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -40,7 +41,7 @@ const Upgrade = () => {
     }
   };
   
-  // Plans data
+  // Plans data - Updated to match the Property Management page
   const plans = [
     {
       id: 'starter',
@@ -369,7 +370,7 @@ const Upgrade = () => {
                             <span className="text-muted-foreground ml-2 mb-1">/{billingInterval}</span>
                           </div>
                           <p className="text-sm text-zenora-purple mt-1">
-                            Just {plan.pricePerMonth.year}/mo, billed annually
+                            Just {plan.pricePerMonth[billingInterval]}/mo, billed annually
                           </p>
                         </div>
                         
