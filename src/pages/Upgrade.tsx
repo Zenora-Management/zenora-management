@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -41,7 +40,7 @@ const Upgrade = () => {
     }
   };
   
-  // Plans data - Updated to match the Property Management page
+  // Plans data - Exactly matching the PropertyManagement page
   const plans = [
     {
       id: 'starter',

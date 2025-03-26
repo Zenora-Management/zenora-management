@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -117,7 +116,7 @@ export function useSubscription() {
   // Check if user has access permission
   const hasAccessPermission = isSubscriptionActive && subscription?.has_access_permission;
 
-  // Get subscription plan details - Updated to match the plan features from PropertyManagement page
+  // Get subscription plan details - Exactly matching the plan features from PropertyManagement page
   const getPlanDetails = () => {
     if (!subscription) {
       return { name: 'Free', features: [] };
