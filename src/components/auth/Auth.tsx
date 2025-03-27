@@ -1,4 +1,3 @@
-
 import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,6 +8,8 @@ interface AuthProps {
 
 const Auth = ({ children }: AuthProps) => {
   const { user, loading } = useAuth();
+  const bypassAuth = localStorage.getItem('zenora_bypass_auth') === 'true';
+  const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost';
 
   if (loading) {
     return (
@@ -18,7 +19,8 @@ const Auth = ({ children }: AuthProps) => {
     );
   }
 
-  if (!user) {
+  // Allow bypass in development mode
+  if (!user && !(isDevelopment && bypassAuth)) {
     return <Navigate to="/login" />;
   }
 

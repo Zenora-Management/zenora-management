@@ -1,15 +1,54 @@
-
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AuthForm from "@/components/auth/AuthForm";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ZenoraButton } from "@/components/ui/button-zenora";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const Login = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isSignUp = location.pathname === "/signup";
   const [loginType, setLoginType] = useState<"regular" | "admin">("regular");
+  const [bypassLoading, setBypassLoading] = useState(false);
+  const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost';
+
+  // Development bypass function
+  const handleBypass = async (type: 'user' | 'admin') => {
+    if (!isDevelopment) return;
+    
+    setBypassLoading(true);
+    try {
+      // Set a bypass session in local storage to simulate login
+      localStorage.setItem('zenora_bypass_auth', 'true');
+      localStorage.setItem('zenora_bypass_type', type);
+      localStorage.setItem('zenora_session_valid', 'true');
+      
+      toast({
+        title: "Development Bypass",
+        description: `You've bypassed auth as a ${type}. This works only in development.`,
+      });
+      
+      // Navigate to the appropriate dashboard
+      if (type === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error("Bypass error:", error);
+      toast({
+        title: "Bypass failed",
+        description: "Unable to bypass authentication",
+        variant: "destructive",
+      });
+    } finally {
+      setBypassLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -90,6 +129,34 @@ const Login = () => {
               Privacy Policy
             </Link>
           </div>
+          
+          {/* Development Bypass Section */}
+          {isDevelopment && !isSignUp && (
+            <div className="max-w-md mx-auto mt-8 p-4 border border-dashed border-amber-500 rounded-lg bg-amber-50 dark:bg-amber-950/20">
+              <h3 className="text-center text-amber-700 dark:text-amber-400 font-medium mb-3">Development Mode</h3>
+              <div className="text-center text-sm text-amber-600 dark:text-amber-300 mb-4">
+                Bypass authentication to quickly access internal pages during development.
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <ZenoraButton
+                  variant="outline"
+                  className="border-amber-500 text-amber-700 hover:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-950/50"
+                  onClick={() => handleBypass('user')}
+                  disabled={bypassLoading}
+                >
+                  Bypass as User
+                </ZenoraButton>
+                <ZenoraButton
+                  variant="outline"
+                  className="border-amber-500 text-amber-700 hover:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-950/50"
+                  onClick={() => handleBypass('admin')}
+                  disabled={bypassLoading}
+                >
+                  Bypass as Admin
+                </ZenoraButton>
+              </div>
+            </div>
+          )}
         </div>
       </main>
       

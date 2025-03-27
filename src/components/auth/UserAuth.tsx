@@ -8,6 +8,11 @@ interface UserAuthProps {
 const UserAuth = ({ children }: UserAuthProps) => {
   const { user, loading, isUserAdmin } = useAuth();
   const location = useLocation();
+  
+  // Development bypass handling
+  const bypassAuth = localStorage.getItem('zenora_bypass_auth') === 'true';
+  const bypassType = localStorage.getItem('zenora_bypass_type');
+  const isDevelopment = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost';
 
   if (loading) {
     return (
@@ -17,12 +22,16 @@ const UserAuth = ({ children }: UserAuthProps) => {
     );
   }
 
-  if (!user) {
+  // Check regular authentication first
+  if (!user && !(isDevelopment && bypassAuth)) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (isUserAdmin()) {
-    console.log('Admin user attempting to access user dashboard, redirecting to admin dashboard:', user.email);
+  // Handle admin checking with bypass support
+  const isAdmin = user ? isUserAdmin() : (isDevelopment && bypassType === 'admin');
+  
+  if (isAdmin) {
+    console.log('Admin user attempting to access user dashboard, redirecting to admin dashboard');
     return <Navigate to="/admin" replace />;
   }
 
