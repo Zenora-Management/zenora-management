@@ -1,8 +1,9 @@
+
 import React from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { ZenoraButton } from '@/components/ui/button-zenora';
-import { Check, Sparkles, Star, Zap } from 'lucide-react';
+import { Check, Sparkles, Star, Zap, Building, Database, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -94,10 +95,11 @@ const PropertyManagement = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
+                  id: "client",
                   name: "Client Plan",
                   price: "$1,999",
                   pricePerMonth: "$166",
-                  description: "Perfect for single property owners looking for comprehensive management",
+                  description: "Perfect for single property owners",
                   features: [
                     "Full property management",
                     "Tenant screening & placement",
@@ -108,13 +110,15 @@ const PropertyManagement = () => {
                   ],
                   button: "Get Started",
                   popular: false,
-                  icon: <Star className="h-6 w-6 text-purple-500" />
+                  icon: <Building className="h-6 w-6 text-purple-600" />,
+                  gradient: "from-purple-500 to-indigo-600"
                 },
                 {
+                  id: "discount",
                   name: "Discount Plans",
                   price: "$1,499",
                   pricePerMonth: "$125",
-                  description: "Special pricing for referred clients or those switching from another company",
+                  description: "Special pricing for referred clients",
                   features: [
                     "All Client Plan features",
                     "$500 annual savings",
@@ -125,13 +129,15 @@ const PropertyManagement = () => {
                   ],
                   button: "Get Started",
                   popular: true,
-                  icon: <Sparkles className="h-6 w-6 text-zenora-purple" />
+                  icon: <Sparkles className="h-6 w-6 text-amber-500" />,
+                  gradient: "from-amber-400 to-pink-500"
                 },
                 {
+                  id: "enterprise",
                   name: "Enterprise Plan",
                   price: "Custom",
                   pricePerMonth: "Custom",
-                  description: "Tailored solutions for portfolio investors with 10+ properties",
+                  description: "For portfolio investors with 10+ properties",
                   features: [
                     "All Discount Plan features",
                     "Volume discounting",
@@ -142,32 +148,31 @@ const PropertyManagement = () => {
                   ],
                   button: "Contact Sales",
                   popular: false,
-                  icon: <Zap className="h-6 w-6 text-blue-500" />
+                  icon: <Database className="h-6 w-6 text-green-600" />,
+                  gradient: "from-green-400 to-blue-500"
                 }
-              ].map((plan, index) => (
+              ].map((plan) => (
                 <div 
-                  key={index} 
-                  className={cn(
-                    "relative rounded-2xl overflow-hidden transition-all duration-300 group hover:shadow-xl", 
-                    plan.popular 
-                      ? "shadow-lg border-2 border-zenora-purple transform hover:-translate-y-1" 
-                      : "shadow-md border border-gray-200 dark:border-gray-800"
-                  )}
+                  key={plan.id} 
+                  className="relative h-full rounded-2xl overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl group"
                 >
                   {plan.popular && (
-                    <div className="absolute top-0 right-0 bg-zenora-purple text-white py-2 px-4 text-sm font-medium rounded-bl-xl">
+                    <div className="absolute top-0 right-0 bg-zenora-purple text-white py-2 px-4 text-sm font-medium rounded-bl-xl z-10">
                       Most Popular
                     </div>
                   )}
+                  
+                  <div className="absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500"></div>
+                  
                   <div className={cn(
                     "p-1",
-                    plan.popular ? "bg-zenora-gradient" : ""
+                    plan.popular ? `bg-gradient-to-br ${plan.gradient}` : "bg-white dark:bg-zenora-dark"
                   )}>
-                    <div className="bg-white dark:bg-zenora-dark rounded-xl p-8">
+                    <div className="bg-white dark:bg-zenora-dark rounded-xl p-6 h-full flex flex-col">
                       <div className="flex items-center gap-3 mb-4">
                         <div className={cn(
-                          "rounded-full w-10 h-10 flex items-center justify-center",
-                          plan.popular ? "bg-zenora-purple/10" : "bg-gray-100 dark:bg-gray-800"
+                          "p-2.5 rounded-lg flex items-center justify-center shadow-md",
+                          plan.popular ? `bg-gradient-to-br ${plan.gradient} text-white` : "bg-gray-100 dark:bg-gray-800"
                         )}>
                           {plan.icon}
                         </div>
@@ -176,7 +181,7 @@ const PropertyManagement = () => {
                       
                       <div className="mb-6">
                         <div className="flex items-end">
-                          <span className="text-4xl font-extrabold">{plan.price}</span>
+                          <span className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">{plan.price}</span>
                           <span className="text-muted-foreground ml-2 mb-1">/year</span>
                         </div>
                         <p className="text-sm text-muted-foreground mt-1">Just {plan.pricePerMonth}/mo, billed annually</p>
@@ -184,27 +189,29 @@ const PropertyManagement = () => {
                       
                       <p className="text-muted-foreground mb-6">{plan.description}</p>
                       
-                      <ul className="space-y-4 mb-8">
+                      <ul className="space-y-4 mb-8 flex-grow">
                         {plan.features.map((feature, i) => (
                           <li key={i} className="flex items-start">
-                            <Check className={cn(
+                            <Shield className={cn(
                               "h-5 w-5 shrink-0 mr-2 mt-0.5",
-                              plan.popular ? "text-zenora-purple" : "text-green-500"
+                              plan.popular ? "text-amber-500" : "text-zenora-purple"
                             )} />
                             <span>{feature}</span>
                           </li>
                         ))}
                       </ul>
                       
-                      <ZenoraButton 
-                        className="w-full"
-                        variant={plan.popular ? "default" : "outline"}
-                        as={Link}
-                        to="/signup"
-                        animation={plan.popular ? "glow" : "none"}
-                      >
-                        {plan.button}
-                      </ZenoraButton>
+                      <div className="mt-auto pt-4">
+                        <ZenoraButton 
+                          className="w-full h-12"
+                          variant={plan.popular ? "default" : "outline"}
+                          as={Link}
+                          to={`/contact?plan=${plan.id}`}
+                          animation={plan.popular ? "glow" : "none"}
+                        >
+                          {plan.button}
+                        </ZenoraButton>
+                      </div>
                     </div>
                   </div>
                 </div>

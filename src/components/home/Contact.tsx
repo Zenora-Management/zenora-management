@@ -32,7 +32,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Client Plan",
       price: "$1,999/year",
       description: "Base plan for single property owners",
-      icon: <Building className="h-6 w-6 text-zenora-purple" />,
+      icon: <Building className="h-7 w-7 text-purple-600" />,
       gradient: "from-purple-500 to-indigo-600",
       features: [
         "AI-powered tenant screening",
@@ -46,7 +46,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Referral Discount",
       price: "$1,499/year",
       description: "$500 discount for referred clients",
-      icon: <Sparkles className="h-6 w-6 text-amber-500" />,
+      icon: <Sparkles className="h-7 w-7 text-amber-500" />,
       gradient: "from-amber-400 to-pink-500",
       features: [
         "All Client Plan features",
@@ -60,7 +60,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Transfer Discount",
       price: "$1,499/year",
       description: "$500 discount when switching from another company",
-      icon: <Zap className="h-6 w-6 text-blue-500" />,
+      icon: <Zap className="h-7 w-7 text-blue-600" />,
       gradient: "from-blue-400 to-teal-500",
       features: [
         "All Client Plan features",
@@ -74,7 +74,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Enterprise Plan",
       price: "Custom",
       description: "For portfolio investors with 10+ properties",
-      icon: <Database className="h-6 w-6 text-green-500" />,
+      icon: <Database className="h-7 w-7 text-green-600" />,
       gradient: "from-green-400 to-blue-500",
       features: [
         "Custom pricing",
@@ -315,10 +315,10 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   <div className="bg-white dark:bg-zenora-dark rounded-xl p-6 h-full flex flex-col">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg bg-gradient-to-br ${plan.gradient} bg-opacity-10`}>
+                        <div className={`p-2.5 rounded-lg bg-gradient-to-br ${plan.gradient} text-white shadow-lg`}>
                           {plan.icon}
                         </div>
-                        <h3 className="text-xl font-bold">{plan.name}</h3>
+                        <h3 className="text-xl lg:text-2xl font-bold">{plan.name}</h3>
                       </div>
                       
                       {formData.plan === plan.id && (
@@ -328,11 +328,11 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                       )}
                     </div>
                     
-                    <div className="mb-4">
-                      <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">
+                    <div className="mb-6">
+                      <div className="text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">
                         {plan.price}
                       </div>
-                      <p className="text-muted-foreground text-sm mt-1">{plan.description}</p>
+                      <p className="text-muted-foreground text-sm lg:text-base mt-1">{plan.description}</p>
                     </div>
                     
                     <div className="flex-grow">
@@ -340,7 +340,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                         {plan.features.map((feature, i) => (
                           <li key={i} className="flex items-start gap-2">
                             <Shield className={`h-5 w-5 text-${plan.gradient.split('-')[1]}-500 flex-shrink-0 mt-0.5`} />
-                            <span>{feature}</span>
+                            <span className="text-sm lg:text-base">{feature}</span>
                           </li>
                         ))}
                       </ul>
@@ -350,7 +350,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                       <ZenoraButton 
                         variant={formData.plan === plan.id ? "default" : "outline"} 
                         size="lg"
-                        className={`w-full transform transition-all duration-300 ${
+                        className={`w-full h-12 transform transition-all duration-300 ${
                           formData.plan === plan.id 
                             ? 'shadow-lg shadow-zenora-purple/20' 
                             : 'hover:shadow-md'
@@ -456,23 +456,23 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                 
                 <div className="mt-12">
                   <h4 className="font-medium mb-4">Meet Our Team</h4>
-                  <div className="flex gap-6">
+                  <div className="flex items-center gap-6">
                     <div className="flex flex-col items-center">
-                      <Avatar className="h-12 w-12 border-2 border-white/50 transition-transform hover:scale-110">
-                        <AvatarImage src="/lovable-uploads/90467d0e-4e8a-4cdc-af83-c22300b2c88b.png" alt="Ansh Parikh" />
+                      <Avatar className="h-14 w-14 border-2 border-white/50 transition-transform hover:scale-110">
+                        <AvatarImage src="/lovable-uploads/d12e36ab-373f-4dc9-8272-3ecab803bfda.png" alt="Ansh Parikh" />
                         <AvatarFallback>AP</AvatarFallback>
                       </Avatar>
                       <a 
                         href="https://www.linkedin.com/in/anshparikh01/" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-xs mt-2 text-white/80 hover:text-white"
+                        className="text-sm mt-2 text-white/80 hover:text-white whitespace-nowrap"
                       >
                         Ansh Parikh
                       </a>
                     </div>
                     <div className="flex flex-col items-center">
-                      <Avatar className="h-12 w-12 border-2 border-white/50 transition-transform hover:scale-110">
+                      <Avatar className="h-14 w-14 border-2 border-white/50 transition-transform hover:scale-110">
                         <AvatarImage src="https://github.com/anvithv.png" alt="Anvith Vobbilisetty" />
                         <AvatarFallback>AV</AvatarFallback>
                       </Avatar>
@@ -480,7 +480,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                         href="https://www.linkedin.com/in/anvithv/" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-xs mt-2 text-white/80 hover:text-white"
+                        className="text-sm mt-2 text-white/80 hover:text-white whitespace-nowrap"
                       >
                         Anvith Vobbilisetty
                       </a>
