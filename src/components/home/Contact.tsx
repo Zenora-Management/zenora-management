@@ -1,10 +1,12 @@
+
 import { useState, useEffect } from "react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Mail, Phone, MapPin, Send, Calendar } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Calendar, CheckCircle, Shield } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ContactProps {
   selectedPlan?: string | null;
@@ -15,12 +17,65 @@ const Contact = ({ selectedPlan }: ContactProps) => {
     name: "",
     email: "",
     subject: "",
-    message: ""
+    message: "",
+    plan: ""
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const location = useLocation();
+  
+  // Available plans with details
+  const plans = [
+    {
+      id: "client",
+      name: "Client Plan",
+      price: "$1,999/year",
+      description: "Base plan for single property owners",
+      features: [
+        "AI-powered tenant screening",
+        "Rent collection automation",
+        "Maintenance coordination",
+        "24/7 tenant support"
+      ]
+    },
+    {
+      id: "referral",
+      name: "Referral Discount",
+      price: "$1,499/year",
+      description: "$500 discount for referred clients",
+      features: [
+        "All Client Plan features",
+        "Priority support",
+        "Free onboarding",
+        "Referral tracking dashboard"
+      ]
+    },
+    {
+      id: "transfer",
+      name: "Transfer Discount",
+      price: "$1,499/year",
+      description: "$500 discount when switching from another company",
+      features: [
+        "All Client Plan features",
+        "Priority support",
+        "Free data migration",
+        "Personalized transition plan"
+      ]
+    },
+    {
+      id: "enterprise",
+      name: "Enterprise Plan",
+      price: "Custom",
+      description: "For portfolio investors with 10+ properties",
+      features: [
+        "Custom pricing",
+        "Dedicated account manager",
+        "Custom reporting",
+        "API access"
+      ]
+    }
+  ];
   
   // Set the subject based on the selected plan
   useEffect(() => {
@@ -48,7 +103,8 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       
       setFormData(prev => ({
         ...prev,
-        subject: `Inquiry about ${planName}`
+        subject: `Inquiry about ${planName}`,
+        plan: selectedPlan
       }));
       
       // Only show toast if not coming from demo redirect
@@ -72,6 +128,23 @@ const Contact = ({ selectedPlan }: ContactProps) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
+  const handlePlanSelect = (planId: string) => {
+    const plan = plans.find(p => p.id === planId);
+    if (plan) {
+      setFormData(prev => ({ 
+        ...prev, 
+        plan: planId,
+        subject: `Inquiry about ${plan.name}`
+      }));
+      
+      toast({
+        title: "Plan Selected",
+        description: `You've selected the ${plan.name}. Please complete the form to proceed.`,
+        variant: "default",
+      });
+    }
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -87,7 +160,8 @@ const Contact = ({ selectedPlan }: ContactProps) => {
             name: formData.name,
             email: formData.email,
             subject: formData.subject,
-            message: formData.message
+            message: formData.message,
+            plan: formData.plan
           }
         ]);
       
@@ -112,6 +186,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
             email: formData.email,
             subject: formData.subject,
             message: formData.message,
+            plan: formData.plan,
             isDemoRequest
           }),
         }
@@ -137,7 +212,8 @@ const Contact = ({ selectedPlan }: ContactProps) => {
         name: "",
         email: "",
         subject: "",
-        message: ""
+        message: "",
+        plan: ""
       });
       
       // Reset success message after some time
@@ -201,18 +277,68 @@ const Contact = ({ selectedPlan }: ContactProps) => {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <div className="inline-flex items-center rounded-full border border-zenora-purple/30 bg-zenora-purple/5 px-3 py-1 text-sm text-zenora-purple backdrop-blur-sm mb-6">
-            <span className="font-medium">Get In Touch</span>
+            <span className="font-medium">Get Started</span>
           </div>
           
           <h2 className="zenora-heading bg-clip-text text-transparent bg-zenora-gradient">
-            {selectedPlan ? "Complete Your Reservation" : "Contact Our Team"}
+            Choose Your Plan & Get In Touch
           </h2>
           
           <p className="zenora-subheading">
-            {selectedPlan 
-              ? "We're excited to help you get started with your selected plan. Please fill out the form below to complete your reservation."
-              : "Have questions about our services or ready to get started? Our team is here to help you transform your property management experience."}
+            Select the plan that fits your needs and fill out the form below to get started with Zenora's AI-powered property management.
           </p>
+        </motion.div>
+
+        {/* Plans Section */}
+        <motion.div 
+          variants={fadeIn}
+          className="mb-16"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {plans.map((plan) => (
+              <motion.div 
+                key={plan.id}
+                className={`zenora-card p-6 border-2 transition-all duration-300 hover:shadow-xl ${
+                  formData.plan === plan.id 
+                    ? 'border-zenora-purple ring-2 ring-zenora-purple/30' 
+                    : 'border-transparent hover:border-zenora-purple/30'
+                }`}
+                whileHover={{ y: -5 }}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-xl font-bold">{plan.name}</h3>
+                  {formData.plan === plan.id && (
+                    <div className="text-zenora-purple">
+                      <CheckCircle className="h-5 w-5" />
+                    </div>
+                  )}
+                </div>
+                
+                <div className="mb-4">
+                  <span className="text-2xl font-bold">{plan.price}</span>
+                  <p className="text-muted-foreground text-sm mt-1">{plan.description}</p>
+                </div>
+                
+                <ul className="space-y-2 mb-6">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      <Shield className="h-4 w-4 text-zenora-purple flex-shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <ZenoraButton 
+                  variant={formData.plan === plan.id ? "default" : "outline"} 
+                  size="default"
+                  className="w-full"
+                  onClick={() => handlePlanSelect(plan.id)}
+                >
+                  {formData.plan === plan.id ? 'Selected' : 'Select Plan'}
+                </ZenoraButton>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -271,34 +397,16 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   </div>
                 </div>
                 
-                {selectedPlan && selectedPlan !== "demo" && (
+                {formData.plan && (
                   <div className="mt-8 p-4 bg-white/10 rounded-lg border border-white/20 backdrop-blur-sm">
-                    <h4 className="font-medium mb-2">Selected Plan Information</h4>
+                    <h4 className="font-medium mb-2">Selected Plan</h4>
                     <div>
-                      {selectedPlan === "client" && (
-                        <div>
-                          <p className="font-semibold">Client Plan</p>
-                          <p className="text-white/80">$1,999/year - Base plan for single property owners</p>
+                      {plans.map(plan => plan.id === formData.plan && (
+                        <div key={plan.id}>
+                          <p className="font-semibold">{plan.name}</p>
+                          <p className="text-white/80">{plan.price} - {plan.description}</p>
                         </div>
-                      )}
-                      {selectedPlan === "referral" && (
-                        <div>
-                          <p className="font-semibold">Referral Discount Plan</p>
-                          <p className="text-white/80">$1,499/year - $500 discount for referred clients</p>
-                        </div>
-                      )}
-                      {selectedPlan === "transfer" && (
-                        <div>
-                          <p className="font-semibold">Transfer Discount Plan</p>
-                          <p className="text-white/80">$1,499/year - $500 discount for clients switching from another management company</p>
-                        </div>
-                      )}
-                      {selectedPlan === "enterprise" && (
-                        <div>
-                          <p className="font-semibold">Enterprise Plan</p>
-                          <p className="text-white/80">Custom pricing for portfolio investors with 10+ properties</p>
-                        </div>
-                      )}
+                      ))}
                     </div>
                   </div>
                 )}
@@ -320,13 +428,36 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                 </div>
                 
                 <div className="mt-12">
-                  <h4 className="font-medium mb-4">Connect With Us</h4>
+                  <h4 className="font-medium mb-4">Meet Our Team</h4>
                   <div className="flex gap-4">
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all hover:scale-110 transform" aria-label="Facebook">
-                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd"></path>
-                      </svg>
-                    </a>
+                    <div className="flex flex-col items-center">
+                      <Avatar className="h-12 w-12 border-2 border-white/50 transition-transform hover:scale-110">
+                        <AvatarImage src="/lovable-uploads/e3c52233-a9f9-4349-a36f-534527fe1699.png" alt="Ansh Parikh" />
+                        <AvatarFallback>AP</AvatarFallback>
+                      </Avatar>
+                      <a 
+                        href="https://www.linkedin.com/in/anshparikh01/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-xs mt-1 text-white/80 hover:text-white"
+                      >
+                        Ansh Parikh
+                      </a>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <Avatar className="h-12 w-12 border-2 border-white/50 transition-transform hover:scale-110">
+                        <AvatarImage src="https://github.com/anvithv.png" alt="Anvith Vobbilisetty" />
+                        <AvatarFallback>AV</AvatarFallback>
+                      </Avatar>
+                      <a 
+                        href="https://www.linkedin.com/in/anvithv/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-xs mt-1 text-white/80 hover:text-white"
+                      >
+                        Anvith Vobbilisetty
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -340,7 +471,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
           >
             <div className="zenora-card h-full p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300">
               <h3 className="text-2xl font-bold mb-6">
-                {selectedPlan ? "Complete Your Reservation" : "Send Us a Message"}
+                {formData.plan ? "Complete Your Reservation" : "Get in Touch"}
               </h3>
               
               {isSubmitted ? (
@@ -448,7 +579,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                       onChange={handleChange}
                       required
                       className="zenora-input min-h-[120px] transition-all border-gray-300 focus:border-zenora-purple focus:ring focus:ring-zenora-purple/20 group-hover:border-zenora-purple/50"
-                      placeholder={selectedPlan ? "Please tell us more about your property management needs..." : "How can we help you?"}
+                      placeholder={formData.plan ? "Please tell us more about your property management needs..." : "How can we help you?"}
                     ></textarea>
                   </div>
                   
@@ -469,7 +600,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                     ) : (
                       <>
                         <Send className="mr-2 h-4 w-4 group-hover:translate-x-1 transition-transform" /> 
-                        {selectedPlan ? "Complete Reservation" : "Send Message"}
+                        {formData.plan ? "Complete Reservation" : "Send Message"}
                       </>
                     )}
                   </ZenoraButton>

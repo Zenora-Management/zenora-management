@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Globe, Target, Star, Users, ChevronRight } from "lucide-react";
+import { Globe, Target, Star, Users, ChevronRight, Linkedin } from "lucide-react";
 
 const About = () => {
   const fadeIn = {
@@ -63,17 +63,42 @@ const About = () => {
             <p className="text-muted-foreground mb-6">
               Our founders, Ansh Parikh (CEO) and Anvith Vobbilisetty (CTO), combined their expertise in real estate and technology to create a platform that addresses the real pain points of property owners and managers.
             </p>
-            <div className="flex gap-4 mt-2">
-              <img 
-                src="/placeholder.svg" 
-                alt="Ansh Parikh" 
-                className="w-16 h-16 rounded-full bg-zenora-purple/10 object-cover"
-              />
-              <img 
-                src="/placeholder.svg" 
-                alt="Anvith Vobbilisetty" 
-                className="w-16 h-16 rounded-full bg-zenora-purple/10 object-cover"
-              />
+            <div className="flex items-center gap-6 mt-4">
+              <div className="group relative">
+                <img 
+                  src="/lovable-uploads/e3c52233-a9f9-4349-a36f-534527fe1699.png" 
+                  alt="Ansh Parikh" 
+                  className="w-20 h-20 rounded-full object-cover border-2 border-zenora-purple/50 shadow-lg transition-all duration-300 group-hover:scale-105"
+                />
+                <a 
+                  href="https://www.linkedin.com/in/anshparikh01/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="absolute -bottom-2 -right-2 bg-white dark:bg-zenora-dark p-1 rounded-full border border-zenora-purple/50 text-zenora-purple hover:bg-zenora-purple hover:text-white transition-colors duration-300"
+                  aria-label="Ansh Parikh LinkedIn"
+                >
+                  <Linkedin className="h-4 w-4" />
+                </a>
+                <span className="block mt-2 text-sm font-medium text-center">Ansh Parikh</span>
+              </div>
+              
+              <div className="group relative">
+                <img 
+                  src="https://github.com/anvithv.png" 
+                  alt="Anvith Vobbilisetty" 
+                  className="w-20 h-20 rounded-full object-cover border-2 border-zenora-purple/50 shadow-lg transition-all duration-300 group-hover:scale-105"
+                />
+                <a 
+                  href="https://www.linkedin.com/in/anvithv/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="absolute -bottom-2 -right-2 bg-white dark:bg-zenora-dark p-1 rounded-full border border-zenora-purple/50 text-zenora-purple hover:bg-zenora-purple hover:text-white transition-colors duration-300"
+                  aria-label="Anvith Vobbilisetty LinkedIn"
+                >
+                  <Linkedin className="h-4 w-4" />
+                </a>
+                <span className="block mt-2 text-sm font-medium text-center">Anvith Vobbilisetty</span>
+              </div>
             </div>
           </motion.div>
           
@@ -88,7 +113,7 @@ const About = () => {
                 <blockquote className="italic text-lg">
                   "We envision a future where property management is effortless, where AI handles the complexity, and where property owners can focus on growth rather than day-to-day operations."
                 </blockquote>
-                <p className="mt-4 font-semibold">- Ansh Parikh, CEO</p>
+                <p className="mt-4 font-semibold">- Anvith Vobbilisetty, CTO</p>
               </div>
             </div>
           </motion.div>

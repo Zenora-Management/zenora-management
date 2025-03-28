@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LayoutDashboard } from "lucide-react";
@@ -35,18 +34,15 @@ const Navbar = () => {
     };
   }, []);
 
-  // Close mobile menu when navigating
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
   
-  // Function to navigate to home without redirects
   const goToHome = (e) => {
     e.preventDefault();
     navigate('/', { replace: true });
   };
 
-  // Function to handle external dashboard navigation
   const goToDashboard = () => {
     window.location.href = 'https://zenoralogin.com';
   };
@@ -74,7 +70,6 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
           <a 
             href="/" 
@@ -87,7 +82,6 @@ const Navbar = () => {
             Features
           </Link>
           
-          {/* Services Dropdown Menu */}
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -194,7 +188,6 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Mobile menu button */}
         <button
           className="md:hidden p-2 text-foreground"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -204,7 +197,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white dark:bg-zenora-dark shadow-lg py-4 animate-fade-in">
           <div className="zenora-container flex flex-col gap-4">
@@ -222,7 +214,6 @@ const Navbar = () => {
               Features
             </Link>
             
-            {/* Mobile Services Section */}
             <div className="border-t border-b border-gray-200 dark:border-gray-700 py-2 my-1">
               <div className="font-medium py-1 text-foreground">Services</div>
               <div className="pl-4 flex flex-col gap-2">
