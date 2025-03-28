@@ -5,18 +5,22 @@
 export async function sendContactEmail({
   name,
   email,
+  phone,
   subject,
   message,
+  plan,
   isDemoRequest = false
 }: {
   name: string;
   email: string;
+  phone: string;
   subject: string;
   message: string;
+  plan?: string;
   isDemoRequest?: boolean;
 }): Promise<{ success: boolean; message: string }> {
   try {
-    console.log("sendContactEmail called with:", { name, email, subject, messageLength: message.length, isDemoRequest });
+    console.log("sendContactEmail called with:", { name, email, phone, subject, messageLength: message.length, plan, isDemoRequest });
     
     // First, add the message to the database
     const supabaseResponse = await fetch(
@@ -28,7 +32,7 @@ export async function sendContactEmail({
           "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtbW16dHlycWh4am92aW5nd2VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2NzA3NjksImV4cCI6MjA1ODI0Njc2OX0.IPWVZc1dLYpFKs8rBuoHZFsGnwrw-_ol9LdCsQpu7Gs",
           "Content-Profile": "public",
         },
-        body: JSON.stringify({ name, email, subject, message }),
+        body: JSON.stringify({ name, email, phone, subject, message, plan }),
       }
     );
 
@@ -53,8 +57,10 @@ export async function sendContactEmail({
       body: JSON.stringify({
         name,
         email,
+        phone,
         subject,
         message,
+        plan,
         isDemoRequest
       }),
     });

@@ -326,14 +326,14 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                       </div>
                       
                       {formData.plan === plan.id && (
-                        <div className="text-zenora-purple animate-pulse">
+                        <div className="text-zenora-purple">
                           <CheckCircle className="h-5 w-5" />
                         </div>
                       )}
                     </div>
                     
                     <div className="mb-4">
-                      <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">
+                      <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">
                         {plan.price}
                       </div>
                       <p className="text-muted-foreground text-sm mt-1">{plan.description}</p>
@@ -359,7 +359,6 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                             : 'hover:shadow-md'
                         }`}
                         onClick={() => handlePlanSelect(plan.id)}
-                        animation={formData.plan === plan.id ? "glow" : "none"}
                       >
                         {formData.plan === plan.id ? 'Selected' : 'Select Plan'}
                       </ZenoraButton>
@@ -462,7 +461,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   <div className="flex items-center gap-6">
                     <div className="flex flex-col items-center">
                       <Avatar className="h-14 w-14 border-2 border-white/50 transition-transform hover:scale-110">
-                        <AvatarImage src="/lovable-uploads/0e1e0eca-4203-41fe-94a5-a5a40d426dcc.png" alt="Ansh Parikh" />
+                        <AvatarImage src="/lovable-uploads/9502d42e-3adf-4962-9337-ea2df96c8146.png" alt="Ansh Parikh" />
                         <AvatarFallback>AP</AvatarFallback>
                       </Avatar>
                       <p className="text-sm mt-2 text-white/80">Ansh Parikh</p>

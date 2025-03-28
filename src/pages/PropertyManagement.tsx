@@ -162,7 +162,7 @@ const PropertyManagement = () => {
                     </div>
                   )}
                   
-                  <div className="absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500"></div>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}></div>
                   
                   <div className={cn(
                     "p-1",
@@ -181,7 +181,7 @@ const PropertyManagement = () => {
                       
                       <div className="mb-6">
                         <div className="flex items-end">
-                          <span className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">{plan.price}</span>
+                          <span className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">{plan.price}</span>
                           <span className="text-muted-foreground ml-2 mb-1">/year</span>
                         </div>
                         <p className="text-sm text-muted-foreground mt-1">Just {plan.pricePerMonth}/mo, billed annually</p>
@@ -207,7 +207,6 @@ const PropertyManagement = () => {
                           variant={plan.popular ? "default" : "outline"}
                           as={Link}
                           to={`/contact?plan=${plan.id}`}
-                          animation={plan.popular ? "glow" : "none"}
                         >
                           {plan.button}
                         </ZenoraButton>
