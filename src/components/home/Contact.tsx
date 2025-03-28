@@ -266,8 +266,9 @@ const Contact = ({ selectedPlan }: ContactProps) => {
             {plans.map((plan) => (
               <motion.div 
                 key={plan.id}
-                className="relative h-full rounded-2xl overflow-hidden transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                className="relative h-full rounded-2xl overflow-hidden transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
                 whileHover={{ scale: 1.01 }}
+                onClick={() => handlePlanSelect(plan.id)}
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-10 hover:opacity-15 transition-opacity duration-300`} />
                 
@@ -309,7 +310,10 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                     <ZenoraButton 
                       variant={formData.plan === plan.id ? "default" : "outline"} 
                       className="w-full h-10"
-                      onClick={() => handlePlanSelect(plan.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePlanSelect(plan.id);
+                      }}
                     >
                       {formData.plan === plan.id ? 'Selected' : 'Select Plan'}
                     </ZenoraButton>
