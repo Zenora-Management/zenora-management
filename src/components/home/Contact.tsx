@@ -7,6 +7,7 @@ import { Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { sendContactEmail } from "@/utils/contact-email";
 
 interface ContactProps {
   selectedPlan?: string | null;
@@ -161,56 +162,23 @@ const Contact = ({ selectedPlan }: ContactProps) => {
     try {
       console.log("Submitting contact form", formData);
       
-      // Save to Supabase
-      const { error: supabaseError } = await supabase
-        .from('contact_messages')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            subject: formData.subject,
-            message: formData.message,
-            plan: formData.plan
-          }
-        ]);
-      
-      if (supabaseError) {
-        console.error("Supabase error:", supabaseError);
-        throw new Error("Failed to save message to database");
-      }
-      
-      // Send email via edge function
+      // Check if this is a demo request
       const isDemoRequest = selectedPlan === "demo" || formData.subject.toLowerCase().includes("demo");
       
-      const emailResponse = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-contact-email`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            subject: formData.subject,
-            message: formData.message,
-            plan: formData.plan,
-            isDemoRequest
-          }),
-        }
-      );
-
-      const responseData = await emailResponse.json();
+      // Send the contact email using the utility function
+      const response = await sendContactEmail({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
+        plan: formData.plan,
+        isDemoRequest
+      });
       
-      if (!emailResponse.ok) {
-        console.error("Email API error response:", responseData);
-        throw new Error(responseData.error || responseData.message || "Failed to send email");
+      if (!response.success) {
+        throw new Error(response.message);
       }
-      
-      console.log("Email sent successfully:", responseData);
       
       // Show success message
       toast({
@@ -310,59 +278,53 @@ const Contact = ({ selectedPlan }: ContactProps) => {
             {plans.map((plan) => (
               <motion.div 
                 key={plan.id}
-                className="relative h-full rounded-2xl overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
-                whileHover={{ scale: 1.02 }}
+                className="relative h-full rounded-2xl overflow-hidden transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                whileHover={{ scale: 1.01 }}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-10 hover:opacity-20 transition-opacity duration-500`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-10 hover:opacity-15 transition-opacity duration-300`} />
                 
-                <div className={`p-1 bg-gradient-to-br ${plan.gradient}`}>
-                  <div className="bg-white dark:bg-zenora-dark rounded-xl p-6 h-full flex flex-col">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg flex items-center justify-center bg-gradient-to-br ${plan.gradient} text-white shadow-md`}>
-                          {plan.icon}
-                        </div>
-                        <h3 className="text-lg font-bold">{plan.name}</h3>
+                <div className="h-full bg-white dark:bg-zenora-dark rounded-xl border border-gray-200 dark:border-gray-800 p-6 flex flex-col">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg flex items-center justify-center bg-gradient-to-br ${plan.gradient} text-white shadow-md`}>
+                        {plan.icon}
                       </div>
-                      
-                      {formData.plan === plan.id && (
-                        <div className="text-zenora-purple">
-                          <CheckCircle className="h-5 w-5" />
-                        </div>
-                      )}
+                      <h3 className="text-lg font-bold">{plan.name}</h3>
                     </div>
                     
-                    <div className="mb-4">
-                      <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">
-                        {plan.price}
+                    {formData.plan === plan.id && (
+                      <div className="text-zenora-purple">
+                        <CheckCircle className="h-5 w-5" />
                       </div>
-                      <p className="text-muted-foreground text-sm mt-1">{plan.description}</p>
+                    )}
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">
+                      {plan.price}
                     </div>
-                    
-                    <div className="flex-grow">
-                      <ul className="space-y-2 mb-6">
-                        {plan.features.map((feature, i) => (
-                          <li key={i} className="flex items-start gap-2">
-                            <Shield className={`h-4 w-4 text-${plan.gradient.split('-')[1]}-500 flex-shrink-0 mt-0.5`} />
-                            <span className="text-sm">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div className="mt-auto pt-4">
-                      <ZenoraButton 
-                        variant={formData.plan === plan.id ? "default" : "outline"} 
-                        className={`w-full h-10 transform transition-all duration-300 ${
-                          formData.plan === plan.id 
-                            ? 'shadow-lg shadow-zenora-purple/20' 
-                            : 'hover:shadow-md'
-                        }`}
-                        onClick={() => handlePlanSelect(plan.id)}
-                      >
-                        {formData.plan === plan.id ? 'Selected' : 'Select Plan'}
-                      </ZenoraButton>
-                    </div>
+                    <p className="text-muted-foreground text-sm mt-1">{plan.description}</p>
+                  </div>
+                  
+                  <div className="flex-grow">
+                    <ul className="space-y-2 mb-6">
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <Shield className={`h-4 w-4 text-${plan.gradient.split('-')[1]}-500 flex-shrink-0 mt-0.5`} />
+                          <span className="text-sm">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div className="mt-auto pt-4">
+                    <ZenoraButton 
+                      variant={formData.plan === plan.id ? "default" : "outline"} 
+                      className="w-full h-10"
+                      onClick={() => handlePlanSelect(plan.id)}
+                    >
+                      {formData.plan === plan.id ? 'Selected' : 'Select Plan'}
+                    </ZenoraButton>
                   </div>
                 </div>
               </motion.div>
@@ -376,7 +338,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
             variants={fadeIn}
             className="group"
           >
-            <div className="bg-zenora-gradient rounded-2xl p-8 text-white h-full relative overflow-hidden shadow-lg transform transition-transform duration-300 group-hover:scale-[1.02]">
+            <div className="bg-zenora-gradient rounded-2xl p-8 text-white h-full relative overflow-hidden shadow-lg">
               <div className="absolute inset-0 bg-gradient-to-br from-zenora-dark to-zenora-purple mix-blend-overlay opacity-70"></div>
               <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-white opacity-10 rounded-full"></div>
               <div className="absolute -top-32 -right-32 w-64 h-64 bg-white opacity-10 rounded-full"></div>
@@ -461,7 +423,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   <div className="flex items-center gap-6">
                     <div className="flex flex-col items-center">
                       <Avatar className="h-14 w-14 border-2 border-white/50 transition-transform hover:scale-110">
-                        <AvatarImage src="/lovable-uploads/9502d42e-3adf-4962-9337-ea2df96c8146.png" alt="Ansh Parikh" />
+                        <AvatarImage src="/lovable-uploads/b59dd2a1-1583-4590-9e48-c8d9d6421936.png" alt="Ansh Parikh" />
                         <AvatarFallback>AP</AvatarFallback>
                       </Avatar>
                       <p className="text-sm mt-2 text-white/80">Ansh Parikh</p>
@@ -583,6 +545,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                       type="tel"
                       value={formData.phone}
                       onChange={handleChange}
+                      required
                       className="zenora-input w-full transition-all border-gray-300 focus:border-zenora-purple focus:ring focus:ring-zenora-purple/20 group-hover:border-zenora-purple/50"
                       placeholder="(123) 456-7890"
                     />
@@ -632,7 +595,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   <ZenoraButton 
                     type="submit" 
                     size="lg" 
-                    className="w-full sm:w-auto group"
+                    className="w-full sm:w-auto"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -645,7 +608,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                       </>
                     ) : (
                       <>
-                        <Send className="mr-2 h-4 w-4 group-hover:translate-x-1 transition-transform" /> 
+                        <Send className="mr-2 h-4 w-4" /> 
                         {formData.plan ? "Complete Reservation" : "Send Message"}
                       </>
                     )}

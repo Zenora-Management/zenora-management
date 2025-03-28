@@ -92,14 +92,14 @@ const PropertyManagement = () => {
             </p>
             <p className="text-center font-semibold text-zenora-purple mb-16">Billed annually</p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
                 {
                   id: "client",
                   name: "Client Plan",
                   price: "$1,999",
                   pricePerMonth: "$166",
-                  description: "Perfect for single property owners",
+                  description: "Base plan for single property owners",
                   features: [
                     "Full property management",
                     "Tenant screening & placement",
@@ -114,8 +114,8 @@ const PropertyManagement = () => {
                   gradient: "from-purple-500 to-indigo-600"
                 },
                 {
-                  id: "discount",
-                  name: "Discount Plans",
+                  id: "referral",
+                  name: "Referral Discount",
                   price: "$1,499",
                   pricePerMonth: "$125",
                   description: "Special pricing for referred clients",
@@ -131,6 +131,25 @@ const PropertyManagement = () => {
                   popular: true,
                   icon: <Sparkles className="h-6 w-6 text-amber-500" />,
                   gradient: "from-amber-400 to-pink-500"
+                },
+                {
+                  id: "transfer",
+                  name: "Transfer Discount",
+                  price: "$1,499",
+                  pricePerMonth: "$125",
+                  description: "For clients switching from another company",
+                  features: [
+                    "All Client Plan features",
+                    "$500 annual savings",
+                    "Free data migration",
+                    "AI rent analysis (enhanced)",
+                    "Priority support",
+                    "Personalized transition plan"
+                  ],
+                  button: "Get Started",
+                  popular: false,
+                  icon: <Zap className="h-6 w-6 text-blue-600" />,
+                  gradient: "from-blue-400 to-teal-500"
                 },
                 {
                   id: "enterprise",
@@ -154,7 +173,7 @@ const PropertyManagement = () => {
               ].map((plan) => (
                 <div 
                   key={plan.id} 
-                  className="relative h-full rounded-2xl overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl group"
+                  className="h-full rounded-2xl overflow-hidden transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   {plan.popular && (
                     <div className="absolute top-0 right-0 bg-zenora-purple text-white py-2 px-4 text-sm font-medium rounded-bl-xl z-10">
@@ -162,48 +181,35 @@ const PropertyManagement = () => {
                     </div>
                   )}
                   
-                  <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}></div>
-                  
-                  <div className={cn(
-                    "p-1",
-                    plan.popular ? `bg-gradient-to-br ${plan.gradient}` : "bg-white dark:bg-zenora-dark"
-                  )}>
-                    <div className="bg-white dark:bg-zenora-dark rounded-xl p-6 h-full flex flex-col">
+                  <div className="h-full bg-white dark:bg-zenora-dark rounded-xl border border-gray-200 dark:border-gray-800 p-6 flex flex-col relative">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-10 hover:opacity-15 transition-opacity duration-300`} />
+                    <div className="relative z-10">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className={cn(
-                          "p-2.5 rounded-lg flex items-center justify-center shadow-md",
-                          plan.popular ? `bg-gradient-to-br ${plan.gradient} text-white` : "bg-gray-100 dark:bg-gray-800"
-                        )}>
+                        <div className={`p-2 rounded-lg flex items-center justify-center bg-gradient-to-br ${plan.gradient} text-white shadow-md`}>
                           {plan.icon}
                         </div>
-                        <h3 className="text-2xl font-bold">{plan.name}</h3>
+                        <h3 className="text-lg font-bold">{plan.name}</h3>
                       </div>
                       
-                      <div className="mb-6">
-                        <div className="flex items-end">
-                          <span className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">{plan.price}</span>
-                          <span className="text-muted-foreground ml-2 mb-1">/year</span>
-                        </div>
+                      <div className="mb-4">
+                        <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">{plan.price}</div>
                         <p className="text-sm text-muted-foreground mt-1">Just {plan.pricePerMonth}/mo, billed annually</p>
                       </div>
                       
                       <p className="text-muted-foreground mb-6">{plan.description}</p>
                       
-                      <ul className="space-y-4 mb-8 flex-grow">
+                      <ul className="space-y-2 mb-8 flex-grow">
                         {plan.features.map((feature, i) => (
-                          <li key={i} className="flex items-start">
-                            <Shield className={cn(
-                              "h-5 w-5 shrink-0 mr-2 mt-0.5",
-                              plan.popular ? "text-amber-500" : "text-zenora-purple"
-                            )} />
-                            <span>{feature}</span>
+                          <li key={i} className="flex items-start gap-2">
+                            <Shield className={`h-4 w-4 text-${plan.gradient.split('-')[1]}-500 flex-shrink-0 mt-0.5`} />
+                            <span className="text-sm">{feature}</span>
                           </li>
                         ))}
                       </ul>
                       
                       <div className="mt-auto pt-4">
                         <ZenoraButton 
-                          className="w-full h-12"
+                          className="w-full h-10"
                           variant={plan.popular ? "default" : "outline"}
                           as={Link}
                           to={`/contact?plan=${plan.id}`}
@@ -277,7 +283,7 @@ const PropertyManagement = () => {
                 variant="outline" 
                 size="lg"
                 as={Link}
-                to="/contact"
+                to="/contact?plan=demo"
                 className="border-white text-white hover:bg-white hover:text-zenora-purple"
               >
                 Schedule a Demo
