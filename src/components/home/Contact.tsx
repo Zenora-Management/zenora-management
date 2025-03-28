@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Mail, Phone, MapPin, Send, Calendar, CheckCircle, Shield } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Calendar, CheckCircle, Shield, Sparkles, Zap, Building, Database } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +32,8 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Client Plan",
       price: "$1,999/year",
       description: "Base plan for single property owners",
+      icon: <Building className="h-6 w-6 text-zenora-purple" />,
+      gradient: "from-purple-500 to-indigo-600",
       features: [
         "AI-powered tenant screening",
         "Rent collection automation",
@@ -44,6 +46,8 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Referral Discount",
       price: "$1,499/year",
       description: "$500 discount for referred clients",
+      icon: <Sparkles className="h-6 w-6 text-amber-500" />,
+      gradient: "from-amber-400 to-pink-500",
       features: [
         "All Client Plan features",
         "Priority support",
@@ -56,6 +60,8 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Transfer Discount",
       price: "$1,499/year",
       description: "$500 discount when switching from another company",
+      icon: <Zap className="h-6 w-6 text-blue-500" />,
+      gradient: "from-blue-400 to-teal-500",
       features: [
         "All Client Plan features",
         "Priority support",
@@ -68,6 +74,8 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Enterprise Plan",
       price: "Custom",
       description: "For portfolio investors with 10+ properties",
+      icon: <Database className="h-6 w-6 text-green-500" />,
+      gradient: "from-green-400 to-blue-500",
       features: [
         "Custom pricing",
         "Dedicated account manager",
@@ -298,44 +306,63 @@ const Contact = ({ selectedPlan }: ContactProps) => {
             {plans.map((plan) => (
               <motion.div 
                 key={plan.id}
-                className={`zenora-card p-6 border-2 transition-all duration-300 hover:shadow-xl ${
-                  formData.plan === plan.id 
-                    ? 'border-zenora-purple ring-2 ring-zenora-purple/30' 
-                    : 'border-transparent hover:border-zenora-purple/30'
-                }`}
-                whileHover={{ y: -5 }}
+                className={`relative h-full rounded-2xl overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl group`}
+                whileHover={{ scale: 1.02 }}
               >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold">{plan.name}</h3>
-                  {formData.plan === plan.id && (
-                    <div className="text-zenora-purple">
-                      <CheckCircle className="h-5 w-5" />
+                <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-10 group-hover:opacity-20 transition-opacity duration-500`} />
+                
+                <div className={`p-1 bg-gradient-to-br ${plan.gradient}`}>
+                  <div className="bg-white dark:bg-zenora-dark rounded-xl p-6 h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg bg-gradient-to-br ${plan.gradient} bg-opacity-10`}>
+                          {plan.icon}
+                        </div>
+                        <h3 className="text-xl font-bold">{plan.name}</h3>
+                      </div>
+                      
+                      {formData.plan === plan.id && (
+                        <div className="text-zenora-purple animate-pulse">
+                          <CheckCircle className="h-5 w-5" />
+                        </div>
+                      )}
                     </div>
-                  )}
+                    
+                    <div className="mb-4">
+                      <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">
+                        {plan.price}
+                      </div>
+                      <p className="text-muted-foreground text-sm mt-1">{plan.description}</p>
+                    </div>
+                    
+                    <div className="flex-grow">
+                      <ul className="space-y-3 mb-6">
+                        {plan.features.map((feature, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <Shield className={`h-5 w-5 text-${plan.gradient.split('-')[1]}-500 flex-shrink-0 mt-0.5`} />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className="mt-auto pt-4">
+                      <ZenoraButton 
+                        variant={formData.plan === plan.id ? "default" : "outline"} 
+                        size="lg"
+                        className={`w-full transform transition-all duration-300 ${
+                          formData.plan === plan.id 
+                            ? 'shadow-lg shadow-zenora-purple/20' 
+                            : 'hover:shadow-md'
+                        }`}
+                        onClick={() => handlePlanSelect(plan.id)}
+                        animation={formData.plan === plan.id ? "glow" : "none"}
+                      >
+                        {formData.plan === plan.id ? 'Selected' : 'Select Plan'}
+                      </ZenoraButton>
+                    </div>
+                  </div>
                 </div>
-                
-                <div className="mb-4">
-                  <span className="text-2xl font-bold">{plan.price}</span>
-                  <p className="text-muted-foreground text-sm mt-1">{plan.description}</p>
-                </div>
-                
-                <ul className="space-y-2 mb-6">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
-                      <Shield className="h-4 w-4 text-zenora-purple flex-shrink-0 mt-0.5" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                
-                <ZenoraButton 
-                  variant={formData.plan === plan.id ? "default" : "outline"} 
-                  size="default"
-                  className="w-full"
-                  onClick={() => handlePlanSelect(plan.id)}
-                >
-                  {formData.plan === plan.id ? 'Selected' : 'Select Plan'}
-                </ZenoraButton>
               </motion.div>
             ))}
           </div>
@@ -429,17 +456,17 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                 
                 <div className="mt-12">
                   <h4 className="font-medium mb-4">Meet Our Team</h4>
-                  <div className="flex gap-4">
+                  <div className="flex gap-6">
                     <div className="flex flex-col items-center">
                       <Avatar className="h-12 w-12 border-2 border-white/50 transition-transform hover:scale-110">
-                        <AvatarImage src="/lovable-uploads/e3c52233-a9f9-4349-a36f-534527fe1699.png" alt="Ansh Parikh" />
+                        <AvatarImage src="/lovable-uploads/90467d0e-4e8a-4cdc-af83-c22300b2c88b.png" alt="Ansh Parikh" />
                         <AvatarFallback>AP</AvatarFallback>
                       </Avatar>
                       <a 
                         href="https://www.linkedin.com/in/anshparikh01/" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-xs mt-1 text-white/80 hover:text-white"
+                        className="text-xs mt-2 text-white/80 hover:text-white"
                       >
                         Ansh Parikh
                       </a>
@@ -453,7 +480,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                         href="https://www.linkedin.com/in/anvithv/" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-xs mt-1 text-white/80 hover:text-white"
+                        className="text-xs mt-2 text-white/80 hover:text-white"
                       >
                         Anvith Vobbilisetty
                       </a>
