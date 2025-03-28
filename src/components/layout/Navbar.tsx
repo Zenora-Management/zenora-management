@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import {
   NavigationMenu,
@@ -44,6 +44,11 @@ const Navbar = () => {
   const goToHome = (e) => {
     e.preventDefault();
     navigate('/', { replace: true });
+  };
+
+  // Function to handle external dashboard navigation
+  const goToDashboard = () => {
+    window.location.href = 'https://zenoralogin.com';
   };
 
   return (
@@ -173,6 +178,15 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
+          <ZenoraButton 
+            variant="outline" 
+            size="default" 
+            onClick={goToDashboard}
+            className="flex items-center gap-2"
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            Dashboard
+          </ZenoraButton>
           <Link to="/contact">
             <ZenoraButton variant="default" size="default">
               Get Started
@@ -252,6 +266,15 @@ const Navbar = () => {
               Contact
             </Link>
             <div className="flex flex-col gap-2 mt-2">
+              <ZenoraButton 
+                variant="outline" 
+                size="default" 
+                onClick={goToDashboard}
+                className="flex items-center justify-center gap-2 w-full"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                Dashboard
+              </ZenoraButton>
               <Link to="/contact">
                 <ZenoraButton variant="default" size="default" className="w-full">
                   Get Started
