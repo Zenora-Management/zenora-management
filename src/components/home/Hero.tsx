@@ -110,16 +110,10 @@ const Hero = () => {
               transition={{ delay: 0.9, duration: 0.5 }}
               className="flex flex-col sm:flex-row gap-4 mb-8"
             >
-              <Link to="/signup">
-                <ZenoraButton size="xl" variant="default" className="w-full sm:w-auto group">
-                  Get Started
-                  <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </ZenoraButton>
-              </Link>
               <Link to="/contact">
-                <ZenoraButton size="xl" variant="outline" className="w-full sm:w-auto group">
-                  Contact Sales
-                  <span className="ml-2">→</span>
+                <ZenoraButton size="xl" variant="default" className="w-full sm:w-auto group">
+                  Feel the Zen!
+                  <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </ZenoraButton>
               </Link>
             </motion.div>
