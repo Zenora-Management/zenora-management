@@ -1,10 +1,8 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Building, ChevronLeft, Loader2 } from "lucide-react";
 import { useProperties, Property } from "@/hooks/useProperties";
-import { useAuth } from "@/contexts/AuthContext";
 
 interface PropertyFormProps {
   property?: Property;
@@ -13,7 +11,6 @@ interface PropertyFormProps {
 
 const PropertyForm = ({ property, isEditing = false }: PropertyFormProps) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { createProperty, updateProperty } = useProperties();
   
   const [formData, setFormData] = useState({
@@ -43,17 +40,13 @@ const PropertyForm = ({ property, isEditing = false }: PropertyFormProps) => {
           ...formData
         });
       } else {
-        if (!user?.id) {
-          throw new Error("User must be logged in to create a property");
-        }
-        
         await createProperty.mutateAsync({
           ...formData,
-          owner_id: user.id
+          owner_id: "guest-user"
         });
       }
       
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       console.error("Error saving property:", error);
     }
@@ -65,7 +58,7 @@ const PropertyForm = ({ property, isEditing = false }: PropertyFormProps) => {
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-6">
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate("/")}
           className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-zenora-dark/50"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -192,7 +185,7 @@ const PropertyForm = ({ property, isEditing = false }: PropertyFormProps) => {
             <ZenoraButton
               type="button"
               variant="outline"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/")}
             >
               Cancel
             </ZenoraButton>

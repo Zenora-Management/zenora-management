@@ -1,7 +1,6 @@
 
 import { ReactNode } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ZenoraButton } from "@/components/ui/button-zenora";
@@ -25,7 +24,10 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const { signOut } = useAuth();
+  const handleSignOut = () => {
+    // Simply navigate to home page since we've removed auth
+    window.location.href = '/';
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -42,8 +44,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             </div>
             
             <div className="mt-4 md:mt-0">
-              <ZenoraButton variant="outline" onClick={() => signOut()}>
-                <LogOut className="mr-2 h-4 w-4" /> Sign Out
+              <ZenoraButton variant="outline" onClick={handleSignOut}>
+                <LogOut className="mr-2 h-4 w-4" /> Return to Home
               </ZenoraButton>
             </div>
           </div>
