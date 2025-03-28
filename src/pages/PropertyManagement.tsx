@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -110,7 +109,7 @@ const PropertyManagement = () => {
                   ],
                   button: "Get Started",
                   popular: false,
-                  icon: <Building className="h-6 w-6 text-purple-600" />,
+                  icon: <Building className="h-6 w-6 text-white" />,
                   gradient: "from-purple-500 to-indigo-600"
                 },
                 {
@@ -129,7 +128,7 @@ const PropertyManagement = () => {
                   ],
                   button: "Get Started",
                   popular: true,
-                  icon: <Sparkles className="h-6 w-6 text-amber-500" />,
+                  icon: <Sparkles className="h-6 w-6 text-white" />,
                   gradient: "from-amber-400 to-pink-500"
                 },
                 {
@@ -148,7 +147,7 @@ const PropertyManagement = () => {
                   ],
                   button: "Get Started",
                   popular: false,
-                  icon: <Zap className="h-6 w-6 text-blue-600" />,
+                  icon: <Zap className="h-6 w-6 text-white" />,
                   gradient: "from-blue-400 to-teal-500"
                 },
                 {
@@ -167,7 +166,7 @@ const PropertyManagement = () => {
                   ],
                   button: "Contact Sales",
                   popular: false,
-                  icon: <Database className="h-6 w-6 text-green-600" />,
+                  icon: <Database className="h-6 w-6 text-white" />,
                   gradient: "from-green-400 to-blue-500"
                 }
               ].map((plan) => (
@@ -185,7 +184,7 @@ const PropertyManagement = () => {
                     <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-10 hover:opacity-15 transition-opacity duration-300`} />
                     <div className="relative z-10">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className={`p-2 rounded-lg flex items-center justify-center bg-gradient-to-br ${plan.gradient} text-white shadow-md`}>
+                        <div className={`p-2 rounded-lg flex items-center justify-center bg-gradient-to-br ${plan.gradient} shadow-md`}>
                           {plan.icon}
                         </div>
                         <h3 className="text-lg font-bold">{plan.name}</h3>

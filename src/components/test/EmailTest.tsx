@@ -16,9 +16,10 @@ const EmailTest = () => {
       const response = await sendContactEmail({
         name: "John Doe (Test)",
         email: "test@example.com",
-        phone: "555-123-4567", // Added phone property
+        phone: "555-123-4567",
         subject: "Test Email",
         message: "This is a test email from the test environment.",
+        plan: "client",
         isDemoRequest: true
       });
       
@@ -92,3 +93,4 @@ const EmailTest = () => {
 };
 
 export default EmailTest;
+

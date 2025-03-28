@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Mail, Phone, MapPin, Send, Calendar, CheckCircle, Shield, Sparkles, Zap, Building, Database } from "lucide-react";
@@ -27,14 +26,13 @@ const Contact = ({ selectedPlan }: ContactProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const location = useLocation();
   
-  // Available plans with details
   const plans = [
     {
       id: "client",
       name: "Client Plan",
       price: "$1,999/year",
       description: "Base plan for single property owners",
-      icon: <Building className="h-6 w-6 text-purple-600" />,
+      icon: <Building className="h-6 w-6 text-white" />,
       gradient: "from-purple-500 to-indigo-600",
       features: [
         "AI-powered tenant screening",
@@ -48,7 +46,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Referral Discount",
       price: "$1,499/year",
       description: "$500 discount for referred clients",
-      icon: <Sparkles className="h-6 w-6 text-amber-500" />,
+      icon: <Sparkles className="h-6 w-6 text-white" />,
       gradient: "from-amber-400 to-pink-500",
       features: [
         "All Client Plan features",
@@ -62,7 +60,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Transfer Discount",
       price: "$1,499/year",
       description: "$500 discount when switching from another company",
-      icon: <Zap className="h-6 w-6 text-blue-600" />,
+      icon: <Zap className="h-6 w-6 text-white" />,
       gradient: "from-blue-400 to-teal-500",
       features: [
         "All Client Plan features",
@@ -76,7 +74,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       name: "Enterprise Plan",
       price: "Custom",
       description: "For portfolio investors with 10+ properties",
-      icon: <Database className="h-6 w-6 text-green-600" />,
+      icon: <Database className="h-6 w-6 text-white" />,
       gradient: "from-green-400 to-blue-500",
       features: [
         "Custom pricing",
@@ -87,7 +85,6 @@ const Contact = ({ selectedPlan }: ContactProps) => {
     }
   ];
   
-  // Set the subject based on the selected plan
   useEffect(() => {
     if (selectedPlan) {
       let planName = "";
@@ -117,7 +114,6 @@ const Contact = ({ selectedPlan }: ContactProps) => {
         plan: selectedPlan
       }));
       
-      // Only show toast if not coming from demo redirect
       const searchParams = new URLSearchParams(location.search);
       const fromCalendly = searchParams.get("fromCalendly");
       
@@ -162,10 +158,8 @@ const Contact = ({ selectedPlan }: ContactProps) => {
     try {
       console.log("Submitting contact form", formData);
       
-      // Check if this is a demo request
       const isDemoRequest = selectedPlan === "demo" || formData.subject.toLowerCase().includes("demo");
       
-      // Send the contact email using the utility function
       const response = await sendContactEmail({
         name: formData.name,
         email: formData.email,
@@ -180,7 +174,6 @@ const Contact = ({ selectedPlan }: ContactProps) => {
         throw new Error(response.message);
       }
       
-      // Show success message
       toast({
         title: "Message Sent!",
         description: "Thank you for contacting us. We'll get back to you soon.",
@@ -196,14 +189,12 @@ const Contact = ({ selectedPlan }: ContactProps) => {
         plan: ""
       });
       
-      // Reset success message after some time
       setTimeout(() => {
         setIsSubmitted(false);
       }, 5000);
     } catch (error) {
       console.error("Error sending message:", error);
       
-      // Show a more detailed error message
       let errorMessage = "There was a problem sending your message. ";
       if (error.message.includes("database")) {
         errorMessage += "We couldn't save your message. ";
@@ -222,7 +213,6 @@ const Contact = ({ selectedPlan }: ContactProps) => {
     }
   };
 
-  // Animation variants
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -247,7 +237,6 @@ const Contact = ({ selectedPlan }: ContactProps) => {
       }}
       className="zenora-section bg-white dark:bg-zenora-dark relative overflow-hidden"
     >
-      {/* Background elements */}
       <div className="absolute top-0 left-1/4 w-1/2 h-1/2 bg-zenora-gradient opacity-5 blur-3xl rounded-full"></div>
       <div className="absolute bottom-0 right-1/4 w-1/2 h-1/2 bg-zenora-light opacity-5 blur-3xl rounded-full"></div>
       
@@ -269,7 +258,6 @@ const Contact = ({ selectedPlan }: ContactProps) => {
           </p>
         </motion.div>
 
-        {/* Plans Section */}
         <motion.div 
           variants={fadeIn}
           className="mb-16"
@@ -286,7 +274,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                 <div className="h-full bg-white dark:bg-zenora-dark rounded-xl border border-gray-200 dark:border-gray-800 p-6 flex flex-col">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg flex items-center justify-center bg-gradient-to-br ${plan.gradient} text-white shadow-md`}>
+                      <div className={`p-2 rounded-lg flex items-center justify-center bg-gradient-to-br ${plan.gradient} shadow-md`}>
                         {plan.icon}
                       </div>
                       <h3 className="text-lg font-bold">{plan.name}</h3>
@@ -333,7 +321,6 @@ const Contact = ({ selectedPlan }: ContactProps) => {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Information */}
           <motion.div 
             variants={fadeIn}
             className="group"
@@ -423,7 +410,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   <div className="flex items-center gap-6">
                     <div className="flex flex-col items-center">
                       <Avatar className="h-14 w-14 border-2 border-white/50 transition-transform hover:scale-110">
-                        <AvatarImage src="/lovable-uploads/b59dd2a1-1583-4590-9e48-c8d9d6421936.png" alt="Ansh Parikh" />
+                        <AvatarImage src="/lovable-uploads/d0a33789-21c2-42ed-946d-dba71c49e986.png" alt="Ansh Parikh" />
                         <AvatarFallback>AP</AvatarFallback>
                       </Avatar>
                       <p className="text-sm mt-2 text-white/80">Ansh Parikh</p>
@@ -457,7 +444,6 @@ const Contact = ({ selectedPlan }: ContactProps) => {
             </div>
           </motion.div>
           
-          {/* Contact Form */}
           <motion.div 
             variants={fadeIn}
             className="group"
