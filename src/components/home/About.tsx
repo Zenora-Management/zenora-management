@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
@@ -66,7 +65,7 @@ const About = () => {
             <div className="flex items-center gap-6 mt-4">
               <div className="group relative">
                 <img 
-                  src="/lovable-uploads/e3c52233-a9f9-4349-a36f-534527fe1699.png" 
+                  src="/lovable-uploads/a0b42a29-69dc-4c13-b322-930e53867888.png" 
                   alt="Ansh Parikh" 
                   className="w-20 h-20 rounded-full object-cover border-2 border-zenora-purple/50 shadow-lg transition-all duration-300 group-hover:scale-105"
                 />

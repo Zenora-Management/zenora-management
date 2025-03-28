@@ -414,7 +414,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
                   <div className="flex items-center gap-6">
                     <div className="flex flex-col items-center">
                       <Avatar className="h-14 w-14 border-2 border-white/50 transition-transform hover:scale-110">
-                        <AvatarImage src="/lovable-uploads/d0a33789-21c2-42ed-946d-dba71c49e986.png" alt="Ansh Parikh" />
+                        <AvatarImage src="/lovable-uploads/a0b42a29-69dc-4c13-b322-930e53867888.png" alt="Ansh Parikh" />
                         <AvatarFallback>AP</AvatarFallback>
                       </Avatar>
                       <p className="text-sm mt-2 text-white/80">Ansh Parikh</p>
