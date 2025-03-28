@@ -70,16 +70,18 @@ const About = () => {
                   alt="Ansh Parikh" 
                   className="w-20 h-20 rounded-full object-cover border-2 border-zenora-purple/50 shadow-lg transition-all duration-300 group-hover:scale-105"
                 />
-                <a 
-                  href="https://www.linkedin.com/in/anshparikh01/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="absolute -bottom-2 -right-2 bg-white dark:bg-zenora-dark p-1 rounded-full border border-zenora-purple/50 text-zenora-purple hover:bg-zenora-purple hover:text-white transition-colors duration-300"
-                  aria-label="Ansh Parikh LinkedIn"
-                >
-                  <Linkedin className="h-4 w-4" />
-                </a>
-                <span className="block mt-2 text-sm font-medium text-center">Ansh Parikh</span>
+                <div className="mt-2 flex flex-col items-center">
+                  <span className="text-sm font-medium">Ansh Parikh</span>
+                  <a 
+                    href="https://www.linkedin.com/in/anshparikh01/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center mt-1 bg-white dark:bg-zenora-dark p-1 rounded-full border border-zenora-purple/50 text-zenora-purple hover:bg-zenora-purple hover:text-white transition-colors duration-300"
+                    aria-label="Ansh Parikh LinkedIn"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                </div>
               </div>
               
               <div className="group relative">
@@ -88,16 +90,18 @@ const About = () => {
                   alt="Anvith Vobbilisetty" 
                   className="w-20 h-20 rounded-full object-cover border-2 border-zenora-purple/50 shadow-lg transition-all duration-300 group-hover:scale-105"
                 />
-                <a 
-                  href="https://www.linkedin.com/in/anvithv/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="absolute -bottom-2 -right-2 bg-white dark:bg-zenora-dark p-1 rounded-full border border-zenora-purple/50 text-zenora-purple hover:bg-zenora-purple hover:text-white transition-colors duration-300"
-                  aria-label="Anvith Vobbilisetty LinkedIn"
-                >
-                  <Linkedin className="h-4 w-4" />
-                </a>
-                <span className="block mt-2 text-sm font-medium text-center">Anvith Vobbilisetty</span>
+                <div className="mt-2 flex flex-col items-center">
+                  <span className="text-sm font-medium">Anvith Vobbilisetty</span>
+                  <a 
+                    href="https://www.linkedin.com/in/anvithv/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center mt-1 bg-white dark:bg-zenora-dark p-1 rounded-full border border-zenora-purple/50 text-zenora-purple hover:bg-zenora-purple hover:text-white transition-colors duration-300"
+                    aria-label="Anvith Vobbilisetty LinkedIn"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -176,7 +180,7 @@ const About = () => {
         >
           <Link to="/contact">
             <ZenoraButton size="lg" className="group">
-              Connect With Our Team <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              Get Started <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </ZenoraButton>
           </Link>
         </motion.div>

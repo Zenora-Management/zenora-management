@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LayoutDashboard } from "lucide-react";
@@ -166,9 +167,6 @@ const Navbar = () => {
           <Link to="/about" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/about' ? 'text-zenora-purple font-medium' : ''}`}>
             About
           </Link>
-          <Link to="/contact" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/contact' ? 'text-zenora-purple font-medium' : ''}`}>
-            Contact
-          </Link>
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
@@ -249,12 +247,6 @@ const Navbar = () => {
               className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/about' ? 'text-zenora-purple font-medium' : ''}`}
             >
               About
-            </Link>
-            <Link 
-              to="/contact"
-              className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/contact' ? 'text-zenora-purple font-medium' : ''}`}
-            >
-              Contact
             </Link>
             <div className="flex flex-col gap-2 mt-2">
               <ZenoraButton 
