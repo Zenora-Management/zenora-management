@@ -117,29 +117,6 @@ const Hero = () => {
                 </ZenoraButton>
               </Link>
             </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.1, duration: 0.5 }}
-              className="flex items-center gap-4 text-sm text-muted-foreground"
-            >
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <motion.div 
-                    key={i} 
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1.1 + (i * 0.1), duration: 0.3 }}
-                    className="h-8 w-8 rounded-full border-2 border-white bg-zenora-purple/20 flex items-center justify-center text-xs text-zenora-purple"
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    {i}
-                  </motion.div>
-                ))}
-              </div>
-              <p>Join 1,000+ property owners already using Zenora</p>
-            </motion.div>
           </motion.div>
           
           <motion.div 
