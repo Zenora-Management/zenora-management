@@ -206,24 +206,60 @@ const Hero = () => {
                 </div>
                 
                 <div className="flex flex-col gap-4 overflow-auto flex-grow">
-                  {[1, 2, 3, 4, 5].map((i) => (
+                  {[
+                    { 
+                      id: 1, 
+                      name: "Property #1", 
+                      address: "1470 Oak Avenue, San Francisco", 
+                      status: "Rented", 
+                      statusClass: "bg-green-500/20 text-green-700" 
+                    },
+                    { 
+                      id: 2, 
+                      name: "Property #2", 
+                      address: "835 Maple Street, Suite 2B, Portland", 
+                      status: "Vacant", 
+                      statusClass: "bg-amber-500/20 text-amber-700" 
+                    },
+                    { 
+                      id: 3, 
+                      name: "Property #3", 
+                      address: "217 Cedar Lane, New York", 
+                      status: "Maintenance", 
+                      statusClass: "bg-blue-500/20 text-blue-700" 
+                    },
+                    { 
+                      id: 4, 
+                      name: "Property #4", 
+                      address: "508 Birch Road, Austin", 
+                      status: "Leasing", 
+                      statusClass: "bg-purple-500/20 text-purple-700" 
+                    },
+                    { 
+                      id: 5, 
+                      name: "Property #5", 
+                      address: "1249 Pine Court, Seattle", 
+                      status: "Rented", 
+                      statusClass: "bg-green-500/20 text-green-700" 
+                    }
+                  ].map((property) => (
                     <motion.div 
-                      key={i} 
+                      key={property.id} 
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 1.6 + (i * 0.1), duration: 0.3 }}
+                      transition={{ delay: 1.6 + (property.id * 0.1), duration: 0.3 }}
                       className="bg-white/10 backdrop-blur-sm rounded-lg p-4 flex items-center gap-4 hover:bg-white/20 transition-all duration-300"
                       whileHover={{ x: 5, backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
                     >
                       <div className="bg-zenora-gradient h-10 w-10 rounded-md flex items-center justify-center text-white font-bold">
-                        {i}
+                        {property.id}
                       </div>
                       <div className="flex-grow">
-                        <h3 className="font-medium">Property #{i}</h3>
-                        <p className="text-sm text-zenora-purple/70">123 Main St, Unit {i}</p>
+                        <h3 className="font-medium">{property.name}</h3>
+                        <p className="text-sm text-zenora-purple/70">{property.address}</p>
                       </div>
-                      <div className="bg-green-500/20 text-green-700 px-2 py-1 rounded text-xs">
-                        Rented
+                      <div className={`px-2 py-1 rounded text-xs ${property.statusClass}`}>
+                        {property.status}
                       </div>
                     </motion.div>
                   ))}
@@ -235,35 +271,12 @@ const Hero = () => {
                   transition={{ delay: 2.2, duration: 0.5 }}
                   className="mt-4 bg-zenora-dark/30 backdrop-blur-sm rounded-lg p-4"
                 >
-                  <div className="text-sm font-medium mb-2">AI Recommendation</div>
+                  <div className="text-sm font-medium mb-2">AI Insights</div>
                   <p className="text-xs text-zenora-purple/70">
-                    Based on market analysis, Property #2 can increase rent by 8% upon renewal.
+                    Property #2 has been vacant for 14 days. Consider adjusting listing price by 5% to attract tenants faster.
                   </p>
                 </motion.div>
               </div>
-            </motion.div>
-            
-            {/* Floating elements */}
-            <motion.div 
-              initial={{ opacity: 0, x: 20, y: 20 }}
-              animate={{ opacity: 1, x: 0, y: 0 }}
-              transition={{ delay: 2.4, duration: 0.5 }}
-              className="absolute -top-4 -right-4 bg-white dark:bg-zenora-dark rounded-lg shadow-lg p-4 rotate-3"
-              whileHover={{ scale: 1.05, rotate: 5 }}
-            >
-              <div className="text-sm font-medium mb-1">Rent Analysis</div>
-              <div className="text-xs text-muted-foreground">AI-recommended: $1,850/mo</div>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, x: -20, y: -20 }}
-              animate={{ opacity: 1, x: 0, y: 0 }}
-              transition={{ delay: 2.6, duration: 0.5 }}
-              className="absolute bottom-12 -left-8 bg-white dark:bg-zenora-dark rounded-lg shadow-lg p-4 -rotate-6"
-              whileHover={{ scale: 1.05, rotate: -8 }}
-            >
-              <div className="text-sm font-medium mb-1">Maintenance Alert</div>
-              <div className="text-xs text-muted-foreground">Issue resolved in 24hrs</div>
             </motion.div>
           </motion.div>
         </div>
