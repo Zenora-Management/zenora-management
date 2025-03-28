@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -12,14 +13,12 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -174,31 +173,11 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          {user ? (
-            <>
-              <Link to="/dashboard">
-                <ZenoraButton variant="outline" size="default">
-                  Dashboard
-                </ZenoraButton>
-              </Link>
-              <ZenoraButton variant="default" size="default" onClick={signOut}>
-                Sign Out
-              </ZenoraButton>
-            </>
-          ) : (
-            <>
-              <Link to="/login">
-                <ZenoraButton variant="outline" size="default">
-                  Log In
-                </ZenoraButton>
-              </Link>
-              <Link to="/signup">
-                <ZenoraButton variant="default" size="default">
-                  Sign Up
-                </ZenoraButton>
-              </Link>
-            </>
-          )}
+          <Link to="/contact">
+            <ZenoraButton variant="default" size="default">
+              Get Started
+            </ZenoraButton>
+          </Link>
         </div>
 
         {/* Mobile menu button */}
@@ -273,31 +252,11 @@ const Navbar = () => {
               Contact
             </Link>
             <div className="flex flex-col gap-2 mt-2">
-              {user ? (
-                <>
-                  <Link to="/dashboard">
-                    <ZenoraButton variant="outline" size="default" className="w-full">
-                      Dashboard
-                    </ZenoraButton>
-                  </Link>
-                  <ZenoraButton variant="default" size="default" className="w-full" onClick={signOut}>
-                    Sign Out
-                  </ZenoraButton>
-                </>
-              ) : (
-                <>
-                  <Link to="/login">
-                    <ZenoraButton variant="outline" size="default" className="w-full">
-                      Log In
-                    </ZenoraButton>
-                  </Link>
-                  <Link to="/signup">
-                    <ZenoraButton variant="default" size="default" className="w-full">
-                      Sign Up
-                    </ZenoraButton>
-                  </Link>
-                </>
-              )}
+              <Link to="/contact">
+                <ZenoraButton variant="default" size="default" className="w-full">
+                  Get Started
+                </ZenoraButton>
+              </Link>
             </div>
           </div>
         </div>
