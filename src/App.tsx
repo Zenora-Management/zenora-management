@@ -18,9 +18,13 @@ import Cookies from '@/pages/Cookies';
 import Careers from '@/pages/Careers';
 import ContactPage from '@/pages/Contact';
 import EmailTestPage from '@/pages/EmailTest';
+import PropertyManagement from '@/pages/PropertyManagement';
 import PropertyManagementDetail from '@/pages/PropertyManagementDetail';
+import AIRentAnalysis from '@/pages/AIRentAnalysis';
 import AIRentAnalysisDetail from '@/pages/AIRentAnalysisDetail';
+import TenantScreening from '@/pages/TenantScreening';
 import TenantScreeningDetail from '@/pages/TenantScreeningDetail';
+import Maintenance from '@/pages/Maintenance';
 import MaintenanceDetail from '@/pages/MaintenanceDetail';
 import NotFound from '@/pages/NotFound';
 
@@ -43,6 +47,12 @@ function App() {
         <Route path="/careers" element={<Careers />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/email-test" element={<EmailTestPage />} />
+        
+        {/* Service pages */}
+        <Route path="/property-management" element={<PropertyManagement />} />
+        <Route path="/ai-rent-analysis" element={<AIRentAnalysis />} />
+        <Route path="/tenant-screening" element={<TenantScreening />} />
+        <Route path="/maintenance" element={<Maintenance />} />
         
         {/* Service detail pages */}
         <Route path="/property-management/details" element={<PropertyManagementDetail />} />

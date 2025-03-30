@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { BarChart, Calendar, CheckCircle, TrendingUp } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const AIRentAnalysis = () => {
   return (
@@ -62,8 +63,8 @@ const AIRentAnalysis = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <ZenoraButton size="lg">Start Your Analysis</ZenoraButton>
-                <ZenoraButton size="lg" variant="outline">Watch Demo</ZenoraButton>
+                <ZenoraButton size="lg" as={Link} to="/ai-rent-analysis/details">Start Your Analysis</ZenoraButton>
+                <ZenoraButton size="lg" variant="outline" as={Link} to="/contact?topic=ai-rent-demo">Watch Demo</ZenoraButton>
               </div>
             </div>
             
@@ -122,7 +123,7 @@ const AIRentAnalysis = () => {
               <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
                 Start using our AI-powered rent analysis tool today and make data-driven decisions that maximize your rental income.
               </p>
-              <ZenoraButton size="lg">
+              <ZenoraButton size="lg" as={Link} to="/ai-rent-analysis/details">
                 Get Started Now
               </ZenoraButton>
               <p className="text-sm text-muted-foreground mt-4">Available with all Zenora property management plans.</p>
