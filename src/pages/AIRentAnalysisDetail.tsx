@@ -1,4 +1,3 @@
-
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ZenoraButton } from "@/components/ui/button-zenora";
@@ -32,7 +31,7 @@ const AIRentAnalysisDetail = () => {
                       Request a Demo
                     </ZenoraButton>
                   </Link>
-                  <Link to="/dashboard">
+                  <Link to="/ai-rent-analysis/details">
                     <ZenoraButton variant="outline" className="text-white border-white">
                       Try it Now
                     </ZenoraButton>
