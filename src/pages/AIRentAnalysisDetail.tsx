@@ -39,7 +39,7 @@ const AIRentAnalysisDetail = () => {
                     </ZenoraButton>
                   </Link>
                   <ZenoraButton variant="outline" className="text-white border-white" onClick={scrollToDemo}>
-                    Try it Now
+                    Preview
                   </ZenoraButton>
                 </div>
               </div>
@@ -196,12 +196,12 @@ const AIRentAnalysisDetail = () => {
           </div>
         </section>
         
-        {/* Demo Section */}
+        {/* Preview Section */}
         <section ref={demoSectionRef} className="py-16 bg-white dark:bg-zenora-dark">
           <div className="zenora-container">
             <div className="text-center mb-12">
               <div className="inline-flex items-center rounded-full border border-zenora-purple/30 bg-zenora-purple/5 px-3 py-1 text-sm text-zenora-purple backdrop-blur-sm mb-6">
-                <span className="font-medium">Interactive Demo</span>
+                <span className="font-medium">Preview</span>
               </div>
               <h2 className="text-3xl font-bold mb-4">
                 Experience AI Rent Analysis in Action
