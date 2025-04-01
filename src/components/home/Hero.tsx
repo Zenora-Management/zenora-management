@@ -92,7 +92,7 @@ const Hero = () => {
               transition={{ delay: 0.5, duration: 0.8 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-zenora-gradient"
             >
-              AI-Powered Property Management Solutions
+              AI-Powered Property Management Platform
             </motion.h1>
             
             <motion.p 
@@ -101,7 +101,7 @@ const Hero = () => {
               transition={{ delay: 0.7, duration: 0.5 }}
               className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-xl"
             >
-              Zenora delivers the cheapest, simplest, and most efficient AI-driven property management solutions, ensuring 24/7 client satisfaction through automation and smart technology.
+              Zenora delivers the cheapest, simplest, and most efficient AI-driven property management platform & solutions, ensuring 24/7 client satisfaction through automation and smart technology.
             </motion.p>
             
             <motion.div 

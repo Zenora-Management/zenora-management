@@ -9,7 +9,8 @@ import {
   Users, 
   Calendar, 
   Settings,
-  ChevronRight
+  ChevronRight,
+  DollarSign
 } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 
@@ -18,42 +19,50 @@ const Features = () => {
     {
       icon: <LineChart className="h-6 w-6 text-zenora-purple" />,
       title: "AI Rent Analysis",
-      description: "Our AI algorithm analyzes market data to recommend the optimal rent price for your properties, maximizing your income without sacrificing occupancy."
+      description: "Our AI algorithm analyzes market data to recommend the optimal rent price for your properties, maximizing your income without sacrificing occupancy.",
+      showLearnMore: true
     },
     {
       icon: <Home className="h-6 w-6 text-zenora-purple" />,
       title: "Property Management",
-      description: "Effortlessly manage all your properties in one place with our intuitive dashboard, complete with occupancy tracking and financial reports."
+      description: "Effortlessly manage all your properties in one place with our intuitive dashboard, complete with occupancy tracking and financial reports.",
+      showLearnMore: true
     },
     {
       icon: <FileText className="h-6 w-6 text-zenora-purple" />,
       title: "Zenora Report",
-      description: "Generate comprehensive property reports with detailed rent estimates, comparable properties, and market insights at the click of a button."
+      description: "Generate comprehensive property reports with detailed rent estimates, comparable properties, and market insights at the click of a button.",
+      showLearnMore: false
     },
     {
       icon: <Bell className="h-6 w-6 text-zenora-purple" />,
       title: "Smart Notifications",
-      description: "Receive timely alerts about maintenance requests, lease renewals, payment confirmations, and other important events."
+      description: "Receive timely alerts about maintenance requests, lease renewals, payment confirmations, and other important events.",
+      showLearnMore: false
     },
     {
-      icon: <CheckCircle className="h-6 w-6 text-zenora-purple" />,
-      title: "Tenant Screening",
-      description: "AI-powered screening process that evaluates potential tenants based on credit scores, rental history, and other relevant factors."
+      icon: <DollarSign className="h-6 w-6 text-zenora-purple" />,
+      title: "Cost Effectiveness",
+      description: "Zenora optimizes property management with AI-driven automation, reducing operational costs while maximizing efficiency. Our smart technology streamlines tasks, saving you time and money without compromising quality.",
+      showLearnMore: false
     },
     {
       icon: <Users className="h-6 w-6 text-zenora-purple" />,
       title: "Owner Portal",
-      description: "Access your property information, financial statements, and maintenance records anytime, anywhere through our secure owner portal."
+      description: "Access your property information, financial statements, and maintenance records anytime, anywhere through our secure owner portal.",
+      showLearnMore: false
     },
     {
       icon: <Calendar className="h-6 w-6 text-zenora-purple" />,
       title: "Scheduling",
-      description: "Automated scheduling for property showings, maintenance visits, and inspections, synced with your calendar."
+      description: "Automated scheduling for property showings, maintenance visits, and inspections, synced with your calendar.",
+      showLearnMore: false
     },
     {
       icon: <Settings className="h-6 w-6 text-zenora-purple" />,
-      title: "Customizable Dashboards",
-      description: "Tailor your dashboard to display the metrics and information that matter most to you and your property portfolio."
+      title: "Informational Dashboard",
+      description: "Zenora provides property owners with a comprehensive informational dashboard, giving them easy access to all property details in one place. Our intuitive user interface ensures a seamless experience, making property management simple and efficient.",
+      showLearnMore: false
     }
   ];
 
@@ -96,17 +105,23 @@ const Features = () => {
                 {feature.description}
               </p>
               
-              <Link to={`/features/${feature.title.toLowerCase().replace(/\s+/g, '-')}`} className="text-zenora-purple font-medium inline-flex items-center text-sm hover:underline">
-                Learn more <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
+              {feature.showLearnMore ? (
+                <Link to={`/features/${feature.title.toLowerCase().replace(/\s+/g, '-')}`} className="text-zenora-purple font-medium inline-flex items-center text-sm hover:underline">
+                  Learn more <ChevronRight className="ml-1 h-4 w-4" />
+                </Link>
+              ) : (
+                <Link to="/signup" className="text-zenora-purple font-medium inline-flex items-center text-sm hover:underline">
+                  Try it now <ChevronRight className="ml-1 h-4 w-4" />
+                </Link>
+              )}
             </div>
           ))}
         </div>
         
         <div className="mt-16 text-center">
-          <Link to="/features">
+          <Link to="/signup">
             <ZenoraButton size="lg" variant="outline">
-              Explore All Features
+              Try it now
             </ZenoraButton>
           </Link>
         </div>
