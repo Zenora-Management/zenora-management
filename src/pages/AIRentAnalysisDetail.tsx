@@ -3,8 +3,15 @@ import Footer from "@/components/layout/Footer";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Check, Calendar, ChevronRight, LineChart, BarChart3, PieChart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useRef } from "react";
 
 const AIRentAnalysisDetail = () => {
+  const demoSectionRef = useRef<HTMLDivElement>(null);
+  
+  const scrollToDemo = () => {
+    demoSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -31,17 +38,15 @@ const AIRentAnalysisDetail = () => {
                       Request a Demo
                     </ZenoraButton>
                   </Link>
-                  <Link to="/ai-rent-analysis/details">
-                    <ZenoraButton variant="outline" className="text-white border-white">
-                      Try it Now
-                    </ZenoraButton>
-                  </Link>
+                  <ZenoraButton variant="outline" className="text-white border-white" onClick={scrollToDemo}>
+                    Preview
+                  </ZenoraButton>
                 </div>
               </div>
               <div className="md:w-1/2">
                 <div className="rounded-xl overflow-hidden shadow-xl">
                   <img 
-                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800&h=500" 
+                    src="/lovable-uploads/6ec1603f-741d-4f1d-bb10-163401d7a684.png" 
                     alt="AI Rent Analysis Dashboard" 
                     className="w-full h-auto"
                   />
@@ -186,6 +191,133 @@ const AIRentAnalysisDetail = () => {
                 <p className="text-muted-foreground">
                   Receive clear, actionable recommendations about optimal pricing, potential rental increases, and market positioning for your property.
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Preview Section */}
+        <section ref={demoSectionRef} className="py-16 bg-white dark:bg-zenora-dark">
+          <div className="zenora-container">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center rounded-full border border-zenora-purple/30 bg-zenora-purple/5 px-3 py-1 text-sm text-zenora-purple backdrop-blur-sm mb-6">
+                <span className="font-medium">Preview</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-4">
+                Experience AI Rent Analysis in Action
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                See how our AI-powered tool analyzes rental data to provide you with actionable insights.
+              </p>
+            </div>
+            
+            <div className="zenora-card p-8">
+              <div className="bg-zenora-purple/5 p-8 rounded-xl mb-8">
+                <h3 className="text-xl font-bold mb-4">Property Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Property Type</label>
+                    <select className="zenora-input w-full">
+                      <option>Apartment</option>
+                      <option>House</option>
+                      <option>Condo</option>
+                      <option>Townhouse</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Bedrooms</label>
+                    <select className="zenora-input w-full">
+                      <option>Studio</option>
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4+</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Bathrooms</label>
+                    <select className="zenora-input w-full">
+                      <option>1</option>
+                      <option>1.5</option>
+                      <option>2</option>
+                      <option>2.5</option>
+                      <option>3+</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="mt-6">
+                  <ZenoraButton>Analyze Property</ZenoraButton>
+                </div>
+              </div>
+              
+              <div className="border border-zenora-purple/20 rounded-xl p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold">Market Analysis Results</h3>
+                  <span className="text-sm text-muted-foreground">Demo data</span>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="font-semibold mb-4">Recommended Rent Range</h4>
+                    <div className="bg-zenora-purple/5 p-4 rounded-lg">
+                      <div className="flex justify-between mb-2">
+                        <span>Minimum</span>
+                        <span className="font-bold">$1,850</span>
+                      </div>
+                      <div className="flex justify-between mb-2">
+                        <span>Optimal</span>
+                        <span className="font-bold text-zenora-purple">$2,100</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Maximum</span>
+                        <span className="font-bold">$2,350</span>
+                      </div>
+                    </div>
+                    
+                    <h4 className="font-semibold mt-6 mb-4">Market Comparison</h4>
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <span>Your Area Average</span>
+                        <span className="font-bold">$2,050</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Similar Properties</span>
+                        <span className="font-bold">$2,150</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Market Trend</span>
+                        <span className="text-green-500 font-bold">+3.5% (Last 6 months)</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold mb-4">Rental Demand</h4>
+                    <div className="h-64 bg-zenora-purple/10 rounded-lg flex items-center justify-center">
+                      <span className="text-muted-foreground">Demand chart visualization</span>
+                    </div>
+                    
+                    <h4 className="font-semibold mt-6 mb-4">Factors Affecting Price</h4>
+                    <ul className="space-y-2">
+                      <li className="flex justify-between items-center">
+                        <span>Location</span>
+                        <span className="font-medium text-green-500">+$150</span>
+                      </li>
+                      <li className="flex justify-between items-center">
+                        <span>Property Size</span>
+                        <span className="font-medium text-green-500">+$75</span>
+                      </li>
+                      <li className="flex justify-between items-center">
+                        <span>Amenities</span>
+                        <span className="font-medium text-green-500">+$100</span>
+                      </li>
+                      <li className="flex justify-between items-center">
+                        <span>Market Competition</span>
+                        <span className="font-medium text-red-500">-$50</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

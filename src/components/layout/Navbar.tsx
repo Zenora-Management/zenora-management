@@ -164,10 +164,6 @@ const Navbar = () => {
             </NavigationMenuList>
           </NavigationMenu>
           
-          <Link to="/pricing" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/pricing' ? 'text-zenora-purple font-medium' : ''}`}>
-            Pricing
-          </Link>
-          
           <Link to="/about" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/about' ? 'text-zenora-purple font-medium' : ''}`}>
             About
           </Link>
@@ -245,13 +241,6 @@ const Navbar = () => {
                 </Link>
               </div>
             </div>
-            
-            <Link 
-              to="/pricing"
-              className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/pricing' ? 'text-zenora-purple font-medium' : ''}`}
-            >
-              Pricing
-            </Link>
             
             <Link 
               to="/about"

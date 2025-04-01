@@ -26,7 +26,6 @@ import TenantScreening from '@/pages/TenantScreening';
 import TenantScreeningDetail from '@/pages/TenantScreeningDetail';
 import Maintenance from '@/pages/Maintenance';
 import MaintenanceDetail from '@/pages/MaintenanceDetail';
-import Pricing from '@/pages/Pricing';
 import NotFound from '@/pages/NotFound';
 
 function App() {
@@ -48,7 +47,6 @@ function App() {
         <Route path="/careers" element={<Careers />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/email-test" element={<EmailTestPage />} />
-        <Route path="/pricing" element={<Pricing />} />
         
         {/* Service pages */}
         <Route path="/property-management" element={<PropertyManagement />} />
