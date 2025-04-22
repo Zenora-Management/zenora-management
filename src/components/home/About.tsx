@@ -47,27 +47,15 @@ const About = () => {
           </h2>
           
           <p className="zenora-subheading">
-            Founded by visionaries Ansh Parikh and Anvith Vobbilisetty, Zenora combines cutting-edge technology with property management expertise to revolutionize how properties are managed.
+            Founded with a vision to revolutionize property management through innovative technology and AI-driven solutions.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 mb-16">
-          <motion.div 
-            variants={fadeIn}
-            className="flex flex-col justify-center"
-          >
-            <h3 className="text-2xl font-bold mb-4">Our Story</h3>
-            <p className="text-muted-foreground mb-6">
-              Zenora Property Management was founded in 2024 with a mission to make property management simple, affordable, and effective through AI-powered automation. What started as a solution for a few property owners has grown into a comprehensive platform serving property owners across the bay area.
-            </p>
-          </motion.div>
-          
-          <ProblemSolution />
-        </div>
+        <ProblemSolution />
 
         <motion.div 
           variants={fadeIn}
-          className="text-center mb-12"
+          className="text-center mb-12 mt-16"
         >
           <h3 className="text-2xl font-bold mb-4">Why Choose Zenora</h3>
           <p className="text-muted-foreground max-w-2xl mx-auto">

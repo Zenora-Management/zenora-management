@@ -63,26 +63,12 @@ const Index = () => {
       <main className="flex-grow">
         <Hero />
         
-        <section id="features">
-          <Features />
-        </section>
-        
         <section id="about">
           <About />
-          <motion.div 
-            className="text-center py-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link to="/about">
-              <ZenoraButton variant="outline" size="lg" className="group">
-                Learn More About Us
-                <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </ZenoraButton>
-            </Link>
-          </motion.div>
+        </section>
+        
+        <section id="features">
+          <Features />
         </section>
       </main>
       
