@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LayoutDashboard } from "lucide-react";
@@ -79,6 +78,9 @@ const Navbar = () => {
           >
             Home
           </a>
+          <Link to="/pricing" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/pricing' ? 'text-zenora-purple font-medium' : ''}`}>
+            Pricing
+          </Link>
           <Link to="/features" className={`text-foreground hover:text-zenora-purple transition-colors ${location.pathname === '/features' ? 'text-zenora-purple font-medium' : ''}`}>
             Features
           </Link>
@@ -205,6 +207,12 @@ const Navbar = () => {
             >
               Home
             </a>
+            <Link 
+              to="/pricing"
+              className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/pricing' ? 'text-zenora-purple font-medium' : ''}`}
+            >
+              Pricing
+            </Link>
             <Link 
               to="/features"
               className={`text-foreground hover:text-zenora-purple py-2 transition-colors ${location.pathname === '/features' ? 'text-zenora-purple font-medium' : ''}`}

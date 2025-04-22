@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { 
   Home, 
@@ -9,7 +8,8 @@ import {
   Users, 
   Calendar, 
   Settings,
-  ChevronRight
+  ChevronRight,
+  BadgeDollarSign
 } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 
@@ -36,9 +36,9 @@ const Features = () => {
       description: "Receive timely alerts about maintenance requests, lease renewals, payment confirmations, and other important events."
     },
     {
-      icon: <CheckCircle className="h-6 w-6 text-zenora-purple" />,
-      title: "Tenant Screening",
-      description: "AI-powered screening process that evaluates potential tenants based on credit scores, rental history, and other relevant factors."
+      icon: <BadgeDollarSign className="h-6 w-6 text-zenora-purple" />,
+      title: "Cost Effectiveness",
+      description: "Zenora optimizes property management with AI-driven automation, reducing operational costs while maximizing efficiency. Our smart technology streamlines tasks, saving you time and money without compromising quality."
     },
     {
       icon: <Users className="h-6 w-6 text-zenora-purple" />,
@@ -52,8 +52,8 @@ const Features = () => {
     },
     {
       icon: <Settings className="h-6 w-6 text-zenora-purple" />,
-      title: "Customizable Dashboards",
-      description: "Tailor your dashboard to display the metrics and information that matter most to you and your property portfolio."
+      title: "Informational Dashboard",
+      description: "Zenora provides property owners with a comprehensive informational dashboard, giving them easy access to all property details in one place. Our intuitive user interface ensures a seamless experience, making property management simple and efficient."
     }
   ];
 
@@ -69,9 +69,9 @@ const Features = () => {
             <span className="font-medium">Powerful Features</span>
           </div>
           
-          <h2 className="zenora-heading bg-clip-text text-transparent bg-zenora-gradient">
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-zenora-gradient">
             Your All-in-One AI & Tech Platform
-          </h2>
+          </h1>
           
           <p className="zenora-subheading">
             Our platform combines cutting-edge AI technology with user-friendly interfaces to deliver a seamless property management experience.

@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { Shield, Building } from "lucide-react";
+import { Building, Shield } from "lucide-react";
 
 const ProblemSolution = () => {
   const fadeIn = {
@@ -15,15 +15,12 @@ const ProblemSolution = () => {
   return (
     <motion.div 
       variants={fadeIn}
-      className="relative"
+      className="relative bg-gradient-to-br from-background to-muted/20 rounded-3xl overflow-hidden"
     >
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-zenora-purple/5 to-transparent rounded-3xl"></div>
-      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
         {/* Problem Card */}
         <motion.div 
-          className="relative p-8 bg-gradient-to-br from-background to-muted/50 border rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-300"
+          className="relative p-8 bg-white/50 dark:bg-zenora-dark/50 rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-300"
           whileHover={{ y: -5 }}
         >
           <div className="absolute inset-0 bg-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -47,7 +44,7 @@ const ProblemSolution = () => {
         
         {/* Solution Card */}
         <motion.div 
-          className="relative p-8 bg-gradient-to-br from-background to-muted/50 border rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-300"
+          className="relative p-8 bg-white/50 dark:bg-zenora-dark/50 rounded-xl overflow-hidden group hover:shadow-xl transition-all duration-300"
           whileHover={{ y: -5 }}
         >
           <div className="absolute inset-0 bg-zenora-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -69,14 +66,6 @@ const ProblemSolution = () => {
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Animated connecting line */}
-      <motion.div
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ duration: 0.8, delay: 0.5 }}
-        className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-red-500/20 via-zenora-purple/20 to-zenora-purple/20 transform -translate-y-1/2 hidden lg:block"
-      />
     </motion.div>
   );
 };
