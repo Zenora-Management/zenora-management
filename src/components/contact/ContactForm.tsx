@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { ZenoraButton } from '@/components/ui/button-zenora';
 import { Send } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
 import { toast } from '@/hooks/use-toast';
 import { sendContactEmail } from '@/utils/contact-email';
 
@@ -15,12 +16,24 @@ const ContactForm = ({ selectedPlan, onSubmitSuccess }: ContactFormProps) => {
     name: "",
     email: "",
     phone: "",
-    subject: selectedPlan ? `Inquiry about ${selectedPlan}` : "",
+    address: "",
+    subject: "",
     message: "",
     plan: selectedPlan || ""
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get plan details based on selected plan ID
+  const getPlanDetails = (planId: string) => {
+    const planMap = {
+      platinum: "ZenPlatinum Plan ($1,999/year)",
+      referral: "Referral & Transfer Plan ($1,499/year)",
+      gold: "ZenGold Plan ($1,499/year)",
+      enterprise: "Enterprise Plan (Custom Pricing)"
+    };
+    return planMap[planId as keyof typeof planMap] || "";
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -51,24 +64,17 @@ const ContactForm = ({ selectedPlan, onSubmitSuccess }: ContactFormProps) => {
         name: "",
         email: "",
         phone: "",
+        address: "",
         subject: "",
         message: "",
         plan: ""
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error sending message:", error);
-      
-      let errorMessage = "There was a problem sending your message. ";
-      if (error.message.includes("database")) {
-        errorMessage += "We couldn't save your message. ";
-      } else if (error.message.includes("Gmail") || error.message.includes("email")) {
-        errorMessage += "We couldn't send the email notification. ";
-      }
-      errorMessage += "Please try again or contact us directly at zenoramgmt@gmail.com";
       
       toast({
         title: "Error",
-        description: errorMessage,
+        description: "There was a problem sending your message. Please try again or contact us directly.",
         variant: "destructive",
       });
     } finally {
@@ -78,6 +84,23 @@ const ContactForm = ({ selectedPlan, onSubmitSuccess }: ContactFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="mb-6">
+        <h3 className="text-2xl font-bold mb-6">
+          Get in Touch About Your Property
+        </h3>
+        
+        {selectedPlan && (
+          <div className="mb-6">
+            <Badge 
+              variant="outline" 
+              className="px-4 py-2 text-sm bg-gradient-to-r from-zenora-purple/10 to-blue-500/10 border-zenora-purple/20"
+            >
+              You Selected: {getPlanDetails(selectedPlan)}
+            </Badge>
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="group">
           <label htmlFor="name" className="block text-sm font-medium mb-2">
@@ -126,6 +149,22 @@ const ContactForm = ({ selectedPlan, onSubmitSuccess }: ContactFormProps) => {
           placeholder="(123) 456-7890"
         />
       </div>
+
+      <div className="group">
+        <label htmlFor="address" className="block text-sm font-medium mb-2">
+          Property Address
+        </label>
+        <input
+          id="address"
+          name="address"
+          type="text"
+          value={formData.address}
+          onChange={handleChange}
+          required
+          className="zenora-input w-full transition-all border-gray-300 focus:border-zenora-purple focus:ring focus:ring-zenora-purple/20 group-hover:border-zenora-purple/50"
+          placeholder="123 Main St, City, State, ZIP"
+        />
+      </div>
       
       <div className="group">
         <label htmlFor="subject" className="block text-sm font-medium mb-2">
@@ -140,14 +179,9 @@ const ContactForm = ({ selectedPlan, onSubmitSuccess }: ContactFormProps) => {
           className="zenora-input w-full transition-all border-gray-300 focus:border-zenora-purple focus:ring focus:ring-zenora-purple/20 group-hover:border-zenora-purple/50"
         >
           <option value="">Select a topic</option>
-          <option value="Pricing Information">Pricing Information</option>
-          <option value="Feature Inquiry">Feature Inquiry</option>
-          <option value="Technical Support">Technical Support</option>
-          <option value="Request a Demo">Request a Demo</option>
-          <option value="Inquiry about Client Plan">Inquiry about Client Plan</option>
-          <option value="Inquiry about Referral Discount Plan">Inquiry about Referral Discount Plan</option>
-          <option value="Inquiry about Transfer Discount Plan">Inquiry about Transfer Discount Plan</option>
-          <option value="Inquiry about Enterprise Plan">Inquiry about Enterprise Plan</option>
+          <option value="General Inquiry">General Inquiry</option>
+          <option value="List My Property">List My Property</option>
+          <option value="Referral Program">Referral Program</option>
           <option value="Other">Other</option>
         </select>
       </div>
@@ -164,7 +198,7 @@ const ContactForm = ({ selectedPlan, onSubmitSuccess }: ContactFormProps) => {
           onChange={handleChange}
           required
           className="zenora-input min-h-[120px] transition-all border-gray-300 focus:border-zenora-purple focus:ring focus:ring-zenora-purple/20 group-hover:border-zenora-purple/50"
-          placeholder={formData.plan ? "Please tell us more about your property management needs..." : "How can we help you?"}
+          placeholder="Tell us more about your property or ask a question..."
         ></textarea>
       </div>
       
@@ -185,7 +219,7 @@ const ContactForm = ({ selectedPlan, onSubmitSuccess }: ContactFormProps) => {
         ) : (
           <>
             <Send className="mr-2 h-4 w-4" /> 
-            {formData.plan ? "Complete Reservation" : "Send Message"}
+            Send Message
           </>
         )}
       </ZenoraButton>
