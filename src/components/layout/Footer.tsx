@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { 
   Facebook, 
-  Twitter, 
   Instagram, 
   Linkedin, 
   Mail, 
@@ -38,15 +37,6 @@ const Footer = () => {
                 aria-label="Facebook"
               >
                 <Facebook size={20} />
-              </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-zenora-purple transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={20} />
               </a>
               <a 
                 href="https://instagram.com" 
@@ -198,7 +188,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between">
           <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} Zenora Property Management. All rights reserved.
+            &copy; {new Date().getFullYear()} Zenora Management LLC. All rights reserved.
           </p>
           <div className="flex flex-wrap gap-4 text-sm">
             <Link 

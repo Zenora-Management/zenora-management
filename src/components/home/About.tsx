@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Globe, Target, Star, Users, ChevronRight, Linkedin } from "lucide-react";
+import { Globe, Target, Star, Users, ChevronRight } from "lucide-react";
+import ProblemSolution from "./ProblemSolution";
 
 const About = () => {
   const fadeIn = {
@@ -61,20 +62,7 @@ const About = () => {
             </p>
           </motion.div>
           
-          <motion.div 
-            variants={fadeIn}
-            className="relative rounded-2xl overflow-hidden"
-          >
-            <div className="aspect-video relative overflow-hidden rounded-xl border bg-background">
-              <div className="absolute inset-0 bg-zenora-gradient opacity-10"></div>
-              <div className="flex flex-col items-center justify-center h-full text-center p-8">
-                <div className="relative h-20 w-20 rounded-full bg-zenora-gradient flex items-center justify-center shadow-lg mb-4">
-                  <span className="font-bold text-white text-3xl">Z</span>
-                </div>
-                <h3 className="text-2xl font-bold">Zenora</h3>
-              </div>
-            </div>
-          </motion.div>
+          <ProblemSolution />
         </div>
 
         <motion.div 
