@@ -70,7 +70,7 @@ const Features = () => {
           </div>
           
           <h2 className="zenora-heading bg-clip-text text-transparent bg-zenora-gradient">
-            Transforming Property Management With AI
+            Your All-in-One AI & Tech Platform
           </h2>
           
           <p className="zenora-subheading">

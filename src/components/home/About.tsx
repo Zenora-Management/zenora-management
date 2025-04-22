@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ZenoraButton } from "@/components/ui/button-zenora";
@@ -43,7 +44,7 @@ const About = () => {
           </div>
           
           <h2 className="zenora-heading bg-clip-text text-transparent bg-zenora-gradient">
-            Transforming Property Management Through AI
+            Transforming Property Management with Technology & AI
           </h2>
           
           <p className="zenora-subheading">
