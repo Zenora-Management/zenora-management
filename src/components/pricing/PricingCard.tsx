@@ -50,7 +50,7 @@ const PricingCard = ({
       onClick={handleClick}
     >
       {isPopular && (
-        <div className="absolute -top-4 right-4 px-4 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-sm font-medium rounded-full shadow-md z-10">
+        <div className="absolute top-0 right-0 z-10 px-4 py-1.5 bg-white text-zenora-purple text-sm font-semibold rounded-bl-lg shadow-md">
           Most Popular
         </div>
       )}
