@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { sendContactEmail } from "@/utils/contact-email";
+import PricingCard from "@/components/pricing/PricingCard";
+import { pricingPlans } from "@/data/pricing-plans";
 
 interface ContactProps {
   selectedPlan?: string | null;
@@ -263,63 +265,14 @@ const Contact = ({ selectedPlan }: ContactProps) => {
           className="mb-16"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {plans.map((plan) => (
-              <motion.div 
+            {pricingPlans.map((plan) => (
+              <PricingCard 
                 key={plan.id}
-                className="relative h-full rounded-2xl overflow-hidden transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
-                whileHover={{ scale: 1.01 }}
-                onClick={() => handlePlanSelect(plan.id)}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-10 hover:opacity-15 transition-opacity duration-300`} />
-                
-                <div className="h-full bg-white dark:bg-zenora-dark rounded-xl border border-gray-200 dark:border-gray-800 p-6 flex flex-col">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg flex items-center justify-center bg-gradient-to-br ${plan.gradient} shadow-md`}>
-                        {plan.icon}
-                      </div>
-                      <h3 className="text-lg font-bold">{plan.name}</h3>
-                    </div>
-                    
-                    {formData.plan === plan.id && (
-                      <div className="text-zenora-purple">
-                        <CheckCircle className="h-5 w-5" />
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="mb-4">
-                    <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-zenora-purple to-blue-500">
-                      {plan.price}
-                    </div>
-                    <p className="text-muted-foreground text-sm mt-1">{plan.description}</p>
-                  </div>
-                  
-                  <div className="flex-grow">
-                    <ul className="space-y-2 mb-6">
-                      {plan.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <Shield className={`h-4 w-4 text-${plan.gradient.split('-')[1]}-500 flex-shrink-0 mt-0.5`} />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <div className="mt-auto pt-4">
-                    <ZenoraButton 
-                      variant={formData.plan === plan.id ? "default" : "outline"} 
-                      className="w-full h-10"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePlanSelect(plan.id);
-                      }}
-                    >
-                      {formData.plan === plan.id ? 'Selected' : 'Select Plan'}
-                    </ZenoraButton>
-                  </div>
-                </div>
-              </motion.div>
+                {...plan}
+                isSelected={formData.plan === plan.id}
+                onSelect={handlePlanSelect}
+                showContactButton={false}
+              />
             ))}
           </div>
         </motion.div>
