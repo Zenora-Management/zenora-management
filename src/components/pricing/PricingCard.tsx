@@ -2,7 +2,7 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 interface PricingCardProps {
@@ -34,6 +34,7 @@ const PricingCard = ({
   onSelect,
   showContactButton = true
 }: PricingCardProps) => {
+  const navigate = useNavigate();
   // Use id if planId is not provided
   const actualPlanId = planId || id || "";
   
@@ -41,6 +42,10 @@ const PricingCard = ({
     if (onSelect) {
       onSelect(actualPlanId);
     }
+  };
+
+  const handleGetStarted = () => {
+    navigate(`/contact?plan=${actualPlanId}`);
   };
 
   return (
@@ -93,14 +98,13 @@ const PricingCard = ({
         
         {showContactButton && (
           <div className="mt-auto pt-4">
-            <Link to="/contact" className="w-full">
-              <ZenoraButton 
-                variant={isSelected ? "default" : "outline"} 
-                className="w-full"
-              >
-                {isSelected ? 'Selected' : actualPlanId === 'enterprise' ? 'Contact Sales' : 'Get Started'}
-              </ZenoraButton>
-            </Link>
+            <ZenoraButton 
+              variant={isSelected ? "default" : "outline"} 
+              className="w-full"
+              onClick={handleGetStarted}
+            >
+              {isSelected ? 'Selected' : actualPlanId === 'enterprise' ? 'Contact Sales' : 'Get Started'}
+            </ZenoraButton>
           </div>
         )}
       </div>
@@ -109,3 +113,4 @@ const PricingCard = ({
 };
 
 export default PricingCard;
+
