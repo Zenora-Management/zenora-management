@@ -57,52 +57,8 @@ const About = () => {
           >
             <h3 className="text-2xl font-bold mb-4">Our Story</h3>
             <p className="text-muted-foreground mb-6">
-              Zenora Property Management was founded in 2022 with a mission to make property management simple, affordable, and effective through AI-powered automation. What started as a solution for a few property owners has grown into a comprehensive platform serving thousands of properties nationwide.
+              Zenora Property Management was founded in 2024 with a mission to make property management simple, affordable, and effective through AI-powered automation. What started as a solution for a few property owners has grown into a comprehensive platform serving property owners across the bay area.
             </p>
-            <p className="text-muted-foreground mb-6">
-              Our founders, Ansh Parikh (CEO) and Anvith Vobbilisetty (CTO), combined their expertise in real estate and technology to create a platform that addresses the real pain points of property owners and managers.
-            </p>
-            <div className="flex items-center gap-6 mt-4">
-              <div className="group relative">
-                <img 
-                  src="/lovable-uploads/a0b42a29-69dc-4c13-b322-930e53867888.png" 
-                  alt="Ansh Parikh" 
-                  className="w-20 h-20 rounded-full object-cover border-2 border-zenora-purple/50 shadow-lg transition-all duration-300 group-hover:scale-105"
-                />
-                <div className="mt-2 flex flex-col items-center">
-                  <span className="text-sm font-medium">Ansh Parikh</span>
-                  <a 
-                    href="https://www.linkedin.com/in/anshparikh01/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center mt-1 bg-white dark:bg-zenora-dark p-1 rounded-full border border-zenora-purple/50 text-zenora-purple hover:bg-zenora-purple hover:text-white transition-colors duration-300"
-                    aria-label="Ansh Parikh LinkedIn"
-                  >
-                    <Linkedin className="h-4 w-4" />
-                  </a>
-                </div>
-              </div>
-              
-              <div className="group relative">
-                <img 
-                  src="https://github.com/anvithv.png" 
-                  alt="Anvith Vobbilisetty" 
-                  className="w-20 h-20 rounded-full object-cover border-2 border-zenora-purple/50 shadow-lg transition-all duration-300 group-hover:scale-105"
-                />
-                <div className="mt-2 flex flex-col items-center">
-                  <span className="text-sm font-medium">Anvith Vobbilisetty</span>
-                  <a 
-                    href="https://www.linkedin.com/in/anvithv/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center mt-1 bg-white dark:bg-zenora-dark p-1 rounded-full border border-zenora-purple/50 text-zenora-purple hover:bg-zenora-purple hover:text-white transition-colors duration-300"
-                    aria-label="Anvith Vobbilisetty LinkedIn"
-                  >
-                    <Linkedin className="h-4 w-4" />
-                  </a>
-                </div>
-              </div>
-            </div>
           </motion.div>
           
           <motion.div 
@@ -112,11 +68,10 @@ const About = () => {
             <div className="aspect-video relative overflow-hidden rounded-xl border bg-background">
               <div className="absolute inset-0 bg-zenora-gradient opacity-10"></div>
               <div className="flex flex-col items-center justify-center h-full text-center p-8">
-                <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
-                <blockquote className="italic text-lg">
-                  "We envision a future where property management is effortless, where AI handles the complexity, and where property owners can focus on growth rather than day-to-day operations."
-                </blockquote>
-                <p className="mt-4 font-semibold">- Anvith Vobbilisetty, CTO</p>
+                <div className="relative h-20 w-20 rounded-full bg-zenora-gradient flex items-center justify-center shadow-lg mb-4">
+                  <span className="font-bold text-white text-3xl">Z</span>
+                </div>
+                <h3 className="text-2xl font-bold">Zenora</h3>
               </div>
             </div>
           </motion.div>

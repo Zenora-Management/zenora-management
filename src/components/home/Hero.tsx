@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
@@ -92,7 +91,7 @@ const Hero = () => {
               transition={{ delay: 0.5, duration: 0.8 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-zenora-gradient"
             >
-              AI-Powered Property Management Solutions
+              AI-Powered Property Management Platform
             </motion.h1>
             
             <motion.p 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Routes,
@@ -27,6 +26,7 @@ import TenantScreeningDetail from '@/pages/TenantScreeningDetail';
 import Maintenance from '@/pages/Maintenance';
 import MaintenanceDetail from '@/pages/MaintenanceDetail';
 import NotFound from '@/pages/NotFound';
+import Team from '@/pages/Team';
 
 function App() {
   console.log("App component rendering");
@@ -39,6 +39,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/features" element={<Features />} />
         <Route path="/help" element={<Help />} />
+        <Route path="/team" element={<Team />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />

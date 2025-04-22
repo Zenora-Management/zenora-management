@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { 
   Facebook, 
@@ -108,10 +107,10 @@ const Footer = () => {
               </li>
               <li>
                 <Link 
-                  to="/blog" 
+                  to="/team" 
                   className="text-muted-foreground hover:text-zenora-purple hover:underline transition-colors"
                 >
-                  Blog
+                  Team
                 </Link>
               </li>
             </ul>
