@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Routes,
@@ -27,6 +28,7 @@ import Maintenance from '@/pages/Maintenance';
 import MaintenanceDetail from '@/pages/MaintenanceDetail';
 import NotFound from '@/pages/NotFound';
 import Team from '@/pages/Team';
+import Pricing from '@/pages/Pricing';
 
 function App() {
   console.log("App component rendering");
