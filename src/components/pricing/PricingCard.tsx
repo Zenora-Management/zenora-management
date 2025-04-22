@@ -45,12 +45,12 @@ const PricingCard = ({
 
   return (
     <motion.div 
-      className="relative h-full rounded-2xl overflow-hidden transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+      className="relative h-full rounded-2xl overflow-hidden transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
       whileHover={{ scale: 1.01 }}
       onClick={handleClick}
     >
       {isPopular && (
-        <div className="absolute -top-3 right-4 px-3 py-1 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-sm rounded-full">
+        <div className="absolute -top-4 right-4 px-4 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-sm font-medium rounded-full shadow-md z-10">
           Most Popular
         </div>
       )}
