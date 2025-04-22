@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 interface PricingCardProps {
-  planId: string;
+  id?: string;
+  planId?: string;
   name: string;
   price: string;
   description: string;
@@ -20,6 +21,7 @@ interface PricingCardProps {
 }
 
 const PricingCard = ({
+  id,
   planId,
   name,
   price,
@@ -32,9 +34,12 @@ const PricingCard = ({
   onSelect,
   showContactButton = true
 }: PricingCardProps) => {
+  // Use id if planId is not provided
+  const actualPlanId = planId || id || "";
+  
   const handleClick = () => {
     if (onSelect) {
-      onSelect(planId);
+      onSelect(actualPlanId);
     }
   };
 
@@ -93,7 +98,7 @@ const PricingCard = ({
                 variant={isSelected ? "default" : "outline"} 
                 className="w-full"
               >
-                {isSelected ? 'Selected' : planId === 'enterprise' ? 'Contact Sales' : 'Get Started'}
+                {isSelected ? 'Selected' : actualPlanId === 'enterprise' ? 'Contact Sales' : 'Get Started'}
               </ZenoraButton>
             </Link>
           </div>
