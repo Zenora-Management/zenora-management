@@ -89,7 +89,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
           <motion.div variants={fadeIn} className="group">
             <div className="zenora-card h-full p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300">
               <h3 className="text-2xl font-bold mb-6">
-                {formPlan ? "Complete Your Reservation" : "Get in Touch"}
+                Get In Touch
               </h3>
               
               {isSubmitted ? (
@@ -109,3 +109,4 @@ const Contact = ({ selectedPlan }: ContactProps) => {
 };
 
 export default Contact;
+
