@@ -2,7 +2,7 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ZenoraButton } from "@/components/ui/button-zenora";
-import { Check, Calendar, ChevronRight, Shield, Search, FileText, Clock } from "lucide-react";
+import { Check, Calendar, ChevronRight, FileText, Upload, Database, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const TenantScreeningDetail = () => {
@@ -18,13 +18,13 @@ const TenantScreeningDetail = () => {
             <div className="flex flex-col md:flex-row items-center gap-12">
               <div className="md:w-1/2">
                 <div className="inline-flex items-center rounded-full border border-zenora-light/30 bg-zenora-light/5 px-3 py-1 text-sm backdrop-blur-sm mb-6">
-                  <span className="font-medium">Reliable Screening</span>
+                  <span className="font-medium">Smart Document Solution</span>
                 </div>
                 <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                  Comprehensive Tenant Screening
+                  Document Understanding & Storage
                 </h1>
                 <p className="text-lg mb-8 text-white/80">
-                  Our advanced tenant screening service helps you find reliable, responsible tenants while minimizing risk. We use AI-enhanced background checks to ensure thorough vetting.
+                  Effortlessly handle, organize, and access all your property documents in one secure, centralized location. Powered by Zenora Management's AI Comprehensive Reader, our system not only stores your documents but also understands and extracts key insights.
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <Link to="/contact?subject=demo">
@@ -42,8 +42,8 @@ const TenantScreeningDetail = () => {
               <div className="md:w-1/2">
                 <div className="rounded-xl overflow-hidden shadow-xl">
                   <img 
-                    src="https://images.unsplash.com/photo-1579389083078-4e7018379f7e?auto=format&fit=crop&q=80&w=800&h=500" 
-                    alt="Tenant Screening" 
+                    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800&h=500" 
+                    alt="Document Management" 
                     className="w-full h-auto"
                   />
                 </div>
@@ -57,37 +57,61 @@ const TenantScreeningDetail = () => {
           <div className="zenora-container">
             <div className="text-center mb-12">
               <div className="inline-flex items-center rounded-full border border-zenora-purple/30 bg-zenora-purple/5 px-3 py-1 text-sm text-zenora-purple backdrop-blur-sm mb-6">
-                <span className="font-medium">Comprehensive Screening</span>
+                <span className="font-medium">Smart Document Solutions</span>
               </div>
               <h2 className="text-3xl font-bold mb-4">
-                Our Tenant Screening Process
+                Key Features
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Our thorough screening process helps you find reliable tenants while complying with fair housing laws.
+                Our document management system helps you stay organized, compliant, and efficient.
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="zenora-card p-6">
                 <div className="h-12 w-12 bg-zenora-purple/10 rounded-lg flex items-center justify-center mb-4">
-                  <Search className="h-6 w-6 text-zenora-purple" />
+                  <Upload className="h-6 w-6 text-zenora-purple" />
                 </div>
-                <h3 className="text-xl font-bold mb-3">Background Checks</h3>
+                <h3 className="text-xl font-bold mb-3">Document Upload and Management</h3>
                 <p className="text-muted-foreground mb-4">
-                  Comprehensive background checks to verify tenant history and identify potential risks.
+                  Easily upload and manage all your property-related documents from one intuitive dashboard.
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <span>Criminal history check</span>
+                    <span>Upload leases and agreements</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <span>Eviction history search</span>
+                    <span>Store financial reports</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <span>Sex offender registry check</span>
+                    <span>Manage property documentation</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="zenora-card p-6">
+                <div className="h-12 w-12 bg-zenora-purple/10 rounded-lg flex items-center justify-center mb-4">
+                  <Database className="h-6 w-6 text-zenora-purple" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">Centralized Information Storage</h3>
+                <p className="text-muted-foreground mb-4">
+                  Keep all important property-related documents securely in one place for easy access.
+                </p>
+                <ul className="space-y-2">
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                    <span>Organized file structure</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                    <span>Property-based categorization</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                    <span>Smart tagging and labeling</span>
                   </li>
                 </ul>
               </div>
@@ -96,46 +120,22 @@ const TenantScreeningDetail = () => {
                 <div className="h-12 w-12 bg-zenora-purple/10 rounded-lg flex items-center justify-center mb-4">
                   <FileText className="h-6 w-6 text-zenora-purple" />
                 </div>
-                <h3 className="text-xl font-bold mb-3">Credit Verification</h3>
+                <h3 className="text-xl font-bold mb-3">AI Comprehensive Reader</h3>
                 <p className="text-muted-foreground mb-4">
-                  Detailed credit reports to assess financial responsibility and payment history.
+                  Let our AI analyze your documents to provide insights and save you time.
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <span>Credit score analysis</span>
+                    <span>Automatic document analysis</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <span>Payment history review</span>
+                    <span>Key information extraction</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <span>Debt-to-income assessment</span>
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="zenora-card p-6">
-                <div className="h-12 w-12 bg-zenora-purple/10 rounded-lg flex items-center justify-center mb-4">
-                  <Clock className="h-6 w-6 text-zenora-purple" />
-                </div>
-                <h3 className="text-xl font-bold mb-3">Rental History</h3>
-                <p className="text-muted-foreground mb-4">
-                  Verification of previous rental experiences to ensure reliability and responsibility.
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <span>Previous landlord verification</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <span>On-time payment history</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <span>Property care assessment</span>
+                    <span>Important date reminders</span>
                   </li>
                 </ul>
               </div>
@@ -151,10 +151,10 @@ const TenantScreeningDetail = () => {
                 <span className="font-medium">Our Process</span>
               </div>
               <h2 className="text-3xl font-bold mb-4">
-                How Our Tenant Screening Works
+                How Our Document Management Works
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Our streamlined process delivers thorough screenings with quick turnaround times.
+                Our streamlined process makes document management effortless and insightful.
               </p>
             </div>
             
@@ -163,9 +163,9 @@ const TenantScreeningDetail = () => {
                 <div className="absolute -top-5 -left-5 h-10 w-10 bg-zenora-gradient rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
                   1
                 </div>
-                <h3 className="text-xl font-bold mb-4 mt-2">Application</h3>
+                <h3 className="text-xl font-bold mb-4 mt-2">Upload</h3>
                 <p className="text-muted-foreground">
-                  Prospective tenants complete our comprehensive online application, providing necessary information for screening.
+                  Easily upload your documents through our secure, intuitive interface from any device.
                 </p>
               </div>
               
@@ -173,9 +173,9 @@ const TenantScreeningDetail = () => {
                 <div className="absolute -top-5 -left-5 h-10 w-10 bg-zenora-gradient rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
                   2
                 </div>
-                <h3 className="text-xl font-bold mb-4 mt-2">Verification</h3>
+                <h3 className="text-xl font-bold mb-4 mt-2">AI Analysis</h3>
                 <p className="text-muted-foreground">
-                  Our team verifies employment, income, and contacts previous landlords to confirm rental history.
+                  Our AI reads and analyzes your documents, extracting key information and insights automatically.
                 </p>
               </div>
               
@@ -183,9 +183,9 @@ const TenantScreeningDetail = () => {
                 <div className="absolute -top-5 -left-5 h-10 w-10 bg-zenora-gradient rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
                   3
                 </div>
-                <h3 className="text-xl font-bold mb-4 mt-2">Background Check</h3>
+                <h3 className="text-xl font-bold mb-4 mt-2">Organization</h3>
                 <p className="text-muted-foreground">
-                  We conduct comprehensive background and credit checks using our advanced screening tools.
+                  Documents are automatically categorized, tagged, and stored in our secure cloud system.
                 </p>
               </div>
               
@@ -193,9 +193,9 @@ const TenantScreeningDetail = () => {
                 <div className="absolute -top-5 -left-5 h-10 w-10 bg-zenora-gradient rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
                   4
                 </div>
-                <h3 className="text-xl font-bold mb-4 mt-2">Recommendation</h3>
+                <h3 className="text-xl font-bold mb-4 mt-2">Access</h3>
                 <p className="text-muted-foreground">
-                  You receive a detailed report with our recommendation, helping you make an informed decision.
+                  Easily retrieve, share, and review your documents from anywhere, anytime through our secure platform.
                 </p>
               </div>
             </div>
@@ -210,34 +210,22 @@ const TenantScreeningDetail = () => {
                 <span className="font-medium">Why Choose Us</span>
               </div>
               <h2 className="text-3xl font-bold mb-4">
-                Benefits of Our Tenant Screening Service
+                Benefits of Our Document Management
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Our advanced screening helps reduce risk and find reliable tenants for your properties.
+                Our advanced system helps reduce paperwork and provides valuable insights for property management.
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
               <div className="flex items-start gap-4">
                 <div className="p-2 bg-zenora-purple/10 rounded-lg">
-                  <Shield className="h-6 w-6 text-zenora-purple" />
+                  <Lock className="h-6 w-6 text-zenora-purple" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-2">Reduced Risk</h3>
+                  <h3 className="text-xl font-bold mb-2">Enhanced Security</h3>
                   <p className="text-muted-foreground">
-                    Minimize the risk of problematic tenants with thorough background checks that identify potential red flags before signing a lease.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="p-2 bg-zenora-purple/10 rounded-lg">
-                  <Clock className="h-6 w-6 text-zenora-purple" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Time Savings</h3>
-                  <p className="text-muted-foreground">
-                    Save hours of manual verification work with our streamlined screening process that delivers results within 24-48 hours.
+                    Keep your sensitive property documents secure with enterprise-grade encryption and controlled access permissions.
                   </p>
                 </div>
               </div>
@@ -247,23 +235,45 @@ const TenantScreeningDetail = () => {
                   <FileText className="h-6 w-6 text-zenora-purple" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-2">Legal Compliance</h3>
+                  <h3 className="text-xl font-bold mb-2">Smart Insights</h3>
                   <p className="text-muted-foreground">
-                    Our screening process complies with all fair housing laws and regulations, helping you avoid potential legal issues.
+                    Our AI doesn't just store your documents—it reads them, providing summaries, extracting key dates, and flagging important items.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start gap-4">
                 <div className="p-2 bg-zenora-purple/10 rounded-lg">
-                  <Search className="h-6 w-6 text-zenora-purple" />
+                  <Database className="h-6 w-6 text-zenora-purple" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-2">Thorough Verification</h3>
+                  <h3 className="text-xl font-bold mb-2">Centralized Repository</h3>
                   <p className="text-muted-foreground">
-                    Get comprehensive insights into prospective tenants with our multi-layered verification process that goes beyond basic checks.
+                    Eliminate file searching across multiple locations with our centralized storage that's accessible from anywhere.
                   </p>
                 </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-zenora-purple/10 rounded-lg">
+                  <Upload className="h-6 w-6 text-zenora-purple" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold mb-2">Easy Integration</h3>
+                  <p className="text-muted-foreground">
+                    Seamlessly connects with your existing property management workflows and other Zenora Management services.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Testimonial */}
+            <div className="mt-12 bg-gray-50 dark:bg-zenora-dark/30 rounded-xl p-8">
+              <blockquote className="text-lg italic text-center">
+                "Zenora's document management has streamlined how I handle my rental paperwork — no more lost files or missed details. The AI insights have saved me hours of reading through lengthy contracts."
+              </blockquote>
+              <div className="mt-4 text-center">
+                <p className="font-medium">— Sarah Johnson, Property Owner</p>
               </div>
             </div>
           </div>
@@ -274,10 +284,10 @@ const TenantScreeningDetail = () => {
           <div className="zenora-container">
             <div className="text-center max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold mb-6">
-                Ready to Find Better Tenants?
+                Ready to Streamline Your Document Management?
               </h2>
               <p className="text-lg mb-8 text-white/80">
-                Our tenant screening service helps you find reliable, responsible tenants while reducing risk. Schedule a consultation today to learn more.
+                Our document management system helps you organize, access, and gain insights from all your property documentation. Schedule a consultation today to learn more.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Link to="/contact?subject=demo">
