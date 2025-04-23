@@ -89,7 +89,7 @@ const Navbar = () => {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuTrigger className={`text-foreground hover:text-zenora-purple transition-colors bg-transparent ${
-                  ['/property-management', '/property-management/details', '/ai-rent-analysis', '/ai-rent-analysis/details', '/tenant-screening', '/tenant-screening/details', '/maintenance', '/maintenance/details'].includes(location.pathname) 
+                  ['/property-management', '/property-management/details', '/ai-rent-analysis', '/ai-rent-analysis/details', '/document-management', '/document-management/details', '/maintenance', '/maintenance/details'].includes(location.pathname) 
                     ? 'text-zenora-purple font-medium' 
                     : ''
                 }`}>
@@ -131,15 +131,15 @@ const Navbar = () => {
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
-                          to="/tenant-screening/details"
+                          to="/document-management/details"
                           className={cn(
                             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            location.pathname === '/tenant-screening' || location.pathname === '/tenant-screening/details' ? "bg-accent" : ""
+                            location.pathname === '/document-management' || location.pathname === '/document-management/details' ? "bg-accent" : ""
                           )}
                         >
-                          <div className="text-sm font-medium leading-none">Tenant Screening</div>
+                          <div className="text-sm font-medium leading-none">Document Management</div>
                           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Comprehensive background checks for potential tenants
+                            Effortlessly handle, organize, and access documents with AI-powered insight
                           </p>
                         </Link>
                       </NavigationMenuLink>
@@ -236,10 +236,10 @@ const Navbar = () => {
                   AI Rent Analysis
                 </Link>
                 <Link 
-                  to="/tenant-screening/details"
-                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/tenant-screening' || location.pathname === '/tenant-screening/details' ? 'text-zenora-purple font-medium' : ''}`}
+                  to="/document-management/details"
+                  className={`text-foreground hover:text-zenora-purple py-1 transition-colors ${location.pathname === '/document-management' || location.pathname === '/document-management/details' ? 'text-zenora-purple font-medium' : ''}`}
                 >
-                  Tenant Screening
+                  Document Management
                 </Link>
                 <Link 
                   to="/maintenance/details"
