@@ -1,7 +1,7 @@
 
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { AlertTriangle, Check, Crown, Database, ShieldCheck, Zap } from "lucide-react";
+import { AlertTriangle, Check, Crown, Database, FileText, ShieldCheck, Zap } from "lucide-react";
 import { ZenoraButton } from "@/components/ui/button-zenora";
 import { Link } from "react-router-dom";
 
@@ -134,6 +134,33 @@ const Features = () => {
             <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <div className="p-6">
                 <div className="w-12 h-12 bg-zenora-purple/10 rounded-lg flex items-center justify-center mb-4">
+                  <FileText className="h-6 w-6 text-zenora-purple" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">Document Understanding and Storage</h3>
+                <p className="text-muted-foreground mb-4">
+                  Effortlessly handle, organize, and access all your property documents in one secure, centralized location.
+                </p>
+                <ul className="space-y-2">
+                  <li className="flex items-center">
+                    <Check className="h-5 w-5 text-green-500 mr-2" />
+                    <span>Document upload and management</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-5 w-5 text-green-500 mr-2" />
+                    <span>Centralized property information storage</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-5 w-5 text-green-500 mr-2" />
+                    <span>Secure file access and retrieval</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Feature Card 6 */}
+            <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="p-6">
+                <div className="w-12 h-12 bg-zenora-purple/10 rounded-lg flex items-center justify-center mb-4">
                   <AlertTriangle className="h-6 w-6 text-zenora-purple" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Smart Alerts</h3>
@@ -157,7 +184,7 @@ const Features = () => {
               </div>
             </div>
             
-            {/* Feature Card 6 */}
+            {/* Feature Card 7 */}
             <div className="bg-white dark:bg-zenora-dark/50 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <div className="p-6">
                 <div className="w-12 h-12 bg-zenora-purple/10 rounded-lg flex items-center justify-center mb-4">
