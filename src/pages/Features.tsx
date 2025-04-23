@@ -188,7 +188,7 @@ const Features = () => {
           <div className="mt-16 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6">Ready to transform your property management?</h2>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link to="/signup">
+              <Link to="/contact">
                 <ZenoraButton variant="default" size="lg">
                   Get Started
                 </ZenoraButton>
