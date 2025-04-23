@@ -24,7 +24,7 @@ const DocumentManagement = () => {
             </h1>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
               Effortlessly handle, organize, and access all your property documents in one secure, centralized location.
-              Powered by Zenora Management’s <strong>AI Comprehensive Reader</strong>, our system not only stores your documents
+              Powered by Zenora Management's <strong>AI Comprehensive Reader</strong>, our system not only stores your documents
               but also understands and extracts key insights, helping you stay organized and informed.
             </p>
           </div>
@@ -106,7 +106,7 @@ const DocumentManagement = () => {
                 <path d="M464 32H336c-26.5 0-48 21.5-48 48v112c0 26.5 21.5 48 48 48h40.7c-7.6 72-71.2 128-144.7 128-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24 132.6 0 240-107.4 240-240V80c0-26.5-21.5-48-48-48zm-352 0C85.5 32 64 53.5 64 80v112c0 26.5 21.5 48 48 48h40.7C145.1 304 81.5 360 8 360c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24 132.6 0 240-107.4 240-240V80c0-26.5-21.5-48-48-48z"/>
               </svg>
               <blockquote className="italic text-lg text-zenora-purple mb-2">
-                “Zenora’s document management has streamlined how I handle my rental paperwork — no more lost files or missed details.”
+                "Zenora's document management has streamlined how I handle my rental paperwork — no more lost files or missed details."
               </blockquote>
               <div className="text-muted-foreground text-sm">— Satisfied Zenora Client</div>
             </div>

@@ -22,7 +22,7 @@ import PropertyManagement from '@/pages/PropertyManagement';
 import PropertyManagementDetail from '@/pages/PropertyManagementDetail';
 import AIRentAnalysis from '@/pages/AIRentAnalysis';
 import AIRentAnalysisDetail from '@/pages/AIRentAnalysisDetail';
-import TenantScreening from '@/pages/TenantScreening';
+import DocumentManagement from '@/pages/TenantScreening';
 import TenantScreeningDetail from '@/pages/TenantScreeningDetail';
 import Maintenance from '@/pages/Maintenance';
 import MaintenanceDetail from '@/pages/MaintenanceDetail';
@@ -55,13 +55,13 @@ function App() {
         {/* Service pages */}
         <Route path="/property-management" element={<PropertyManagement />} />
         <Route path="/ai-rent-analysis" element={<AIRentAnalysis />} />
-        <Route path="/tenant-screening" element={<TenantScreening />} />
+        <Route path="/document-management" element={<DocumentManagement />} />
         <Route path="/maintenance" element={<Maintenance />} />
         
         {/* Service detail pages */}
         <Route path="/property-management/details" element={<PropertyManagementDetail />} />
         <Route path="/ai-rent-analysis/details" element={<AIRentAnalysisDetail />} />
-        <Route path="/tenant-screening/details" element={<TenantScreeningDetail />} />
+        <Route path="/document-management/details" element={<TenantScreeningDetail />} />
         <Route path="/maintenance/details" element={<MaintenanceDetail />} />
         
         {/* 404 route */}

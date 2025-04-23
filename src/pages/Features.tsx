@@ -233,6 +233,6 @@ const Features = () => {
       <Footer />
     </div>
   );
-};
+}
 
 export default Features;
