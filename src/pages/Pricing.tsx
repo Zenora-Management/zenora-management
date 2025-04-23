@@ -5,8 +5,10 @@ import { BadgeDollarSign } from "lucide-react";
 import { motion } from "framer-motion";
 import PricingCard from "@/components/pricing/PricingCard";
 import { pricingPlans } from "@/data/pricing-plans";
+import { useNavigate } from "react-router-dom";
 
 const Pricing = () => {
+  const navigate = useNavigate();
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -14,6 +16,10 @@ const Pricing = () => {
       y: 0,
       transition: { duration: 0.6 }
     }
+  };
+
+  const handlePlanSelect = (planId: string) => {
+    navigate(`/contact?plan=${planId}`);
   };
 
   return (
@@ -45,7 +51,10 @@ const Pricing = () => {
                 key={plan.id}
                 variants={fadeIn}
               >
-                <PricingCard {...plan} />
+                <PricingCard 
+                  {...plan} 
+                  onSelect={handlePlanSelect}
+                />
               </motion.div>
             ))}
           </div>

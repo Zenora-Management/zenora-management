@@ -1,19 +1,31 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import ContactForm from '../contact/ContactForm';
 import ContactInfo from '../contact/ContactInfo';
 import SuccessMessage from '../contact/SuccessMessage';
 import PricingCard from '../pricing/PricingCard';
 import { pricingPlans } from '@/data/pricing-plans';
+import { useSearchParams } from 'react-router-dom';
 
 interface ContactProps {
   selectedPlan?: string | null;
 }
 
-const Contact = ({ selectedPlan }: ContactProps) => {
+const Contact = ({ selectedPlan: initialSelectedPlan }: ContactProps) => {
+  const [searchParams] = useSearchParams();
+  const urlPlan = searchParams.get('plan');
+  
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [formPlan, setFormPlan] = useState(selectedPlan);
+  const [formPlan, setFormPlan] = useState<string | null>(urlPlan || initialSelectedPlan || null);
+
+  useEffect(() => {
+    if (urlPlan) {
+      setFormPlan(urlPlan);
+    } else if (initialSelectedPlan) {
+      setFormPlan(initialSelectedPlan);
+    }
+  }, [urlPlan, initialSelectedPlan]);
 
   const handlePlanSelect = (planId: string) => {
     setFormPlan(planId);
@@ -56,7 +68,7 @@ const Contact = ({ selectedPlan }: ContactProps) => {
           </div>
           
           <h2 className="zenora-heading bg-clip-text text-transparent bg-zenora-gradient">
-            Choose Your Plan & Get In Touch
+            Get In Touch
           </h2>
           
           <p className="zenora-subheading">
@@ -109,4 +121,3 @@ const Contact = ({ selectedPlan }: ContactProps) => {
 };
 
 export default Contact;
-
