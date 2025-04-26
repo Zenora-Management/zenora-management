@@ -5,6 +5,7 @@ import App from './App.tsx'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { refreshFavicon } from './utils/favicon-helper.ts'
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient({
@@ -15,6 +16,9 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Refresh favicon to ensure it's using the latest version
+refreshFavicon();
 
 // Add global error handler to catch and log any unhandled errors
 window.addEventListener('error', (event) => {

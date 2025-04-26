@@ -17,3 +17,4 @@ export const refreshFavicon = () => {
   
   console.log('Favicon refreshed');
 };
+
