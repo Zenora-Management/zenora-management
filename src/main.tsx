@@ -1,4 +1,3 @@
-
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
@@ -18,6 +17,7 @@ const queryClient = new QueryClient({
 });
 
 // Refresh favicon to ensure it's using the latest version
+// This will forcefully override any previously cached favicons
 refreshFavicon();
 
 // Add global error handler to catch and log any unhandled errors
