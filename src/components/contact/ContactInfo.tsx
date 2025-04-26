@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Phone, Mail, MapPin, Calendar } from 'lucide-react';
 import { ZenoraButton } from '@/components/ui/button-zenora';
@@ -81,7 +80,7 @@ const ContactInfo = ({ selectedPlan }: ContactInfoProps) => {
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-center">
               <Avatar className="h-14 w-14 border-2 border-white/50 transition-transform hover:scale-110">
-                <AvatarImage src="/lovable-uploads/a0b42a29-69dc-4c13-b322-930e53867888.png" alt="Ansh Parikh" />
+                <AvatarImage src="/images/team-member.png" alt="Ansh Parikh" />
                 <AvatarFallback>AP</AvatarFallback>
               </Avatar>
               <p className="text-sm mt-2 text-white/80">Ansh Parikh</p>

@@ -46,7 +46,7 @@ const AIRentAnalysisDetail = () => {
               <div className="md:w-1/2">
                 <div className="rounded-xl overflow-hidden shadow-xl">
                   <img 
-                    src="/lovable-uploads/6ec1603f-741d-4f1d-bb10-163401d7a684.png" 
+                    src="/images/rent-analysis-detail.png" 
                     alt="AI Rent Analysis Dashboard" 
                     className="w-full h-auto"
                   />

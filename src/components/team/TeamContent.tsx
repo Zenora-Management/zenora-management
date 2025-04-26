@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Linkedin } from "lucide-react";
 
@@ -46,7 +45,7 @@ const TeamContent = () => {
             className="flex flex-col items-center"
           >
             <img 
-              src="/lovable-uploads/a0b42a29-69dc-4c13-b322-930e53867888.png" 
+              src="/images/team-member.png" 
               alt="Ansh Parikh" 
               className="w-40 h-40 rounded-full object-cover border-2 border-zenora-purple/50 shadow-lg mb-4"
             />
